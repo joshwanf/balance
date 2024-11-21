@@ -3,7 +3,6 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify"
 import { prisma } from "../../prisma/prismaClient"
 import fp from "fastify-plugin"
 import jwt from "jsonwebtoken" // If you want to manually generate JWT (optional)
-import { CreateUserRequest } from "../../utils/types/api/user"
 import { uuidv7 } from "uuidv7"
 import type { API } from "../../../utils/types/api/api"
 // import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
