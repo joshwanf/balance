@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String @id @db.Uuid
+  email          String @unique
+  username       String @unique
+  firstName      String
+  lastName       String
+  hashedPassword String
+
+  budgets     Budget[]
+  categorys   Category[]
+  // items       Item[]
+  Transaction Transaction[]
+  UserGroup   UserGroup[]
+
+  @@index(fields: [email])
+  @@index(fields: [username])
+}
+
+model Budget {
+  id          String     @id @db.Uuid
+  name        String
+  cleanedName String
+  userId      String     @db.Uuid
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categorys   Category[]
+  items       Item[]
+
+  @@index(fields: [userId, cleanedName])
+}
+
+model Category {
+  id          String @id @db.Uuid
+  name        String
+  cleanedName String
+
+  userId   String @db.Uuid
+  budgetId String @db.Uuid
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  budget   Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  items    Item[]
+
+  @@index(fields: [userId, budgetId, cleanedName])
+}
+
+model Item {
+  id          String @id @db.Uuid
+  name        String @unique
+  cleanedName String @unique
+
+  // userId      String        @db.Uuid
+  budgetId    String?       @db.Uuid
+  categoryId  String?       @db.Uuid
+  // user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  budget      Budget?       @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  category    Category?     @relation(fields: [categoryId], references: [id])
+  Transaction Transaction[]
+  // @@id([userId, cleanedName])
+  UserGroup   UserGroup[]
+  // User        User?         @relation(fields: [userId], references: [id])
+  // userId      String?       @db.Uuid
+
+  // @@index(fields: [userId, cleanedName])
+  @@index(fields: [cleanedName])
+  @@index(fields: [name])
+}
+
+model Transaction {
+  id         String  @id @db.Uuid
+  payee      String
+  amount     String
+  date       String
+  receiptUrl String?
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String  @db.Uuid
+  // item   Item? @relation(fields: [itemId], references: [id])
+  // categoryItemId String?       @db.Uuid
+  Item   Item?   @relation(fields: [itemId], references: [id])
+  itemId String? @db.Uuid
+}
+
+model UserGroup {
+  userId String @db.Uuid
+  itemId String @db.Uuid
+  User   User   @relation(fields: [userId], references: [id])
+  Item   Item   @relation(fields: [itemId], references: [id])
+
+  @@id([userId, itemId])
+}
