@@ -1,5 +1,5 @@
 import express, { ErrorRequestHandler } from "express"
-require("express-async-errors")
+import "express-async-errors"
 import dotenv from "dotenv"
 import cookieParser from "cookie-parser"
 import cors from "cors"
@@ -51,6 +51,7 @@ app.post("/ping", (req, res) => {
 
 // Catch unhandled requests and forward to error handler.
 app.use((_req, _res, next) => {
+  console.log("catching unhandled requests")
   const error = {
     status: 404,
     title: "Resource Not Found",

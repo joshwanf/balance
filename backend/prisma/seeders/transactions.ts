@@ -1,55 +1,37 @@
 import { uuidv7 } from "uuidv7"
 import { Prisma } from "@prisma/client"
 import { users } from "./users"
-// import { user1Budgets } from "./budgets"
-// import { user1Categories } from "./categories"
-import { user1Items } from "./items"
+import { accounts } from "./accounts"
 
-const userIds = users.map((user) => user.id)
-// const budgetIds = user1BudgetsData.map((budget) => budget.id)
-// const categoryIds = user1CategoriesData.map((category) => category.id)
-const categoryItemIds = user1Items.map((item) => item.id)
-
-export const user1Transactions: Prisma.TransactionCreateManyInput[] = [
+const userIds = users.map(u => u.id)
+const accountIds = accounts.map(a => a.id)
+export const transactions: Prisma.TransactionCreateManyInput[] = [
   {
     id: uuidv7(),
-    userId: userIds[0],
-    itemId: categoryItemIds[0],
     payee: "Landlord",
-    amount: "1600.00",
-    date: "2024-11-01",
+    type: "outgoing",
+    amount: 1600.0,
+    date: new Date("2024-11-01T00:00:00-04:00"),
+    userId: userIds[0],
+    accountId: accountIds[0],
   },
   {
     id: uuidv7(),
+    payee: "Whole Foods",
+    type: "outgoing",
+    amount: 75.0,
+    date: new Date("2024-11-02T00:00:00-04:00"),
     userId: userIds[0],
-    // categoryItemId: categoryItemIds[0],
-    payee: "Whole Foods Market",
-    amount: "54.00",
-    date: "2024-11-01",
+    accountId: accountIds[0],
   },
   {
     id: uuidv7(),
+    payee: "Whole Foods",
+    type: "outgoing",
+    amount: 75.0,
+    date: new Date("2024-11-02T00:00:00-04:00"),
     userId: userIds[0],
-    // categoryItemId: categoryItemIds[0],
-    payee: "Target",
-    amount: "75.36",
-    date: "2024-11-01",
-  },
-  {
-    id: uuidv7(),
-    userId: userIds[0],
-    // categoryItemId: categoryItemIds[0],
-    payee: "Vernick Pizza",
-    amount: "22.96",
-    date: "2024-11-01",
-  },
-  {
-    id: uuidv7(),
-    userId: userIds[0],
-    // categoryItemId: categoryItemIds[0],
-    payee: "Uber Technologies",
-    amount: "14.95",
-    date: "2024-11-01",
+    accountId: accountIds[0],
   },
 ]
 

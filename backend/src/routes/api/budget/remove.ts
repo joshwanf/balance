@@ -13,17 +13,13 @@ import { confirmB } from "./utils"
 const router = Router()
 
 import { NextFunction, Request, Response } from "express-serve-static-core"
-
-interface IDeleteBody {
-  type: string
-  success: string
-}
-type IRes = Response<IDeleteBody>
+interface IReq extends Request {}
+type IRes = Response<ApiTypes.Budget.RemoveBudgetResponse>
 
 router.post(
   "/remove/:id",
-  isLoggedIn,
-  async (req: Request, res: IRes, next: NextFunction) => {
+  // isLoggedIn,
+  async (req: IReq, res: IRes, next: NextFunction) => {
     console.log("delete budget")
 
     /** isLoggedIn should already check for req.user, call next() for TS */
@@ -34,15 +30,15 @@ router.post(
 
     const { id } = req.params
 
-    // /** Confirm budget exists */
-    // try {
-    //   const isValid = await confirmB(id, user.id)
-    //   if (!isValid) {
-    //     throw "not a valid budget"
-    //   }
-    // } catch (e) {
-    //   return next(e)
-    // }
+    /** Confirm budget exists */
+    try {
+      const isValid = await confirmB(id, user.id)
+      if (!isValid) {
+        throw "not a valid budget"
+      }
+    } catch (e) {
+      return next(e)
+    }
 
     try {
       const deleted = await pc.budget.delete({

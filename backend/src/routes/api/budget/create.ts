@@ -13,12 +13,11 @@ import { NextFunction, Request, Response } from "express-serve-static-core"
 interface IReq extends Request {
   body: ApiTypes.Budget.CreateBudgetRequest
 }
-
 type IRes = Response<ApiTypes.Budget.Budget>
 
 router.post(
   "/create",
-  isLoggedIn,
+  // isLoggedIn,
   async (req: IReq, res: IRes, next: NextFunction) => {
     console.log("create budget")
 

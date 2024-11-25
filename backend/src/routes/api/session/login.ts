@@ -38,17 +38,17 @@ router.post("/login", async (req: IReq, res: IRes, next: NextFunction) => {
       ],
     },
   })
-  console.log("found user", user)
+  console.log("login found user")
   if (!user) {
     return next({ title: "Login", message: "Couldn't find user", status: 404 })
   }
 
   const { hashedPassword, ...safeUser } = user
   req.user = safeUser
-  console.log("login", req.user)
+  console.log("req.user set")
   setTokenCookie(res, safeUser)
   res.status(200).send({ type: "success", success: { user: safeUser } })
-  next()
+  // return next()
 })
 
 export default router

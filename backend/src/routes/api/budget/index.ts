@@ -1,5 +1,6 @@
 import { Router } from "express"
 
+import { isLoggedIn } from "../../../utils/auth"
 import list from "./list"
 import create from "./create"
 import change from "./change"
@@ -12,6 +13,7 @@ router.post("/ping", async (req, res, next) => {
   res.status(200).send({ message: "pong", state: { user } })
 })
 
+router.use(isLoggedIn)
 router.use(list)
 router.use(create)
 router.use(change)

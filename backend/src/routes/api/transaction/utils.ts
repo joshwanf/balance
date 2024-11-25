@@ -1,6 +1,13 @@
 import { pc } from "../../../utils/prismaClient"
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 
+export const queryOpts = {
+  include: {
+    category: { select: { id: true, name: true, cleanedName: true } },
+    account: { select: { id: true, name: true, cleanedName: true } },
+  },
+}
+
 export const confirmT = async (transactionId: string, userId: string) => {
   console.log("confirming transaction")
   try {

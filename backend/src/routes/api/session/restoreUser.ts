@@ -21,21 +21,24 @@ const restoreUser: RequestHandler = (req, res, next) => {
     jwtConfig.secret,
     undefined,
     async (err, jwtPayload) => {
-      if (err) {
-        console.log("jwt error")
-        return next()
-      }
+      console.log("jwtPayload", jwtPayload)
+      // if (err) {
+      //   console.log("jwt error", err)
+      //   next()
+      // }
 
       if (typeof jwtPayload === "object") {
+        console.log("jwtPayload is object")
         try {
           const { id } = jwtPayload.data
           const user = await pc.user.findUnique({ where: { id } })
           if (user) {
             const { hashedPassword, ...safeUser } = user
             req.user = safeUser
-            console.log("jwt found user", req.user)
+            console.log("restoreUser found user in db from token")
+            // console.log("jwt found user", req.user)
+            return next()
           }
-          return next()
         } catch (e) {
           console.log("restore user catch")
           res.clearCookie("token")

@@ -41,7 +41,11 @@ export const setTokenCookie = (
 
 export const isLoggedIn: RequestHandler = (req, res, next) => {
   console.log("isLoggedIn")
-  if (req.user) return next()
+  console.log("req.user", req.user)
+  if (req.user) {
+    console.log("logged in")
+    next()
+  }
   if (!req.user) {
     const err = {
       title: "User isn't logged in!",
@@ -49,9 +53,9 @@ export const isLoggedIn: RequestHandler = (req, res, next) => {
       status: 403,
     }
     console.log("isLoggedIn couldn't find user")
-    return next(err)
+    next(err)
   }
-  next()
+  // next()
 }
 
 // const restoreUser = (req: Request, res: Response, next: NextFunction) => {

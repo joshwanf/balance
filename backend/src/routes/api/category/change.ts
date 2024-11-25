@@ -8,7 +8,7 @@ import { isLoggedIn } from "../../../utils/auth"
 import { pc } from "../../../utils/prismaClient"
 import { ApiTypes } from "../../../types/api"
 import { cleanName } from "../../../utils/helpers/cleanName"
-import { checkValidBudgetName, confirmB } from "./utils"
+import { checkValidCategoryName, confirmC } from "./utils"
 
 const router = Router()
 
@@ -16,7 +16,6 @@ import { NextFunction, Request, Response } from "express-serve-static-core"
 interface IReq extends Request {
   body: { name: string }
 }
-
 type IRes = Response<ApiTypes.Budget.Budget>
 
 router.post(
@@ -45,7 +44,7 @@ router.post(
     /** Update with supplied fields */
     try {
       const { name } = req.body
-      const updated = await pc.budget.update({
+      const updated = await pc.category.update({
         where: { id, userId: user.id },
         data: { name, cleanedName: cleanName(name) },
       })

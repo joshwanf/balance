@@ -19,84 +19,93 @@ model User {
   lastName       String
   hashedPassword String
 
-  budgets     Budget[]
-  categorys   Category[]
-  // items       Item[]
-  Transaction Transaction[]
-  UserGroup   UserGroup[]
+  accounts     Account[]
+  transactions Transaction[]
+  categories   Category[]
 
   @@index(fields: [email])
   @@index(fields: [username])
 }
 
-model Budget {
-  id          String     @id @db.Uuid
-  name        String
-  cleanedName String
-  userId      String     @db.Uuid
-  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  categorys   Category[]
-  items       Item[]
+model Account {
+  id             String  @id @db.Uuid
+  name           String
+  cleanedName    String
+  accountType    String // checking, credit
+  initialBalance Decimal @db.Decimal(10, 2)
 
-  @@index(fields: [userId, cleanedName])
-}
+  userId String @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-model Category {
-  id          String @id @db.Uuid
-  name        String
-  cleanedName String
-
-  userId   String @db.Uuid
-  budgetId String @db.Uuid
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  budget   Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
-  items    Item[]
-
-  @@index(fields: [userId, budgetId, cleanedName])
-}
-
-model Item {
-  id          String @id @db.Uuid
-  name        String @unique
-  cleanedName String @unique
-
-  // userId      String        @db.Uuid
-  budgetId    String?       @db.Uuid
-  categoryId  String?       @db.Uuid
-  // user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  budget      Budget?       @relation(fields: [budgetId], references: [id], onDelete: Cascade)
-  category    Category?     @relation(fields: [categoryId], references: [id])
-  Transaction Transaction[]
-  // @@id([userId, cleanedName])
-  UserGroup   UserGroup[]
-  // User        User?         @relation(fields: [userId], references: [id])
-  // userId      String?       @db.Uuid
-
-  // @@index(fields: [userId, cleanedName])
-  @@index(fields: [cleanedName])
-  @@index(fields: [name])
+  transactions Transaction[]
 }
 
 model Transaction {
-  id         String  @id @db.Uuid
-  payee      String
-  amount     String
-  date       String
-  receiptUrl String?
+  id     String   @id @db.Uuid
+  type   String // outgoing or incoming
+  payee  String
+  amount Decimal  @db.Decimal(10, 2)
+  date   DateTime @db.Timestamp()
 
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String  @db.Uuid
-  // item   Item? @relation(fields: [itemId], references: [id])
-  // categoryItemId String?       @db.Uuid
-  Item   Item?   @relation(fields: [itemId], references: [id])
-  itemId String? @db.Uuid
-}
-
-model UserGroup {
   userId String @db.Uuid
-  itemId String @db.Uuid
-  User   User   @relation(fields: [userId], references: [id])
-  Item   Item   @relation(fields: [itemId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@id([userId, itemId])
+  accountId String  @db.Uuid
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  categoryId String?   @db.Uuid
+  category   Category? @relation(fields: [categoryId], references: [id])
 }
+
+model Category {
+  id          String  @unique @db.Uuid
+  name        String
+  cleanedName String
+  amount      Decimal @db.Decimal(10, 2)
+
+  userId       String        @db.Uuid
+  user         User          @relation(fields: [userId], references: [id])
+  transactions Transaction[]
+
+  @@id(fields: [userId, cleanedName])
+  @@index(fields: [userId, cleanedName])
+}
+
+// model Budget {
+//   id          String     @id @db.Uuid
+//   name        String
+//   cleanedName String
+//   userId      String     @db.Uuid
+//   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   categories  Category[]
+//   items       Item[]
+
+//   @@index(fields: [userId, cleanedName])
+// }
+
+// model Item {
+//   id          String @id @db.Uuid
+//   name        String @unique
+//   cleanedName String @unique
+//   amount      String
+
+//   budgetId   String?   @db.Uuid
+//   categoryId String?   @db.Uuid
+//   budget     Budget?   @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+//   category   Category? @relation(fields: [categoryId], references: [id])
+
+//   userGroups UserGroup[]
+
+//   // @@index(fields: [userId, cleanedName])
+//   @@index(fields: [cleanedName])
+//   @@index(fields: [name])
+// }
+
+// model UserGroup {
+//   userId String @db.Uuid
+//   itemId String @db.Uuid
+//   user   User   @relation(fields: [userId], references: [id])
+//   item   Item   @relation(fields: [itemId], references: [id])
+
+//   @@id([userId, itemId])
+// }

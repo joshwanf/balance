@@ -16,12 +16,11 @@ import { NextFunction, Request, Response } from "express-serve-static-core"
 interface IReq extends Request {
   body: { name: string }
 }
-
 type IRes = Response<ApiTypes.Budget.Budget>
 
 router.post(
   "/change/:id",
-  isLoggedIn,
+  // isLoggedIn,
   async (req: IReq, res: IRes, next: NextFunction) => {
     console.log("edit budget")
     const { id } = req.params

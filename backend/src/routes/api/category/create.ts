@@ -1,23 +1,23 @@
 import { Router } from "express"
 import { uuidv7 } from "uuidv7"
-import { PrismaClientValidationError } from "@prisma/client/runtime/library"
 import { isLoggedIn } from "../../../utils/auth"
 import { pc } from "../../../utils/prismaClient"
 import { ApiTypes } from "../../../types/api"
 import { cleanName } from "../../../utils/helpers/cleanName"
-import { checkValidBudgetName } from "./utils"
+import { checkValidCategoryName } from "./utils"
 
 const router = Router()
 
 import { NextFunction, Request, Response } from "express-serve-static-core"
-interface IReq extends Request {
-  body: ApiTypes.Item.CreateRequest
-}
-type IRes = Response<ApiTypes.Item.Item>
+// interface IReq extends Request {
+//   body: ApiTypes.Item.CreateItemRequest
+// }
+type IReq = Request<{}, {}, ApiTypes.Category.CreateCategoryRequest>
+type IRes = Response<ApiTypes.Category.CreateCategoryResponse>
 
 router.post(
   "/create",
-  isLoggedIn,
+  // isLoggedIn,
   async (req: IReq, res: IRes, next: NextFunction) => {
     console.log("create item")
 
@@ -27,16 +27,18 @@ router.post(
       return next()
     }
 
-    const { name } = req.body
-    const validBudgetName = await checkValidBudgetName(name, user.id)
+    const { name, amount } = req.body
+    const validBudgetName = await checkValidCategoryName(name, user.id)
 
     try {
       /** insert item */
-      const newRecord = await pc.item.create({
+      const newRecord = await pc.category.create({
         data: {
           id: uuidv7(),
           name,
           cleanedName: validBudgetName,
+          amount,
+          userId: user.id,
         },
       })
       if (!newRecord) {
@@ -46,8 +48,8 @@ router.post(
           status: 404,
         }
       }
-      const userGroup = await pc.userGroup.findMany()
-      console.log(userGroup)
+      // const userGroup = await pc.userGroup.findMany()
+      // console.log(userGroup)
 
       res.status(201).send({ ...newRecord, userId: user.id })
     } catch (e) {

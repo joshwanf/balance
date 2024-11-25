@@ -1,7 +1,20 @@
-import internal from "stream"
+import { Decimal } from "@prisma/client/runtime/library"
+import {
+  NextFunction,
+  Request,
+  Response,
+  ParamsDictionary,
+  ParsedQs,
+} from "express-serve-static-core"
 
 // import * as UserTypes from "../utils/types/api/user"
 export declare namespace ApiTypes {
+  type CustomRouteHandler<TReq, TRes> = (
+    req: Request<ParamsDictionary, {}, TReq, ParsedQs>,
+    res: Response<TRes>,
+    next: NextFunction,
+  ) => Promise<void>
+
   namespace Session {
     /** Session */
     interface SafeUser {
@@ -16,7 +29,7 @@ export declare namespace ApiTypes {
       status: "success"
       success: {
         token: string
-        userInfo: {
+        user: {
           id: string
           firstName: string
           lastName: string
@@ -27,13 +40,13 @@ export declare namespace ApiTypes {
     }
     export interface LogInRequest {
       credential: string
-      hashedPassword: string
+      password: string
     }
     export interface LogInSuccess {
       status: "success"
       success: {
         token: string
-        userInfo: {
+        user: {
           id: string
           firstName: string
           lastName: string
@@ -117,43 +130,58 @@ export declare namespace ApiTypes {
     }
   }
 
+  /** Transaction */
   namespace Transaction {
     interface Transaction {
-      amount: string
-      date: string
+      amount: Decimal
+      date: Date
       id: string
-      itemId: string | null
       payee: string
-      receiptUrl: string | null
       userId: string
     }
-    interface ListTransactions extends Transaction {}
-
+    interface TransactionWithCat extends Transaction {
+      category: {
+        id: string
+        name: string
+        cleanedName: string
+      } | null
+      account: {
+        id: string
+        name: string
+        cleanedName: string
+      }
+    }
     interface CreateTransactionRequest {
+      type: string
       payee: string
-      amount: string
-      date: DateTime
-      receiptUrl?: string
-      // categoryItemId?: string
+      amount: Decimal
+      date: Date
       itemName?: string
+      accountId: string
     }
     interface ChangeTransactionRequest {
       amount: string
       date: string
       item: {
-        id: string
+        id?: string
         name: string
       }
       payee: string
       receiptUrl: string
     }
-    interface CreateTransactionResponse extends GenericTransactionResponse {}
-    interface CreateTransactionValidationError {
-      type: string
-      message: string
+    /** serialization of prisma Decimal and Date types */
+    interface TSerialized extends TransactionWithCat {
+      amount: string
+      date: string
     }
-    interface CreateTransactionInvalidCredentialError {
-      type: "Invalid request"
+    interface ListTransactionsResponse {
+      transactions: TListTransRes[]
+    }
+    interface RetrieveTransactionResponse extends TSerialized {}
+    interface CreateTransactionResponse extends TSerialized {}
+    interface ChangeTransanctionResponse extends TSerialized {}
+    interface RemoveTransactionResponse {
+      type: string
       message: string
     }
   }
@@ -166,25 +194,66 @@ export declare namespace ApiTypes {
       cleanedName: string
       userId: string
     }
-    type CreateBudgetRequest = {
+    interface CreateBudgetRequest {
       name: string
+    }
+    interface ListBudgetsResponse {
+      budgets: Budget[]
+    }
+    interface RetrieveBudgetResponse {}
+    interface CreateBudgetResponse {}
+    interface RemoveBudgetResponse {
+      type: string
+      success: string
     }
   }
 
-  /** Item */
-  namespace Item {
-    interface Item {
+  /** Category */
+  namespace Category {
+    interface Category {
       id: string
       name: string
       cleanedName: string
+      amount: Decimal
       userId: string
+    }
+    /** serialization of prisma Decimal and Date types */
+    interface TSerialized extends Category {
+      amount: string
     }
     interface Group {
       userId: string
       itemId: string
     }
-    type CreateRequest = {
+    interface CreateCategoryRequest {
+      id?: string
       name: string
+      amount: Decimal
+    }
+    interface ListResponse {
+      categories: TSerialized[]
+    }
+    interface RetrieveResponse extends TSerialized {}
+    interface CreateCategoryResponse {}
+    interface RemoveCategoryResponse {
+      type: string
+      success: string
     }
   }
+
+  // /** Category */
+  // namespace Category {
+  //   interface Category {
+  //     id: string
+  //     name: string
+  //     cleanedName: string
+  //     amount: string
+  //   }
+  //   interface CategoryWithItems extends Category {
+  //     Items: Item.Item[]
+  //   }
+  //   interface ListCategoriesResponse {
+  //     categories: CategoryWithItems[]
+  //   }
+  // }
 }
