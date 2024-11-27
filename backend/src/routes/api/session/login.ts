@@ -14,11 +14,13 @@ interface IReq extends Request {
   body: ILoginBody
 }
 
+type Req = ApiTypes.Session.LoginRequest
+type Res = ApiTypes.Session.LoginResponse
 interface ILoginRes {
   type: string
   success: { user: ApiTypes.Session.SafeUser }
 }
-type IRes = Response<ILoginRes>
+type IRes = Response<Res>
 
 /**
  * req.body expects { credential, password }
@@ -37,18 +39,27 @@ router.post("/login", async (req: IReq, res: IRes, next: NextFunction) => {
         { AND: { email: credential, hashedPassword: password } },
       ],
     },
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      username: true,
+      accounts: { select: { id: true, name: true } },
+      categories: { select: { id: true, name: true } },
+    },
   })
-  console.log("found user", user)
+  console.log("login found user")
   if (!user) {
     return next({ title: "Login", message: "Couldn't find user", status: 404 })
   }
 
-  const { hashedPassword, ...safeUser } = user
-  req.user = safeUser
-  console.log("login", req.user)
-  setTokenCookie(res, safeUser)
-  res.status(200).send({ type: "success", success: { user: safeUser } })
-  next()
+  // const { hashedPassword, ...safeUser } = user
+  req.user = user
+  console.log("req.user set")
+  setTokenCookie(res, user)
+  res.status(200).send({ status: "success", success: { user } })
+  // return next()
 })
 
 export default router

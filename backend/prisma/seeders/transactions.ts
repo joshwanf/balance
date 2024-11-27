@@ -1,56 +1,111 @@
 import { uuidv7 } from "uuidv7"
 import { Prisma } from "@prisma/client"
 import { users } from "./users"
-// import { user1Budgets } from "./budgets"
-// import { user1Categories } from "./categories"
-import { user1Items } from "./items"
+import { accounts } from "./accounts"
+import { user1Cat, user2Cat } from "./categories"
 
-const userIds = users.map((user) => user.id)
-// const budgetIds = user1BudgetsData.map((budget) => budget.id)
-// const categoryIds = user1CategoriesData.map((category) => category.id)
-const categoryItemIds = user1Items.map((item) => item.id)
+const userIds = users.map(u => u.id)
+const accountIds = accounts.map(a => a.id)
+const user1CatIds = user1Cat.map(c => c.id)
+const user2CatIds = user2Cat.map(c => c.id)
 
-export const user1Transactions: Prisma.TransactionCreateManyInput[] = [
+export const transactions: Prisma.TransactionCreateManyInput[] = [
   {
     id: uuidv7(),
-    userId: userIds[0],
-    itemId: categoryItemIds[0],
     payee: "Landlord",
-    amount: "1600.00",
-    date: "2024-11-01",
+    type: "outgoing",
+    amount: 160000,
+    date: "2024-10-01",
+    userId: userIds[0],
+    accountId: accountIds[0],
+    categoryId: user1CatIds[0],
   },
   {
     id: uuidv7(),
+    payee: "PECO",
+    type: "outgoing",
+    amount: 10803,
+    date: "2024-10-05",
     userId: userIds[0],
-    // categoryItemId: categoryItemIds[0],
-    payee: "Whole Foods Market",
-    amount: "54.00",
-    date: "2024-11-01",
+    accountId: accountIds[0],
+    categoryId: user1CatIds[0],
   },
   {
     id: uuidv7(),
+    payee: "Whole Foods",
+    type: "outgoing",
+    amount: 10426,
+    date: "2024-10-02",
     userId: userIds[0],
-    // categoryItemId: categoryItemIds[0],
-    payee: "Target",
-    amount: "75.36",
-    date: "2024-11-01",
+    accountId: accountIds[0],
+    categoryId: user1CatIds[1],
   },
   {
     id: uuidv7(),
+    payee: "SEPTA",
+    type: "outgoing",
+    amount: 2000,
+    date: "2024-10-10",
     userId: userIds[0],
-    // categoryItemId: categoryItemIds[0],
-    payee: "Vernick Pizza",
-    amount: "22.96",
-    date: "2024-11-01",
+    accountId: accountIds[0],
+    categoryId: user1CatIds[2],
   },
   {
     id: uuidv7(),
+    payee: "Uniqlo",
+    type: "outgoing",
+    amount: 15034,
+    date: "2024-10-03",
     userId: userIds[0],
-    // categoryItemId: categoryItemIds[0],
-    payee: "Uber Technologies",
-    amount: "14.95",
+    accountId: accountIds[0],
+  },
+  {
+    id: uuidv7(),
+    payee: "Landlord",
+    type: "outgoing",
+    amount: 160000,
     date: "2024-11-01",
+    userId: userIds[0],
+    accountId: accountIds[0],
+    categoryId: user1CatIds[0],
+  },
+  {
+    id: uuidv7(),
+    payee: "PECO",
+    type: "outgoing",
+    amount: 9500,
+    date: "2024-11-05",
+    userId: userIds[0],
+    accountId: accountIds[0],
+    categoryId: user1CatIds[0],
+  },
+  {
+    id: uuidv7(),
+    payee: "Whole Foods",
+    type: "outgoing",
+    amount: 7500,
+    date: "2024-11-02",
+    userId: userIds[0],
+    accountId: accountIds[0],
+    categoryId: user1CatIds[1],
+  },
+  {
+    id: uuidv7(),
+    payee: "SEPTA",
+    type: "outgoing",
+    amount: 1000,
+    date: "2024-11-10",
+    userId: userIds[0],
+    accountId: accountIds[0],
+    categoryId: user1CatIds[2],
+  },
+  {
+    id: uuidv7(),
+    payee: "Sur La Table",
+    type: "outgoing",
+    amount: 10636,
+    date: "2024-11-15",
+    userId: userIds[0],
+    accountId: accountIds[0],
   },
 ]
-
-export const user2Transactions: Prisma.TransactionCreateManyInput[] = []

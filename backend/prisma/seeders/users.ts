@@ -1,12 +1,9 @@
 import { uuidv7 } from "uuidv7"
 import { Prisma } from "@prisma/client"
+import { cleanName } from "../../src/utils/helpers/cleanName"
 
-// import { cleanName } from "../../src/utils/cleanName"
-import { user1Transactions } from "./transactions"
-
-export const users: Prisma.UserCreateInput[] = [
+export const users: Prisma.UserCreateManyInput[] = [
   {
-    /** User 1 */
     id: uuidv7(),
     firstName: "Adam",
     lastName: "In",
@@ -15,7 +12,6 @@ export const users: Prisma.UserCreateInput[] = [
     hashedPassword: "password",
   },
   {
-    /** User 2 */
     id: uuidv7(),
     firstName: "Jane",
     lastName: "Doe",
@@ -24,7 +20,6 @@ export const users: Prisma.UserCreateInput[] = [
     hashedPassword: "password",
   },
   {
-    /** User 3 */
     id: uuidv7(),
     firstName: "John",
     lastName: "Doe",

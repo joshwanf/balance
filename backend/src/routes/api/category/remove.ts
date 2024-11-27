@@ -8,7 +8,7 @@ import { isLoggedIn } from "../../../utils/auth"
 import { pc } from "../../../utils/prismaClient"
 import { ApiTypes } from "../../../types/api"
 import { cleanName } from "../../../utils/helpers/cleanName"
-import { confirmB } from "./utils"
+import { confirmC } from "./utils"
 
 const router = Router()
 
@@ -45,7 +45,7 @@ router.post(
     // }
 
     try {
-      const deleted = await pc.budget.delete({
+      const deleted = await pc.category.delete({
         where: { id, userId: user.id },
       })
       console.log("deleted budget", deleted)

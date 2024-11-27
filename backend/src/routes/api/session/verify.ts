@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken"
 
 import config from "../../../config"
 import { ApiTypes } from "types/api"
+import { pc } from "../../../utils/prismaClient"
 
 const router = express.Router()
 
@@ -14,7 +15,7 @@ interface IRestoreBody {
 }
 type IRes = Response<IRestoreBody, Locals>
 
-router.post("/verify", (req, res: IRes) => {
+router.post("/verify", async (req, res: IRes, next) => {
   console.log("verifyRoute")
   const { token } = req.cookies
   const { jwtConfig } = config
@@ -23,15 +24,45 @@ router.post("/verify", (req, res: IRes) => {
   try {
     const decoded = jwt.verify(token, jwtConfig.secret)
     if (typeof decoded === "object") {
-      console.log(decoded)
-      const { id, firstName, lastName, email, username } = decoded.data
-      const safeUser = { id, email, firstName, lastName, username }
-      res.status(200).send({
-        status: "success",
-        success: {
-          user: safeUser,
+      // console.log("verify route decoded", decoded)
+      const { id } = decoded.data
+      const user = await pc.user.findUnique({
+        where: { id },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          username: true,
+          accounts: { select: { id: true, name: true } },
+          CategoryMonth: {
+            select: { id: true, month: true, amount: true, category: true },
+          },
+          // categories: { select: { id: true, name: true } },
         },
       })
+      if (!user) {
+        console.log("verify route didnt find user in db", user)
+        res.status(200).send({
+          status: "success",
+          success: {
+            user: null,
+          },
+        })
+        // next()
+      }
+
+      if (user) {
+        // const { hashedPassword, ...safeUser } = user
+        // console.log("verify route found user", safeUser)
+        res.status(200).send({
+          status: "success",
+          success: {
+            user,
+          },
+        })
+        // next()
+      }
     }
   } catch (e) {
     /** Invalid jwt so assume user is not logged in */

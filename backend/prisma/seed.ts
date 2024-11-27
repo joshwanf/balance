@@ -2,42 +2,51 @@ import { uuidv7 } from "uuidv7"
 import { PrismaClient } from "@prisma/client"
 // import { prisma } from "./prismaClient"
 import { users } from "./seeders/users"
-import { user1Budgets } from "./seeders/budgets"
-import { user1Categories } from "./seeders/categories"
-import { user1Items } from "./seeders/items"
-import { user1Transactions } from "./seeders/transactions"
-import { user1Groups } from "./seeders/groups"
+import { accounts } from "./seeders/accounts"
+import { transactions } from "./seeders/transactions"
+import { categories } from "./seeders/categories"
+import { categoryMonths } from "./seeders/categoryMonths"
+
 const prisma = new PrismaClient()
 
 async function main() {
   console.log(`Start seeding ...`)
 
-  for (const u of users) {
-    const user = await prisma.user.create({
-      data: u,
+  for (const x of users) {
+    const result = await prisma.user.create({
+      data: x,
     })
-    console.log(`Created user with id: ${user.id}`)
+    console.log(`Created user with id: ${result.id}`)
   }
 
-  const budget = await prisma.budget.createMany({
-    data: user1Budgets,
-  })
+  for (const x of accounts) {
+    const result = await prisma.account.create({
+      data: x,
+    })
+    console.log(`Created user with id: ${result.id}`)
+  }
 
-  const categories = await prisma.category.createMany({
-    data: user1Categories,
-  })
+  for (const x of categories) {
+    const result = await prisma.category.create({
+      data: x,
+    })
+    console.log(`Created user with id: ${result.id}`)
+  }
 
-  const categoryItems = await prisma.item.createMany({
-    data: user1Items,
-  })
+  for (const x of categoryMonths) {
+    const result = await prisma.categoryMonth.create({
+      data: x,
+    })
+    console.log(`Created user with id: ${result.id}`)
+  }
 
-  const transactions = await prisma.transaction.createMany({
-    data: user1Transactions,
-  })
+  for (const x of transactions) {
+    const result = await prisma.transaction.create({
+      data: x,
+    })
+    console.log(`Created user with id: ${result.id}`)
+  }
 
-  const groups = await prisma.userGroup.createMany({
-    data: user1Groups,
-  })
   console.log(`Seeding finished.`)
 }
 
@@ -45,8 +54,8 @@ main()
   .then(async () => {
     await prisma.$disconnect()
   })
-  .catch(async (e) => {
+  .catch(async e => {
     console.error(e)
     await prisma.$disconnect()
-    // process.exit(1)
+    process.exit(1)
   })

@@ -19,84 +19,71 @@ model User {
   lastName       String
   hashedPassword String
 
-  budgets     Budget[]
-  categorys   Category[]
-  // items       Item[]
-  Transaction Transaction[]
-  UserGroup   UserGroup[]
+  accounts      Account[]
+  transactions  Transaction[]
+  categories    Category[]
+  CategoryMonth CategoryMonth[]
 
   @@index(fields: [email])
   @@index(fields: [username])
 }
 
-model Budget {
-  id          String     @id @db.Uuid
+model Account {
+  id          String @id @db.Uuid
   name        String
   cleanedName String
-  userId      String     @db.Uuid
-  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  categorys   Category[]
-  items       Item[]
+  accountType String // checking, credit
+
+  userId String @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  transactions Transaction[]
 
   @@index(fields: [userId, cleanedName])
 }
 
+model Transaction {
+  id     String @id @db.Uuid
+  type   String // outgoing or incoming
+  payee  String
+  amount Int    @db.Integer
+  date   String
+
+  userId String @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  accountId String  @db.Uuid
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  categoryId String?   @db.Uuid
+  category   Category? @relation(fields: [categoryId], references: [id])
+}
+
 model Category {
-  id          String @id @db.Uuid
+  id          String @unique @db.Uuid
   name        String
   cleanedName String
 
-  userId   String @db.Uuid
-  budgetId String @db.Uuid
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  budget   Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
-  items    Item[]
+  userId        String          @db.Uuid
+  user          User            @relation(fields: [userId], references: [id])
+  transactions  Transaction[]
+  CategoryMonth CategoryMonth[]
 
-  @@index(fields: [userId, budgetId, cleanedName])
+  @@id(fields: [userId, cleanedName])
+  @@index(fields: [userId, cleanedName])
 }
 
-model Item {
-  id          String @id @db.Uuid
-  name        String @unique
-  cleanedName String @unique
+model CategoryMonth {
+  id     String @unique @db.Uuid
+  month  String
+  amount Int    @db.Integer
 
-  // userId      String        @db.Uuid
-  budgetId    String?       @db.Uuid
-  categoryId  String?       @db.Uuid
-  // user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  budget      Budget?       @relation(fields: [budgetId], references: [id], onDelete: Cascade)
-  category    Category?     @relation(fields: [categoryId], references: [id])
-  Transaction Transaction[]
-  // @@id([userId, cleanedName])
-  UserGroup   UserGroup[]
-  // User        User?         @relation(fields: [userId], references: [id])
-  // userId      String?       @db.Uuid
-
-  // @@index(fields: [userId, cleanedName])
-  @@index(fields: [cleanedName])
-  @@index(fields: [name])
-}
-
-model Transaction {
-  id         String  @id @db.Uuid
-  payee      String
-  amount     String
-  date       String
-  receiptUrl String?
-
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String  @db.Uuid
-  // item   Item? @relation(fields: [itemId], references: [id])
-  // categoryItemId String?       @db.Uuid
-  Item   Item?   @relation(fields: [itemId], references: [id])
-  itemId String? @db.Uuid
-}
-
-model UserGroup {
   userId String @db.Uuid
-  itemId String @db.Uuid
-  User   User   @relation(fields: [userId], references: [id])
-  Item   Item   @relation(fields: [itemId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
 
-  @@id([userId, itemId])
+  categoryId String   @db.Uuid
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  @@id(fields: [userId, categoryId, month])
+  @@index(fields: [userId, categoryId, month])
 }

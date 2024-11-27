@@ -1,7 +1,20 @@
-import internal from "stream"
+import { Decimal } from "@prisma/client/runtime/library"
+import {
+  NextFunction,
+  Request,
+  Response,
+  ParamsDictionary,
+  ParsedQs,
+} from "express-serve-static-core"
 
 // import * as UserTypes from "../utils/types/api/user"
 export declare namespace ApiTypes {
+  type CustomRouteHandler<TReq, TRes> = (
+    req: Request<ParamsDictionary, {}, TReq, ParsedQs>,
+    res: Response<TRes>,
+    next: NextFunction,
+  ) => Promise<void>
+
   namespace Session {
     /** Session */
     interface SafeUser {
@@ -12,33 +25,37 @@ export declare namespace ApiTypes {
       username: string
     }
 
-    export interface RestoreSessionResponse {
+    export interface LoginRequest {
+      credential: string
+      password: string
+    }
+    export interface LoginResponse {
       status: "success"
       success: {
-        token: string
-        userInfo: {
-          id: string
-          firstName: string
-          lastName: string
-          email: string
-          username: string
-        } | null
+        user: SafeUser & {
+          accounts: {
+            id: string
+            name: string
+          }[]
+          categories: {
+            id: string
+            name: string
+          }[]
+        }
       }
     }
-    export interface LogInRequest {
-      credential: string
-      hashedPassword: string
-    }
-    export interface LogInSuccess {
+    interface RestoreResponse extends LoginResponse {
       status: "success"
       success: {
-        token: string
-        userInfo: {
-          id: string
-          firstName: string
-          lastName: string
-          email: string
-          username: string
+        user: SafeUser & {
+          accounts: {
+            id: string
+            name: string
+          }[]
+          categories: {
+            id: string
+            name: string
+          }[]
         }
       }
     }
@@ -117,43 +134,70 @@ export declare namespace ApiTypes {
     }
   }
 
+  /** Transaction */
   namespace Transaction {
     interface Transaction {
-      amount: string
-      date: string
       id: string
-      itemId: string | null
-      payee: string
-      receiptUrl: string | null
       userId: string
-    }
-    interface ListTransactions extends Transaction {}
-
-    interface CreateTransactionRequest {
+      amount: number
+      categoryId: string | null
+      type: string
       payee: string
-      amount: string
-      date: DateTime
-      receiptUrl?: string
-      // categoryItemId?: string
-      itemName?: string
-    }
-    interface ChangeTransactionRequest {
-      amount: string
       date: string
-      item: {
+      accountId: string
+    }
+    interface TransactionWithCat extends Transaction {
+      category: {
         id: string
         name: string
+        cleanedName: string
+        amount: string
+        usedAmount: string
+      } | null
+      account: {
+        id: string
+        name: string
+        cleanedName: string
       }
-      payee: string
-      receiptUrl: string
     }
-    interface CreateTransactionResponse extends GenericTransactionResponse {}
-    interface CreateTransactionValidationError {
+
+    /** serialization of prisma Decimal and Date types */
+    interface TSerialized extends Transaction {
+      date: string
+    }
+    interface ListRequest {}
+    interface ListResponse {
+      transactions: TSerialized[]
+      categories: {
+        id: string
+        name: string
+        month: string
+        amount: number
+        usedAmount: number
+      }[]
+    }
+    interface CreateRequest {
+      /** change type to 'outgoing' | 'incoming' ? */
       type: string
-      message: string
+      payee: string
+      amount: number
+      date: string
+      categoryName?: string
+      accountId: string
     }
-    interface CreateTransactionInvalidCredentialError {
-      type: "Invalid request"
+    interface CreateResponse extends TSerialized {}
+    interface RetrieveRequest {}
+    interface RetrieveTransactionResponse extends TSerialized {}
+    interface ChangeRequest {
+      type: string
+      payee: string
+      amount: string
+      date: string
+      categoryName: string
+    }
+    interface ChangeResponse extends TSerialized {}
+    interface RemoveTransactionResponse {
+      type: string
       message: string
     }
   }
@@ -166,25 +210,60 @@ export declare namespace ApiTypes {
       cleanedName: string
       userId: string
     }
-    type CreateBudgetRequest = {
+    interface CreateBudgetRequest {
       name: string
+    }
+    interface ListBudgetsResponse {
+      budgets: Budget[]
+    }
+    interface RetrieveBudgetResponse {}
+    interface CreateBudgetResponse {}
+    interface RemoveBudgetResponse {
+      type: string
+      success: string
     }
   }
 
-  /** Item */
-  namespace Item {
-    interface Item {
+  /** Category */
+  namespace Category {
+    interface Category {
+      id: string
+      name: string
+      amount: number
+    }
+    /** serialization of prisma Decimal and Date types */
+    interface TSerialized extends Category {
+      usedAmount: number
+    }
+    interface ListRequest {}
+    interface ListResponse {
+      categories: TSerialized[]
+    }
+    interface CreateRequest {
+      name: string
+      amount: number
+    }
+    interface CreateResponse extends TSerialized {}
+    interface RetrieveRequest {}
+    interface RetrieveResponse extends TSerialized {}
+    interface ChangeRequest {
+      name?: string
+      amount?: string
+    }
+    interface ChangeResponse extends TSerialized {}
+    interface RemoveRequest {}
+    interface RemoveResponse {
+      type: string
+      success: string
+    }
+  }
+
+  /** Account */
+  namespace Account {
+    interface Account {
       id: string
       name: string
       cleanedName: string
-      userId: string
-    }
-    interface Group {
-      userId: string
-      itemId: string
-    }
-    type CreateRequest = {
-      name: string
     }
   }
 }
