@@ -7,6 +7,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy-prisma": "npx prisma migrate deploy",
     "build": "tsc -p tsconfig.json",
     "start": "node build/src/app.js",
     "dev": "nodemon --watch src src/app.ts",
