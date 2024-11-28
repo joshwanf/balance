@@ -7,13 +7,18 @@ import {
   ParsedQs,
 } from "express-serve-static-core"
 
-// import * as UserTypes from "../utils/types/api/user"
+declare module "express-serve-static-core" {
+  interface Request {
+    user: ApiTypes.Session.SafeUser | null
+  }
+}
+
 export declare namespace ApiTypes {
   type CustomRouteHandler<TReq, TRes> = (
     req: Request<ParamsDictionary, {}, TReq, ParsedQs>,
     res: Response<TRes>,
-    next: NextFunction,
-  ) => Promise<void>
+    next: NextFunction
+  ) => Promise<void> | void
 
   namespace Session {
     /** Session */

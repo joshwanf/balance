@@ -1,0 +1,11 @@
+.list-selector {
+  border: 1px solid red;
+}
+.list-selector:hover {
+  background-color: lightgray;
+  cursor: pointer;
+}
+
+.list-selector-highlight {
+  background-color: lightblue;
+}

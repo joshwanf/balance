@@ -1,0 +1,11 @@
+.input-with-selector {
+  font-size: 48px;
+}
+
+.text-input::after {
+  content: "text here";
+}
+.backspace-pending-true .pill:nth-last-child(2) {
+  outline: 0.1em solid red;
+  /* background-color: red; */
+}

@@ -132,7 +132,7 @@ const route: Handler = async (req, res, next) => {
     })
 
     res.status(200).send(result)
-    return next()
+    // return next()
   } catch (e) {
     console.log("error from create transaction", e)
     if (e instanceof PrismaClientValidationError) {

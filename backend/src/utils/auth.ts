@@ -41,7 +41,6 @@ export const setTokenCookie = (
 
 export const isLoggedIn: RequestHandler = (req, res, next) => {
   console.log("isLoggedIn")
-  console.log("req.user", req.user)
   if (req.user) {
     console.log("logged in")
     next()
