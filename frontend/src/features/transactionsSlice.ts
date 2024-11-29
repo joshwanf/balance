@@ -21,14 +21,18 @@ export const transactionsSlice = createAppSlice({
   name: "transactions",
   initialState,
   reducers: {
+    addOneT(state, action: PayloadAction<Transaction>) {
+      const transaction = action.payload
+      state.error = null
+      state.transactions[transaction.id] = transaction
+    },
     addManyTs(state, action: PayloadAction<Transaction[]>) {
       state.error = null
+      state.transactions = {}
       const transactions = action.payload
       for (const t of transactions) {
-        // console.log(t.date)
-        const tDate = new Date(t.date)
-        // const mDate = moment(t.date)
-        const fixedTDate = `${tDate.getMonth() + 1}/${tDate.getDate()}/${tDate.getFullYear()}`
+        const mDate = moment(t.date, "YYYY-MM-DD")
+        const fixedTDate = `${mDate.year()}-${mDate.month() + 1}-${mDate.format("DD")}`
         state.transactions[t.id] = { ...t, date: fixedTDate }
       }
     },
@@ -58,11 +62,27 @@ export const transactionsSlice = createAppSlice({
 
 export const memoizedSelectTArr = createSelector(
   [(state: RootState) => state.transactions],
-  transactions => Object.values(transactions.transactions),
+  transactions => {
+    const asArray = Object.values(transactions.transactions)
+    // .map(t => ({
+    //   ...t,
+    //   date: moment(t.date, "YYYY-MM-DD"),
+    // }))
+    const sortedByDate = asArray.sort((a, b) => {
+      if (a.date < b.date) {
+        return 1
+      } else if (a.date > b.date) {
+        return -1
+      } else {
+        return a.id < b.id ? 1 : -1
+      }
+    })
+    return sortedByDate
+  },
 )
 
 // Action creators are generated for each case reducer function.
-export const { addManyTs, removeT } = transactionsSlice.actions
+export const { addOneT, addManyTs, removeT } = transactionsSlice.actions
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const { selectTransactions, selectTArr } = transactionsSlice.selectors

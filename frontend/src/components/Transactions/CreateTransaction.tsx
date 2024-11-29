@@ -83,35 +83,46 @@ export const CreateTransaction: React.FC<Props> = props => {
   }
   return (
     <motion.div
-      key="form"
-      initial={{ y: "-100%", opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      exit={{ y: "-100%", opacity: 0 }}
-      className="bg-grass-100 align-top"
+      key="createTransaction"
+      initial={{ height: 0, opacity: 0 }}
+      animate={{
+        height: "auto",
+        opacity: 1,
+        transition: {
+          height: { duration: 0.2 },
+          opacity: { duration: 0.1, delay: 0.2 },
+        },
+      }}
+      exit={{
+        height: 0,
+        opacity: 0,
+        transition: { height: { duration: 0.1 } },
+      }}
+      className="align-top shadow-xl
+      bg-grass-50 py-6 px-2 rounded-lg border-2 border-grass-600"
     >
-      <div
-        className="flex py-6 space-x-2 text-sm
-      bg-grass-50 px-2 rounded-lg border-2 border-grass-600"
-      >
-        <div className="w-1/5">
+      <div className="flex flex-col md:flex-col lg:flex-col xl:flex-row lg:space-x-2 text-sm">
+        <div>
           <FormField
             field="date"
+            displayText="Date"
             placeholder="YYYY-MM-DD"
             value={form.date}
             onChange={e => handleChangeForm(e)}
           />
           {createErrors.date && <div>{createErrors.date}</div>}
         </div>
-        <div className="w-1/5">
+        <div>
           <FormField
             field="payee"
+            displayText="Payee"
             placeholder="Payee"
             value={form.payee}
             onChange={e => handleChangeForm(e)}
           />
           {createErrors.payee && <div>{createErrors.payee}</div>}
         </div>
-        <div className="w-1/5">
+        <div>
           <DropdownSelector
             options={accounts}
             disableBlankSelection={true}
@@ -119,16 +130,17 @@ export const CreateTransaction: React.FC<Props> = props => {
             onChange={setSelectedAcct}
           />
         </div>
-        <div className="w-1/5">
+        <div>
           <FormField
             field="amount"
+            displayText="Amount"
             placeholder="Amount"
             value={form.amount}
             onChange={e => handleChangeForm(e)}
           />
           {createErrors.amount && <div>{createErrors.amount}</div>}
         </div>
-        <div className="w-1/5">
+        <div>
           <DropdownSelector
             options={Object.values(categories)}
             selected={selectedCat}

@@ -151,24 +151,28 @@ export declare namespace ApiTypes {
       date: string
       accountId: string
     }
-    interface TransactionWithCat extends Transaction {
-      category: {
-        id: string
-        name: string
-        cleanedName: string
-        amount: string
-        usedAmount: string
-      } | null
-      account: {
-        id: string
-        name: string
-        cleanedName: string
-      }
-    }
+    // interface TransactionWithCat extends Transaction {
+    //   category: {
+    //     id: string
+    //     name: string
+    //     cleanedName: string
+    //     amount: string
+    //     usedAmount: string
+    //   } | null
+    //   account: {
+    //     id: string
+    //     name: string
+    //     cleanedName: string
+    //   }
+    // }
 
     /** serialization of prisma Decimal and Date types */
     interface TSerialized extends Transaction {
       date: string
+    }
+    interface ListSearchParams {
+      startMonth: string
+      endMonth?: string
     }
     interface ListRequest {}
     interface ListResponse {

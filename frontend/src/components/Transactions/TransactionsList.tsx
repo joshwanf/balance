@@ -12,7 +12,7 @@ import {
 } from "../../features/transactionsSlice"
 import { addManyCategories } from "../../features/categoriesSlice"
 import { ApiError } from "../../utils/classes/ApiError"
-import { listTransactions } from "../../utils/thunks/transactions"
+import { listTransactionsThunk } from "../../utils/thunks/transactions"
 import { CreateTransaction } from "./CreateTransaction"
 import { AnimatePresence, motion } from "motion/react"
 
@@ -20,14 +20,20 @@ type Transaction = ApiTypes.Transaction.ListResponse
 
 export const TransactionsList: React.FC = () => {
   const dispatch = useAppDispatch()
-  const user = useAppSelector(selectUser)
+  const session = useAppSelector(state => state.session)
+  const {
+    user,
+    settings: { curMonth },
+  } = session
   // const transactions = useAppSelector(state => memoizedSelectTArr(state))
-  const transactions = useAppSelector(selectTransactions)
+  // const transactions = useAppSelector(selectTransactions)
+  const transactions = useAppSelector(memoizedSelectTArr)
+  const allTransIds = transactions.map(t => t.id)
   const [selectedItem, setSelectedItem] = useState<string[]>([])
   const [showAddItem, setShowAddItem] = useState(false)
   const [checkAllItems, setCheckAllItems] = useState(false)
 
-  const allTransIds = Object.values(transactions).map(t => t.id)
+  // const allTransIds = Object.values(transactions).map(t => t.id)
   const handleSelectItem =
     (id: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
       e.stopPropagation()
@@ -50,8 +56,8 @@ export const TransactionsList: React.FC = () => {
     }
   }
   useEffect(() => {
-    dispatch(listTransactions())
-  }, [dispatch, listTransactions])
+    dispatch(listTransactionsThunk({ startMonth: curMonth }))
+  }, [dispatch, listTransactionsThunk])
 
   if (!user) {
     return <h1>Must be logged in!</h1>
@@ -64,7 +70,7 @@ export const TransactionsList: React.FC = () => {
     <div>
       <div
         className="flex flex-col justify-between bg-grass-100
-      px-4 py-4 rounded-2xl space-y-2"
+      px-4 py-4 rounded-2xl"
       >
         <div className="flex flex-row justify-around">
           <div>
@@ -72,7 +78,7 @@ export const TransactionsList: React.FC = () => {
               whileTap={{ scale: 0.95 }}
               onClick={e => setShowAddItem(!showAddItem)}
               className={`
-                px-4 rounded-md border-2
+                px-4 rounded-md border-2 
               ${!showAddItem ? "bg-grass-700" : "bg-grass-300"}
               ${!showAddItem ? "text-grass-200" : "text-grass-800"}
               ${!showAddItem ? "border-grass-700" : "border-grass-800"}

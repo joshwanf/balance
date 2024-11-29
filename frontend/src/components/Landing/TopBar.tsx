@@ -1,15 +1,18 @@
 import { useState } from "react"
 import { createPortal } from "react-dom"
 import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import { logout, selectUser } from "../../features/sessionSlice"
+import { logout, selectUser, setCurMonth } from "../../features/sessionSlice"
 
-import ComponentSelector from "../../lib/ComponentLibrary"
 import { Modal } from "../../lib/ComponentLibrary/Modal"
 import { LoginForm } from "./LoginForm"
 import { SignupForm } from "./SignupForm"
 import * as Btn from "../../lib/Base/Button"
 import balance from "../../utils/api"
 import { AnimatePresence } from "motion/react"
+import moment from "moment"
+import { listTransactionsThunk } from "../../utils/thunks/transactions"
+
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 interface Props {
   // isLoggedIn: boolean
@@ -21,6 +24,14 @@ export const TopBar: React.FC<Props> = () => {
   const [display, setDisplay] = useState<string | null>(null)
   const closeModal = () => setDisplay(null)
 
+  const curMonth = useAppSelector(state => state.session.settings.curMonth)
+  const changeCurMonth = (by: number) => () => {
+    const newMonth = moment(curMonth, "YYYY-MM")
+      .add(by, "month")
+      .format("YYYY-MM")
+    dispatch(setCurMonth(newMonth))
+    dispatch(listTransactionsThunk({ startMonth: newMonth }))
+  }
   const handleLogout = async (e: React.FocusEvent<HTMLButtonElement>) => {
     e.preventDefault()
     const response = await balance.session.logout()
@@ -29,7 +40,15 @@ export const TopBar: React.FC<Props> = () => {
   }
   return (
     <nav className="py-4 flex justify-between">
-      <Btn.PrimaryButton>Component Library</Btn.PrimaryButton>
+      <div className="flex space-x-1">
+        <button onClick={changeCurMonth(-1)}>
+          <ChevronLeft />
+        </button>
+        <span>{curMonth}</span>
+        <button onClick={changeCurMonth(1)}>
+          <ChevronRight />
+        </button>
+      </div>
       <div>
         {user ? (
           <Btn.SecondaryButton onClick={handleLogout}>

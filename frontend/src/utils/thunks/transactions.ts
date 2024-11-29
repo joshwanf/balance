@@ -1,5 +1,5 @@
 import { PayloadAction, createAsyncThunk } from "@reduxjs/toolkit"
-import { addManyTs } from "../../features/transactionsSlice"
+import { addManyTs, addOneT } from "../../features/transactionsSlice"
 import {
   addCategoryFromTransaction,
   addManyCategories,
@@ -11,17 +11,17 @@ import { ApiError } from "../classes/ApiError"
 import balance from "../api"
 
 type TList = ApiTypes.Transaction.ListResponse["transactions"]
-export const listTransactions = createAsyncThunk<TList, void>(
+type ListSearchParams = ApiTypes.Transaction.ListSearchParams
+export const listTransactionsThunk = createAsyncThunk<TList, ListSearchParams>(
   "getTransactions",
-  async (_, thunkApi) => {
-    const res = await balance.transaction.list()
+  async (listOptions, thunkApi) => {
+    const res = await balance.transaction.list(listOptions)
     if (res instanceof ApiError) {
       return thunkApi.rejectWithValue(res)
     }
     const { transactions, categories } = res
 
     /** Categories and Transactions payload */
-    // const cPayload = transactions.map(t => t.category).filter(t => t !== null)
     const tPayload = transactions
 
     /** Dispatch to reducers */
@@ -46,7 +46,7 @@ export const createTransaction = createAsyncThunk<
     if (res instanceof ApiError) {
       return thunkApi.rejectWithValue(res)
     }
-    thunkApi.dispatch(addManyTs([res]))
+    thunkApi.dispatch(addOneT(res))
     return res
   } catch (e) {
     if (e instanceof ApiError) {
@@ -79,7 +79,7 @@ export const changeTransactionThunk = createAsyncThunk<
   const tPayload = res
 
   /** Dispatch to reducers */
-  thunkApi.dispatch(addManyTs([res]))
+  thunkApi.dispatch(addOneT(res))
   // if (cPayload) {
   //   thunkApi.dispatch(addCategoryFromTransaction(cPayload))
   // }

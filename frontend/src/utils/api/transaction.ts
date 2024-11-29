@@ -1,15 +1,19 @@
 import { ApiTypes } from "../../types/api"
 import { ApiError } from "../classes/ApiError"
 import { opts, pfetch } from "."
+import moment from "moment"
 
 /**
  * List all transactions
  */
+type ListOptions = ApiTypes.Transaction.ListSearchParams
 interface List {
-  (): Promise<ApiTypes.Transaction.ListResponse | ApiError>
+  (options: ListOptions): Promise<ApiTypes.Transaction.ListResponse | ApiError>
 }
-const list: List = async () => {
-  const url = "/api/transaction/list"
+const list: List = async listOptions => {
+  const params = Object.entries(listOptions).filter(([k, v]) => v)
+  const searchParams = new URLSearchParams(params).toString()
+  const url = `/api/transaction/list${`?` + searchParams}`
   const res = await pfetch(url)
   if (!res.ok) {
     throw new ApiError(await res.json(), res.status)
