@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { InputWithSelector } from "../lib/InputDropdownSelector/InputWithSelector"
+import { InputWithSelector } from "./InputDropdownSelector/InputWithSelector"
 
 export const LanguageTags = () => {
   const arr = [

@@ -70,7 +70,7 @@ export const TransactionsList: React.FC = () => {
     <div>
       <div
         className="flex flex-col justify-between bg-grass-100
-      px-4 py-4 rounded-2xl"
+      px-4 py-4 rounded-2xl space-y-4"
       >
         <div className="flex flex-row justify-around">
           <div>
@@ -87,9 +87,7 @@ export const TransactionsList: React.FC = () => {
               Add Transaction
             </motion.button>
           </div>
-          <div>Edit Transaction</div>
-          <div>Filter</div>
-          <div>Search</div>
+          <div>Search (coming soon)</div>
         </div>
         <AnimatePresence>
           {showAddItem && (
@@ -119,15 +117,6 @@ export const TransactionsList: React.FC = () => {
           </tr>
         </thead>
         <tbody className="space-y-40">
-          {transactions &&
-            Object.values(transactions).map(t => (
-              <TransactionCard
-                key={t.id}
-                t={t}
-                checked={selectedItem.includes(t.id)}
-                onChange={handleSelectItem(t.id)}
-              />
-            ))}
           {transactions &&
             Object.values(transactions).map(t => (
               <TransactionCard

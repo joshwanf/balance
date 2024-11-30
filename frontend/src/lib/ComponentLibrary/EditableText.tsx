@@ -1,32 +1,36 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 interface Props {
   text: string
-  onTextChange: (newValue: string) => void
+  editText: (newText: string) => void
+  // onTextChange: (newValue: string) => void
   additionalClasses?: string[]
   [key: string]: any
 }
 export const EditableText = (props: Props) => {
-  const { text, onTextChange, additionalClasses, ...rest } = props
-  const [value, setValue] = useState(text)
+  const { text, editText, onTextChange, additionalClasses, ...rest } = props
+  const originalText = text
+  const [value, setValue] = useState<string>(text)
+  const divRef = useRef<HTMLDivElement>(null)
 
-  const handleBlur = () => {
-    const isChanged = text !== value
-    if (isChanged) {
-      console.log("Change in input after clicking off! Sending request", {
-        old: text,
-        new: value,
-      })
-      onTextChange(value)
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+    if (e.key === "Enter") {
+      e.preventDefault()
+      if (divRef && divRef.current) {
+        divRef.current.blur()
+      }
     }
   }
+  const handleBlur = (e: React.FocusEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+    if (text !== e.currentTarget.innerText) {
+      editText(e.currentTarget.textContent || "")
+    }
+  }
+
   const defaultClasses = [
     // default style
-    // "px-3",
-    // "py-2",
-    "border-2",
-    // "rounded-lg",
-    // "w-full",
-    // hover
+    // "border-2",
     "hover:border-slate-600",
     "focus:outline-none",
   ]
@@ -35,12 +39,18 @@ export const EditableText = (props: Props) => {
     ...(additionalClasses || []),
   ].join(" ")
   return (
-    <input
-      className={unifiedClassNames}
-      value={value}
-      onChange={e => setValue(e.target.value)}
-      onBlur={handleBlur}
-      {...rest}
-    />
+    <div className="inline-block">
+      <div
+        ref={divRef}
+        contentEditable={true}
+        suppressContentEditableWarning={true}
+        className={unifiedClassNames}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
+        {...rest}
+      >
+        {text}
+      </div>
+    </div>
   )
 }

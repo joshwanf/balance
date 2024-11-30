@@ -11,8 +11,6 @@ import { cleanName } from "../../../utils/helpers/cleanName"
 import { checkValidCategoryName, confirmC } from "./utils"
 import moment, { months } from "moment"
 
-// const router = Router()
-
 type IReq = ApiTypes.Category.ChangeRequest
 type IRes = ApiTypes.Category.ChangeResponse
 type Handler = ApiTypes.CustomRouteHandler<IReq, IRes>
@@ -30,104 +28,87 @@ const route: Handler = async (req, res, next) => {
   /** Update with supplied fields */
   try {
     /**
-     * Retrieve Category for one month
-     * Month determined by query param startMonth
+     * Change Category
      * - Find one
-     * - Find related CategoryMonth that are gte: startMonth, lt: endMonth
+     * - Find CategoryMonth where categoryId and month match
      */
-    const startMonth = req.query.startMonth || moment().format("YYYY-MM")
-    const curMonth = moment(startMonth).format("YYYY-MM")
-    const nextMonth = moment(curMonth).add(1, "month").format("YYYY-MM")
-
-    const { name, amount } = req.body
 
     const result = await pc.$transaction(async prisma => {
+      const { name, amount } = req.body
+      const startMonth = req.query.startMonth || moment().format("YYYY-MM")
+      const nextMonth = moment(startMonth, "YYYY-MM")
+        .add(1, "month")
+        .format("YYYY-MM")
+
       if (name) {
+        const cleanedName = cleanName(name)
         const changedCategory = await prisma.category.update({
           where: { id, userId: user.id },
-          data: { name, cleanedName: cleanName(name) },
+          data: { name, cleanedName },
         })
       }
-      if (amount && Number.isInteger(Number(amount))) {
-        const changedCatMonth = await prisma.categoryMonth.upsert({
-          where: {
-            userId_categoryId_month: {
+
+      if (amount) {
+        const amountAsInt = amount
+        const isAmountNumber = Number.isInteger(amountAsInt)
+        const isValidMonth = /\d{4}-\d{2}/.test(startMonth)
+        if (!isAmountNumber || !isValidMonth) {
+          throw {
+            title: "Change category",
+            message: "Must provide a valid amount or month (YYYY-MM)",
+            status: 400,
+          }
+        }
+
+        if (isAmountNumber && isValidMonth) {
+          const changedCatMonth = await prisma.categoryMonth.upsert({
+            where: {
+              userId_categoryId_month: {
+                userId: user.id,
+                categoryId: id,
+                month: startMonth,
+              },
+            },
+            update: { amount: amountAsInt },
+            create: {
+              id: uuidv7(),
               userId: user.id,
               categoryId: id,
-              month: curMonth,
+              amount: amountAsInt,
+              month: startMonth,
             },
-          },
-          update: { amount: Number(amount) },
-          create: {
-            id: uuidv7(),
-            userId: user.id,
-            categoryId: id,
-            amount: Number(amount),
-            month: curMonth,
-          },
-        })
+          })
+        }
       }
+
+      /** Aggregate transactions of that category for the month or current month */
       const aggTrans = await prisma.transaction.groupBy({
         by: ["categoryId"],
         where: {
           userId: user.id,
           categoryId: id,
-          AND: { date: { lt: nextMonth, gte: curMonth } },
+          AND: { date: { lt: nextMonth, gte: startMonth } },
         },
         _sum: { amount: true },
       })
 
       const cat = await prisma.categoryMonth.findFirstOrThrow({
-        where: { userId: user.id, categoryId: id, month: curMonth },
+        where: { userId: user.id, categoryId: id, month: startMonth },
         select: { amount: true, month: true, category: true },
       })
+
+      const formatedUsedAmount =
+        aggTrans.length > 0 ? aggTrans[0]._sum.amount : 0
 
       const formattedCategory = {
         id: cat.category.id,
         name: cat.category.name,
         month: cat.month,
         amount: cat.amount,
-        usedAmount: aggTrans[0]._sum.amount || 0,
+        usedAmount: formatedUsedAmount ?? 0,
       }
 
       return formattedCategory
-
-      // /** confirm category exists */
-      // const exists = await prisma.category.findUnique({
-      //   where: { id, userId: user.id },
-      // })
-      // if (!exists) {
-      //   throw {
-      //     title: "Change category",
-      //     message: "Category doesnt exist",
-      //     status: 404,
-      //   }
-      // }
-
-      // const cleanedName = cleanName(name || exists.cleanedName)
-
-      // /** update category */
-      // const updated = await pc.category.update({
-      //   where: { id, userId: user.id },
-      //   data: { name, cleanedName, amount },
-      // })
-      // /** sum transaction.amount where categoryId exists */
-      // const tAgg = await pc.transaction.groupBy({
-      //   by: ["categoryId"],
-      //   _sum: { amount: true },
-      //   where: { userId: user.id, categoryId: id },
-      // })
-      // /** Add sum to categories object and serialize amount field */
-
-      // const sum = tAgg.filter(sum => sum.categoryId === id)
-      // const usedAmount =
-      //   sum.length === 1 ? sum[0]._sum.amount?.toString() || "0" : "0"
-      // const result = {
-      //   ...updated,
-      //   usedAmount,
-      //   amount: updated.amount.toString(),
-      // }
-      // return result
     })
 
     if (!result) {

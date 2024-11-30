@@ -14,8 +14,8 @@ export const Main = () => {
       <div className="bg-slate-200 w-1/5 ">
         <Sidebar />
       </div>
-      <div className="w-full pt-4 pr-2  h-screen overflow-y-auto">
-        <div className="bg-white rounded-t-3xl px-4">
+      <div className="w-full pt-4 pr-2 pb-6 h-screen overflow-y-auto">
+        <div className="bg-white rounded-t-3xl rounded-b-3xl px-4 pb-6">
           <TopBar />
           <Outlet />
         </div>

@@ -45,6 +45,9 @@ export declare namespace ApiTypes {
           categories: {
             id: string
             name: string
+            month: string
+            amount: number
+            usedAmount: number
           }[]
         }
       }
@@ -60,6 +63,9 @@ export declare namespace ApiTypes {
           categories: {
             id: string
             name: string
+            month: string
+            amount: number
+            usedAmount: number
           }[]
         }
       }
@@ -200,9 +206,10 @@ export declare namespace ApiTypes {
     interface ChangeRequest {
       type: string
       payee: string
-      amount: string
+      amount: number
       date: string
       categoryName: string
+      accountId: string
     }
     interface ChangeResponse extends TSerialized {}
     interface RemoveTransactionResponse {
@@ -240,8 +247,13 @@ export declare namespace ApiTypes {
       name: string
       amount: number
     }
+    interface ListSearchParams {
+      startMonth: string
+      endMonth?: string
+    }
     /** serialization of prisma Decimal and Date types */
     interface TSerialized extends Category {
+      month: string
       usedAmount: number
     }
     interface ListRequest {}
@@ -256,14 +268,18 @@ export declare namespace ApiTypes {
     interface RetrieveRequest {}
     interface RetrieveResponse extends TSerialized {}
     interface ChangeRequest {
-      name?: string
-      amount?: string
+      name: string
+      amount: number
     }
     interface ChangeResponse extends TSerialized {}
-    interface RemoveRequest {}
+    interface RemoveRequest {
+      categoryIds: string[]
+    }
     interface RemoveResponse {
       type: string
-      success: string
+      success: {
+        count: number
+      }
     }
   }
 

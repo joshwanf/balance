@@ -6,7 +6,7 @@ import * as Btn from "../Base/Button"
 import { AllButtons } from "./AllButtons"
 import { AllInputs } from "./AllInputs"
 import { LoginForm } from "./LoginForm"
-import { LanguageTags } from "./LanguageTags"
+// import { LanguageTags } from "./LanguageTags"
 
 export const ComponentSelector = () => {
   const [selectedComponent, setSelectedComponent] = useState<number>(0)
@@ -14,7 +14,7 @@ export const ComponentSelector = () => {
     { name: "Buttons", component: <AllButtons /> },
     { name: "Inputs", component: <AllInputs /> },
     { name: "LoginForm", component: <LoginForm /> },
-    { name: "LanguageTags", component: <LanguageTags /> },
+    // { name: "LanguageTags", component: <LanguageTags /> },
   ]
 
   return (

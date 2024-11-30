@@ -33,32 +33,43 @@ const retrieve = async (id: string) => {
 }
 
 /**
- * Create a transaction
+ * Create a category
  */
-interface Create {
-  (
-    input: ApiTypes.Transaction.ChangeTransactionRequest,
-  ): Promise<ApiTypes.Transaction.CreateTransactionResponse | ApiError>
+interface CreateOptions {
+  name: string
+  amount: number
+  month: string
 }
-// const create: Create = async () => {}
+interface Create {
+  (input: CreateOptions): Promise<ApiTypes.Category.CreateResponse | ApiError>
+}
+const create: Create = async createOptions => {
+  const { month, ...createInput } = createOptions
+  const queryParams = new URLSearchParams({ startMonth: month }).toString()
+  const url = `/api/category/create${`?` + queryParams}`
+  const res = await pfetch(url, createInput)
+  if (!res.ok) {
+    return new ApiError(await res.json(), res.status)
+  }
+  return await res.json()
+}
 
 /**
- * Edit a transaction
+ * Edit a category
  */
+type ChangeRequest = {
+  id: string
+  month: string
+} & Partial<ApiTypes.Category.ChangeRequest>
+type ChangeResponse = ApiTypes.Category.ChangeResponse
 interface Change {
-  ({
-    id,
-    field,
-    newValue,
-  }: {
-    id: string
-    field: string
-    newValue: string
-  }): Promise<ApiTypes.Transaction.Transaction | ApiError>
+  (updatedFields: ChangeRequest): Promise<ChangeResponse | ApiError>
 }
-const change: Change = async ({ id, field, newValue }) => {
-  const url = `/api/transaction/change/${id}`
-  const body = { [field]: newValue }
+const change: Change = async input => {
+  const { id, month, ...rest } = input
+  const queryParams = new URLSearchParams({ startMonth: month }).toString()
+  const url = `/api/category/change/${id}${`?` + queryParams}`
+  const body = { ...rest }
   const res = await pfetch(url, body)
   if (!res.ok) {
     throw new ApiError(await res.json(), res.status)
@@ -67,21 +78,20 @@ const change: Change = async ({ id, field, newValue }) => {
 }
 
 /**
- * Remove a transaction
+ * Remove a category
  */
+type RemoveRequest = ApiTypes.Category.RemoveRequest
+type RemoveResponse = ApiTypes.Category.RemoveResponse
 interface Remove {
-  (
-    id: string,
-  ): Promise<ApiTypes.Transaction.RemoveTransactionResponse | ApiError>
+  (removeInput: RemoveRequest): Promise<RemoveResponse | ApiError>
 }
-const remove: Remove = async id => {
-  const url = `/api/transaction/remove/${id}`
-  const res = await pfetch(url)
-  console.log(res)
+const remove: Remove = async removeInput => {
+  const url = `/api/category/remove`
+  const res = await pfetch(url, removeInput)
   if (!res.ok) {
     throw new ApiError(await res.json(), res.status)
   }
   return await res.json()
 }
-const category = { list, retrieve, change, remove }
+const category = { list, create, retrieve, change, remove }
 export default category

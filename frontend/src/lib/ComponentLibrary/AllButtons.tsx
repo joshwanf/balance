@@ -1,4 +1,4 @@
-import * as Btn from "../lib/Base/Button"
+import * as Btn from "../Base/Button"
 interface Props {}
 export const AllButtons: React.FC<Props> = ({}) => {
   return (

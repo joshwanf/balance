@@ -46,7 +46,7 @@ export const SignupForm: React.FC<Props> = props => {
     } catch (e) {
       console.log(e)
       if (e instanceof ApiError) {
-        setErrors(e.err.message)
+        setErrors(e.err.error)
       }
     }
   }

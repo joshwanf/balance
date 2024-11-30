@@ -27,10 +27,10 @@ export const makeStore = (preloadedState?: Partial<RootState>) => {
     // middleware: getDefaultMiddleware => {
     //   return getDefaultMiddleware().concat(quotesApiSlice.middleware)
     // },
-    middleware: getDefaultMiddleware =>
-      getDefaultMiddleware({
-        serializableCheck: false,
-      }),
+    // middleware: getDefaultMiddleware =>
+    //   getDefaultMiddleware({
+    //     serializableCheck: false,
+    //   }),
     preloadedState,
   })
   // configure listeners using the provided defaults

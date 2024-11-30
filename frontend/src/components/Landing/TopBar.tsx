@@ -13,6 +13,7 @@ import moment from "moment"
 import { listTransactionsThunk } from "../../utils/thunks/transactions"
 
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import { useNavigate } from "react-router"
 
 interface Props {
   // isLoggedIn: boolean
@@ -20,6 +21,7 @@ interface Props {
 }
 export const TopBar: React.FC<Props> = () => {
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
   const user = useAppSelector(selectUser)
   const [display, setDisplay] = useState<string | null>(null)
   const closeModal = () => setDisplay(null)
@@ -36,6 +38,7 @@ export const TopBar: React.FC<Props> = () => {
     e.preventDefault()
     const response = await balance.session.logout()
     dispatch(logout())
+    navigate("/")
     // setIsLoggedIn(false)
   }
   return (
@@ -44,7 +47,11 @@ export const TopBar: React.FC<Props> = () => {
         <button onClick={changeCurMonth(-1)}>
           <ChevronLeft />
         </button>
-        <span>{curMonth}</span>
+        <div className="text-center">
+          {moment(curMonth).format("MMMM")}
+          <br />
+          {moment(curMonth).format("YYYY")}
+        </div>
         <button onClick={changeCurMonth(1)}>
           <ChevronRight />
         </button>

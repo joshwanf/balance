@@ -6,6 +6,7 @@ import {
   PrismaClientKnownRequestError,
 } from "@prisma/client/runtime/library"
 import moment from "moment"
+import { ApiTypes } from "../../../types/api"
 
 export const queryOpts = {
   include: {
@@ -46,17 +47,25 @@ export const confirmT = async (transactionId: string, userId: string) => {
   }
 }
 
+type CategorySerialized = ApiTypes.Category.TSerialized
+type GetCategoriesWitHTransAgg = (
+  userId: string,
+  startMonth: string,
+  prisma: Omit<
+    PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
+    "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
+  >
+) => Promise<CategorySerialized[]>
+
 /**
- * Get Categories (id, name), get CategoryMonth.amount for a month,
- * aggregate transactions.amount into usedAmount for a month,
+ * Get Categories (id, name), get CategoryMonth (amount) for a month,
+ * aggregate transactions (amount) into usedAmount for that month,
  * and format.
- *
- * Intended to be used in `prism.$transaction(async prisma => {})`
- * @param userId {string} the user id
- * @param curMonth {string} YYYY-MM
+ * @param {string} userId the user id
+ * @param {string} startMonth  YYYY-MM
  * @param prisma the prisma client
  */
-export const getCategoriesWithTransAgg = async (
+export const getCategoriesWithTransAgg: GetCategoriesWitHTransAgg = async (
   userId: string,
   startMonth: string,
   prisma: Omit<
@@ -102,8 +111,8 @@ export const getCategoriesWithTransAgg = async (
     return {
       id: cat.id,
       name: cat.name,
-      month,
       amount,
+      month,
       usedAmount,
     }
   })

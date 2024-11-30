@@ -1,5 +1,5 @@
 import { useState } from "react"
-import * as Ipt from "../lib/Base/Input"
+import * as Ipt from "../Base/Input"
 
 interface Props {}
 export const AllInputs: React.FC<Props> = ({}) => {

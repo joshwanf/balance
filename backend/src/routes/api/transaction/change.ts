@@ -41,11 +41,11 @@ const route: Handler = async (req, res, next) => {
 
   /** Update with supplied fields */
   try {
-    const { categoryName, amount, ...bodyInput } = req.body
+    const { categoryName, ...bodyInput } = req.body
     /** use Prisma transaction for the new Transaction and CategoryItem */
     const result = await pc.$transaction(async prisma => {
       const transactionBody = {
-        amount: Number(amount) || undefined,
+        // amount: Number(amount) || undefined,
         ...bodyInput,
       }
 

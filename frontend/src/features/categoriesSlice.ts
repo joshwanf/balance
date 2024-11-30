@@ -7,11 +7,21 @@ import {
 import { createAppSlice } from "../app/createAppSlice"
 import { ApiTypes } from "../types/api"
 import { RootState } from "../app/store"
+import moment from "moment"
 
 type Category = ApiTypes.Category.TSerialized
-type CategoryFromLogin = { id: string; name: string }
-// type PartialCategory = { id: string; name: string } & Partial<Category>
+// type CategoryFromLogin = { id: string; name: string; month: string }
+type CategoryFromLogin =
+  ApiTypes.Session.LoginResponse["success"]["user"]["categories"]
+export type PartialCategory = {
+  id: string
+  name: string
+  month: string
+  amount?: number
+  usedAmount?: number
+}
 export type CategorySliceState = Record<string, Category>
+// export type CategorySliceState = Category[]
 
 const initialState: CategorySliceState = {}
 
@@ -19,14 +29,15 @@ export const categoriesSlice = createAppSlice({
   name: "categories",
   initialState,
   reducers: {
-    addManyPartialCategories(
-      state,
-      action: PayloadAction<CategoryFromLogin[]>,
-    ) {
+    addManyPartialCategories(state, action: PayloadAction<CategoryFromLogin>) {
       const categories = action.payload
+      // const month = moment().format("YYYY-MM")
       for (const c of categories) {
-        state[c.id] = { ...c, amount: 0, usedAmount: 0 }
+        // state[c.id] = { ...c, month, amount: 0, usedAmount: 0 }
+        state[c.id] = c
       }
+      // const tempHydratedCategories = categories.map(c => ({ ...c, month, amount: 0, usedAmount: 0 }))
+      // state = tempHydratedCategories
     },
     addCategoryFromTransaction(
       state,
@@ -43,16 +54,22 @@ export const categoriesSlice = createAppSlice({
     ) {
       const categories = action.payload
       for (const category of categories) {
-        state[category.id] = { ...state[category.id], ...category }
+        // state[category.id] = { ...state[category.id], ...category }
       }
     },
     addManyCategories(state, action: PayloadAction<Category[]>) {
       const categories = action.payload
-      // console.log(categories)
       for (const category of categories) {
         if (category) {
           state[category.id] = category
         }
+      }
+      // state = [...categories]
+    },
+    removeManyCategories(state, action: PayloadAction<string[]>) {
+      const catIds = action.payload
+      for (const catId of catIds) {
+        delete state[catId]
       }
     },
   },
@@ -60,6 +77,11 @@ export const categoriesSlice = createAppSlice({
   selectors: {
     selectCategories: state => state,
     selectCategoryById: (state, id: string) => state[id],
+    // selectCategoryById: createSelector(
+    //   [(state) => state],
+    //   (state, id: string) => state[id],
+    // ),
+    selectCatIds: state => Object.keys(state),
   },
 })
 
@@ -68,14 +90,19 @@ export const memoizedSelectCArr = createSelector(
   state => Object.values(state),
 )
 
+// export const memoizedSelectCatById = createSelector(
+//   [(state: RootState) => state.categories],
+//   (state, id: string) => state[id],
+// )
 // Action creators are generated for each case reducer function.
 export const {
   addManyPartialCategories,
   addCategoryFromTransaction,
   addManyCategoriesFromTransaction,
   addManyCategories,
+  removeManyCategories,
 } = categoriesSlice.actions
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
-export const { selectCategories, selectCategoryById } =
+export const { selectCategories, selectCategoryById, selectCatIds } =
   categoriesSlice.selectors

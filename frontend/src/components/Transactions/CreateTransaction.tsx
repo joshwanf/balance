@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { FormField } from "./FormField"
-import { CategorySelector } from "./CategorySelector"
+import { FormField } from "../../lib/ComponentLibrary/FormField"
+// import { CategorySelector } from "./CategorySelector"
 import { useAppDispatch, useAppSelector } from "../../app/hooks"
 import { selectCategories } from "../../features/categoriesSlice"
 import { DropdownSelector } from "../../lib/ComponentLibrary/DropdownSelector"
@@ -11,6 +11,7 @@ import {
 import { createTransaction } from "../../utils/thunks/transactions"
 import { ApiTypes } from "../../types/api"
 import { AnimatePresence, motion } from "motion/react"
+import { Money } from "../../utils/classes/Money"
 
 type Account = { id: string; name: string }
 type CreateErrors = { date?: string; payee?: string; amount?: string }
@@ -26,7 +27,7 @@ export const CreateTransaction: React.FC<Props> = props => {
   // const accounts = useAppSelector(selectAccounts)
   const accounts = useAppSelector(state => memoizedSelectAArr(state))
   const [selectedCat, setSelectedCat] = useState<string>("")
-  const [selectedAcct, setSelectedAcct] = useState<Account>(accounts[0])
+  const [selectedAcct, setSelectedAcct] = useState<string>(accounts[0].id)
   const [createErrors, setCreateErrors] = useState<CreateErrors>({})
 
   const handleChangeForm = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,32 +40,32 @@ export const CreateTransaction: React.FC<Props> = props => {
 
   const handleSubmitForm = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    console.log(/\d{4}-\d{2}-\d{2}/g.test(form.date))
     const isValidForm =
       selectedAcct &&
       /\d{4}-\d{2}-\d{2}/g.test(form.date) &&
-      form.payee.length > 0
+      form.payee.length > 0 &&
+      Money.isValidMoney(form.amount)
     if (isValidForm) {
-      // const preparedAccount = accounts[selectedAcct].id
-      const preparedAccount = selectedAcct.id
-
+      // console.log({ selectedAcct })
+      const preparedAmount = Money.parse(form.amount).toInt()
+      const preparedAccount = selectedAcct
       const preparedCatName = selectedCat
         ? categories[selectedCat].name
         : undefined
+
       const preparedForm = {
         type: "outgoing",
         ...form,
-        amount: Number(form.amount),
+        amount: preparedAmount,
         accountId: preparedAccount,
         categoryName: preparedCatName,
       }
-      console.log(preparedForm)
+
       try {
         const res = await dispatch(createTransaction(preparedForm)).unwrap()
-        console.log(res)
         setForm(emptyForm)
         if (onAfterSubmitForm) {
-          // onAfterSubmitForm()
+          onAfterSubmitForm()
         }
       } catch (e) {}
     } else {
@@ -75,7 +76,7 @@ export const CreateTransaction: React.FC<Props> = props => {
       if (form.payee.length < 1) {
         accErrors.payee = "Payee must be filled out"
       }
-      if (!/\d+\.\d{2}/.test(form.amount)) {
+      if (!Money.isValidMoney(form.amount)) {
         accErrors.amount = "Amount must be a valid dollar amount"
       }
       setCreateErrors(accErrors)
@@ -124,9 +125,11 @@ export const CreateTransaction: React.FC<Props> = props => {
         </div>
         <div>
           <DropdownSelector
+            field="account"
             options={accounts}
+            displayText="Account"
             disableBlankSelection={true}
-            selected={selectedAcct.name}
+            selected={selectedAcct}
             onChange={setSelectedAcct}
           />
         </div>
@@ -142,6 +145,8 @@ export const CreateTransaction: React.FC<Props> = props => {
         </div>
         <div>
           <DropdownSelector
+            field="category"
+            displayText="Category"
             options={Object.values(categories)}
             selected={selectedCat}
             onChange={handleChangeCat}

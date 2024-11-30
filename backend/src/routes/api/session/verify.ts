@@ -4,6 +4,8 @@ import jwt from "jsonwebtoken"
 import config from "../../../config"
 import { ApiTypes } from "types/api"
 import { pc } from "../../../utils/prismaClient"
+import moment from "moment"
+import { getCategoriesWithTransAgg } from "../transaction/utils"
 
 const router = express.Router()
 
@@ -30,17 +32,34 @@ const route: Handler = async (req, res, next) => {
     if (typeof decoded === "object") {
       // console.log("verify route decoded", decoded)
       const { id } = decoded.data
-      const user = await pc.user.findUnique({
-        where: { id },
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-          email: true,
-          username: true,
-          accounts: { select: { id: true, name: true } },
-          categories: { select: { id: true, name: true } },
-        },
+      const result = await pc.$transaction(async prisma => {
+        const startMonth = moment().format("YYYY-MM")
+
+        const user = await pc.user.findUnique({
+          where: { id },
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            username: true,
+            accounts: { select: { id: true, name: true } },
+            // categories: { select: { id: true, name: true } },
+          },
+        })
+
+        if (!user) {
+          return user
+        }
+
+        // if (user) {
+        const formattedCategories = await getCategoriesWithTransAgg(
+          user.id,
+          startMonth,
+          prisma
+        )
+        // }
+        return { ...user, categories: formattedCategories }
       })
 
       // Update verify token response to include accounts and categories
@@ -59,8 +78,8 @@ const route: Handler = async (req, res, next) => {
       //     // categories: { select: { id: true, name: true } },
       //   },
       // })
-      if (!user) {
-        console.log("verify route didnt find user in db", user)
+      if (!result) {
+        console.log("verify route didnt find user in db", result)
         res.status(200).send({
           status: "success",
           success: {
@@ -70,13 +89,13 @@ const route: Handler = async (req, res, next) => {
         // next()
       }
 
-      if (user) {
+      if (result) {
         // const { hashedPassword, ...safeUser } = user
         // console.log("verify route found user", safeUser)
         res.status(200).send({
           status: "success",
           success: {
-            user,
+            user: result,
           },
         })
         // next()

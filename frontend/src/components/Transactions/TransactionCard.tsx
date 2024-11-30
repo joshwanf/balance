@@ -26,7 +26,7 @@ export const TransactionCard: React.FC<Props> = props => {
   const accounts = useAppSelector(selectAccounts)
   const [form, setForm] = useState(t)
   const [showModal, setShowModal] = useState(false)
-  const tAmount = t.amount
+  const tAmount = Money.fromCents(`${t.amount}`)
 
   const hasCategory = t.categoryId
   const isCheckedClassname = checked ? "bg-blue-200" : ""
@@ -55,7 +55,7 @@ export const TransactionCard: React.FC<Props> = props => {
       <td className="py-2 text-left">{t.date}</td>
       <td>{t.payee}</td>
       <td>{accounts[t.accountId]?.name}</td>
-      <td className="py-2 text-left">{tAmount}</td>
+      <td className="py-2 text-left">{tAmount.format()}</td>
       <td>{t.categoryId ? categories[t.categoryId].name : "(unassigned)"}</td>
       <AnimatePresence>
         {showModal && (
