@@ -16,9 +16,9 @@ router.post("/ping", async (req, res, next) => {
 
 router.use(isLoggedIn)
 router.post("/list", list)
-router.use(create)
+router.post("/create", create)
 router.post("/retrieve/:id", retrieve)
 router.post("/change/:id", change)
-// router.use(remove)
+router.post("/remove", remove)
 
 export default router

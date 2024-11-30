@@ -7,13 +7,18 @@ import {
   ParsedQs,
 } from "express-serve-static-core"
 
-// import * as UserTypes from "../utils/types/api/user"
+declare module "express-serve-static-core" {
+  interface Request {
+    user: ApiTypes.Session.SafeUser | null
+  }
+}
+
 export declare namespace ApiTypes {
   type CustomRouteHandler<TReq, TRes> = (
     req: Request<ParamsDictionary, {}, TReq, ParsedQs>,
     res: Response<TRes>,
-    next: NextFunction,
-  ) => Promise<void>
+    next: NextFunction
+  ) => Promise<void> | void
 
   namespace Session {
     /** Session */
@@ -40,6 +45,9 @@ export declare namespace ApiTypes {
           categories: {
             id: string
             name: string
+            month: string
+            amount: number
+            usedAmount: number
           }[]
         }
       }
@@ -55,6 +63,9 @@ export declare namespace ApiTypes {
           categories: {
             id: string
             name: string
+            month: string
+            amount: number
+            usedAmount: number
           }[]
         }
       }
@@ -146,24 +157,28 @@ export declare namespace ApiTypes {
       date: string
       accountId: string
     }
-    interface TransactionWithCat extends Transaction {
-      category: {
-        id: string
-        name: string
-        cleanedName: string
-        amount: string
-        usedAmount: string
-      } | null
-      account: {
-        id: string
-        name: string
-        cleanedName: string
-      }
-    }
+    // interface TransactionWithCat extends Transaction {
+    //   category: {
+    //     id: string
+    //     name: string
+    //     cleanedName: string
+    //     amount: string
+    //     usedAmount: string
+    //   } | null
+    //   account: {
+    //     id: string
+    //     name: string
+    //     cleanedName: string
+    //   }
+    // }
 
     /** serialization of prisma Decimal and Date types */
     interface TSerialized extends Transaction {
       date: string
+    }
+    interface ListSearchParams {
+      startMonth: string
+      endMonth?: string
     }
     interface ListRequest {}
     interface ListResponse {
@@ -191,9 +206,10 @@ export declare namespace ApiTypes {
     interface ChangeRequest {
       type: string
       payee: string
-      amount: string
+      amount: number
       date: string
       categoryName: string
+      accountId: string
     }
     interface ChangeResponse extends TSerialized {}
     interface RemoveTransactionResponse {
@@ -231,8 +247,13 @@ export declare namespace ApiTypes {
       name: string
       amount: number
     }
+    interface ListSearchParams {
+      startMonth: string
+      endMonth?: string
+    }
     /** serialization of prisma Decimal and Date types */
     interface TSerialized extends Category {
+      month: string
       usedAmount: number
     }
     interface ListRequest {}
@@ -247,14 +268,18 @@ export declare namespace ApiTypes {
     interface RetrieveRequest {}
     interface RetrieveResponse extends TSerialized {}
     interface ChangeRequest {
-      name?: string
-      amount?: string
+      name: string
+      amount: number
     }
     interface ChangeResponse extends TSerialized {}
-    interface RemoveRequest {}
+    interface RemoveRequest {
+      categoryIds: string[]
+    }
     interface RemoveResponse {
       type: string
-      success: string
+      success: {
+        count: number
+      }
     }
   }
 

@@ -56,7 +56,7 @@ model Transaction {
   account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
   categoryId String?   @db.Uuid
-  category   Category? @relation(fields: [categoryId], references: [id])
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 }
 
 model Category {
@@ -82,7 +82,7 @@ model CategoryMonth {
   user   User   @relation(fields: [userId], references: [id])
 
   categoryId String   @db.Uuid
-  category   Category @relation(fields: [categoryId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   @@id(fields: [userId, categoryId, month])
   @@index(fields: [userId, categoryId, month])

@@ -4,13 +4,10 @@ import config from "../../../config"
 import type { ApiTypes } from "../../../types/api"
 import { pc } from "../../../utils/prismaClient"
 
-declare module "express-serve-static-core" {
-  interface Request {
-    user: ApiTypes.Session.SafeUser | null
-  }
-}
-
-const restoreUser: RequestHandler = (req, res, next) => {
+type Req = {}
+type Res = {}
+type Handler = ApiTypes.CustomRouteHandler<Req, Res>
+const restoreUser: Handler = (req, res, next) => {
   console.log("restoreUser")
   const { jwtConfig } = config
   const { token } = req.cookies
@@ -21,7 +18,6 @@ const restoreUser: RequestHandler = (req, res, next) => {
     jwtConfig.secret,
     undefined,
     async (err, jwtPayload) => {
-      console.log("jwtPayload", jwtPayload)
       // if (err) {
       //   console.log("jwt error", err)
       //   next()

@@ -27,8 +27,33 @@ const route: Handler = async (req, res, next) => {
      * Month determined by query param startMonth
      */
     const result = await pc.$transaction(async prisma => {
-      const curMonth = req.query.curMonth || moment().format("YYYY-MM")
+      // const curMonth = req.query.curMonth || moment().format("YYYY-MM")
       const { name, amount } = req.body
+      const cleanedName = cleanName(name)
+      const startMonth = req.query.startMonth || moment().format("YYYY-MM")
+
+      if (!/\d{4}-\d{2}/.test(startMonth)) {
+        next({
+          title: "Create category",
+          message: "Month must be in YYYY-MM format",
+          status: 400,
+        })
+      }
+      /** Check if userId and cleanedName exist, throw if yes */
+      const existingCategory = await prisma.category.findMany({
+        where: { userId: user.id, cleanedName },
+      })
+      if (existingCategory.length > 0) {
+        next({
+          title: "Create category",
+          error: {
+            name: "Category name already exists",
+          },
+          status: 400,
+        })
+      }
+
+      /** create new category and connect category month */
       const createdCategory = await prisma.category.create({
         include: { CategoryMonth: true },
         data: {
@@ -38,7 +63,7 @@ const route: Handler = async (req, res, next) => {
           cleanedName: cleanName(name),
           CategoryMonth: {
             create: [
-              { id: uuidv7(), amount, month: curMonth, userId: user.id },
+              { id: uuidv7(), amount, month: startMonth, userId: user.id },
             ],
           },
         },
@@ -47,36 +72,15 @@ const route: Handler = async (req, res, next) => {
       const formattedCategory = {
         id: createdCategory.id,
         name: createdCategory.name,
+        month: startMonth,
         amount: createdCategory.CategoryMonth[0].amount,
         usedAmount: 0,
       }
       return formattedCategory
-
-      // /** create category */
-      // const amountAsDecimal = parseFloat(amount)
-      // const created = await prisma.category.create({
-      //   data: {
-      //     id: uuidv7(),
-      //     name,
-      //     cleanedName: cleanName(name),
-      //     amount: amountAsDecimal,
-      //     userId: user.id,
-      //   },
-      // })
-
-      // /** Add usedAmount and serialize amount field */
-      // const result = {
-      //   ...created,
-      //   usedAmount: "0",
-      //   amount: created.amount.toString(),
-      // }
-
-      // return result
     })
 
     res.status(200).send(result)
   } catch (e) {
-    console.log(e)
     if (
       e instanceof PrismaClientKnownRequestError ||
       e instanceof PrismaClientUnknownRequestError ||

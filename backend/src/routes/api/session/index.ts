@@ -14,7 +14,7 @@ router.post("/ping", async (req, res, next) => {
 })
 
 // router.use(restoreUser)
-router.use(verify)
+router.post("/verify", verify)
 router.use(login)
 router.use(logout)
 router.use(protectedRoute)
