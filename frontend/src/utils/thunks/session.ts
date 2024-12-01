@@ -4,7 +4,10 @@ import { login } from "../../features/sessionSlice"
 import balance from "../api"
 import { ApiError } from "../classes/ApiError"
 import { addManyPartialCategories } from "../../features/categoriesSlice"
-import { addManyAccounts } from "../../features/accountsSlice"
+import {
+  addManyAccounts,
+  addPartialAccounts,
+} from "../../features/accountsSlice"
 
 type SafeUser = ApiTypes.Session.SafeUser
 type LoginDetails = ApiTypes.Session.LoginRequest
@@ -27,7 +30,7 @@ export const loginThunk = createAsyncThunk<
   } = res
   thunkApi.dispatch(login(safeUser))
   thunkApi.dispatch(addManyPartialCategories(categories))
-  thunkApi.dispatch(addManyAccounts(accounts))
+  thunkApi.dispatch(addPartialAccounts(accounts))
   return safeUser
 })
 
@@ -48,7 +51,7 @@ export const loginDemoThunk = createAsyncThunk<
   } = res
   thunkApi.dispatch(login(safeUser))
   thunkApi.dispatch(addManyPartialCategories(categories))
-  thunkApi.dispatch(addManyAccounts(accounts))
+  thunkApi.dispatch(addPartialAccounts(accounts))
   return safeUser
 })
 
@@ -68,6 +71,6 @@ export const restoreSession = createAsyncThunk<
   } = res
   thunkApi.dispatch(login(safeUser))
   thunkApi.dispatch(addManyPartialCategories(categories))
-  thunkApi.dispatch(addManyAccounts(accounts))
+  thunkApi.dispatch(addPartialAccounts(accounts))
   return safeUser
 })

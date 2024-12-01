@@ -5,17 +5,22 @@ import { TopBar } from "../Landing/TopBar"
 import { TransactionsList } from "../Transactions/TransactionsList"
 import { Sidebar } from "./Sidebar"
 import { useEffect, useRef, useState } from "react"
-import {
-  SquareChevronDown,
-  SquareChevronLeft,
-  SquareChevronRight,
-} from "lucide-react"
-import { useKeyPress } from "./useKeyPress"
+import { SquareChevronLeft, SquareChevronRight } from "lucide-react"
+// import { useKeyPress } from "./useKeyPress"
 
 export const Main = () => {
   const sidebarMenuRef = useRef<HTMLDivElement>(null)
   const isLgViewport = window.matchMedia("(min-width: 1024px)").matches
   const [hideSidebar, setHideSidebar] = useState(!isLgViewport)
+
+  // const mPressed = useKeyPress("m")
+
+  // useEffect(() => {
+  //   if (mPressed) {
+  //     console.log("m pressed")
+  //     setHideSidebar(!hideSidebar)
+  //   }
+  // }, [setHideSidebar])
 
   useEffect(() => {
     const setSidebarStatus = () => {

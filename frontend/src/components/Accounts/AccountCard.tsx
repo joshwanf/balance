@@ -10,7 +10,7 @@ export const AccountCard: React.FC<Props> = props => {
 
   return (
     <div>
-      <div className="border-2 border-grass-300 rounded-lg p-4 h-full">
+      <div className="border-4 border-grass-300 rounded-lg p-4 h-full">
         <div className="text-wrap">
           <span className="font-bold">ID: </span>
           <pre className="text-wrap inline">{account.id}</pre>

@@ -4,7 +4,7 @@ import { ApiError } from "../classes/ApiError"
 import balance from "../api"
 import {
   addManyAccounts,
-  addPartialAccount,
+  addPartialAccounts,
   removeManyAccounts,
 } from "../../features/accountsSlice"
 
@@ -54,7 +54,7 @@ export const changeAccountThunk = createAsyncThunk<
     return thunkApi.rejectWithValue(res)
   }
 
-  thunkApi.dispatch(addPartialAccount(res))
+  thunkApi.dispatch(addPartialAccounts([res]))
   return res
 })
 
