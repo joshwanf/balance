@@ -4,7 +4,7 @@ import { ApiTypes } from "../types/api"
 import { RootState } from "../app/store"
 
 type Account = ApiTypes.Account.TSerialized
-type ChangeResponse = { id: string; name: string; accountType: string }
+type ChangeResponse = { id: string; name?: string; accountType?: string }
 export type AccountSliceState = Record<string, Account>
 
 const initialState: AccountSliceState = {}
@@ -19,13 +19,16 @@ export const accountsSlice = createAppSlice({
         state[a.id] = a
       }
     },
-    addPartialAccount(state, action: PayloadAction<ChangeResponse>) {
-      const { id, name, accountType } = action.payload
-      if (name) {
-        state[id].name = name
-      }
-      if (accountType) {
-        state[id].accountType = accountType
+    addPartialAccounts(state, action: PayloadAction<ChangeResponse[]>) {
+      const partialAccounts = action.payload
+      for (const p of partialAccounts) {
+        const { id, name, accountType } = p
+        if (name) {
+          state[id].name = name
+        }
+        if (accountType) {
+          state[id].accountType = accountType
+        }
       }
     },
     removeManyAccounts(state, action: PayloadAction<string[]>) {
@@ -49,7 +52,7 @@ export const memoizedSelectAArr = createSelector(
 )
 
 // Action creators are generated for each case reducer function.
-export const { addManyAccounts, addPartialAccount, removeManyAccounts } =
+export const { addManyAccounts, addPartialAccounts, removeManyAccounts } =
   accountsSlice.actions
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.

@@ -9,7 +9,7 @@ export const TextInput = (props: Props) => {
   const defaultClasses = [
     // default style
     "px-3",
-    "py-2",
+    "py-1",
     // "mx-1",
     "border",
     "border-slate-400",
@@ -23,11 +23,13 @@ export const TextInput = (props: Props) => {
     ...(additionalClasses || []),
   ].join(" ")
   return (
-    <input
-      className={unifiedClassNames}
-      value={text}
-      onChange={e => onChange(e.target.value)}
-      {...rest}
-    />
+    <label>
+      <input
+        className={unifiedClassNames}
+        value={text}
+        onChange={e => onChange(e.target.value)}
+        {...rest}
+      />
+    </label>
   )
 }
