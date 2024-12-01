@@ -3,6 +3,7 @@ import restoreUser from "./session/restoreUser"
 import sessionRouter from "./session"
 import transactionRouter from "./transaction"
 import categoryRouter from "./category"
+import accountRouter from "./account"
 // import budgetRouter from "./budget"
 import protectedRouter from "./protected/protected"
 
@@ -12,6 +13,7 @@ router.use(restoreUser)
 router.use("/session", sessionRouter)
 router.use("/transaction", transactionRouter)
 router.use("/category", categoryRouter)
+router.use("/account", accountRouter)
 // router.use("/budget", budgetRouter)
 router.use("/protected", protectedRouter)
 

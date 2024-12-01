@@ -47,7 +47,7 @@ export const TopBar: React.FC<Props> = () => {
         <button onClick={changeCurMonth(-1)}>
           <ChevronLeft />
         </button>
-        <div className="text-center">
+        <div className="text-center w-24">
           {moment(curMonth).format("MMMM")}
           <br />
           {moment(curMonth).format("YYYY")}

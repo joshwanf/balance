@@ -12,12 +12,14 @@ export const Landing: React.FC<Props> = props => {
         <img
           src="images/hero.svg"
           alt="Hero Image"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full object-cover"
         />
 
         <div className="absolute inset-0 flex flex-col justify-start px-8">
-          <div className="flex flex-col space-y-4 mt-[12%]  w-1/2">
-            <h1 className="text-8xl text-grass">Find Your Balance</h1>
+          <div className="flex flex-col space-y-4 mt-[8%]  w-1/2">
+            <h1 className="text-3xl lg:text-6xl text-grass">
+              Find Your Balance
+            </h1>
             <p className="text-lg text-waikawa-gray">
               Level with your money today
             </p>

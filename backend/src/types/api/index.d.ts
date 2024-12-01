@@ -289,6 +289,46 @@ export declare namespace ApiTypes {
       id: string
       name: string
       cleanedName: string
+      type: string
+    }
+    interface ListSearchParams {
+      startMonth: string
+    }
+    interface TSerialized {
+      id: string
+      name: string
+      accountType: string
+      usedAmount: number
+    }
+    interface ListRequest {}
+    interface ListResponse {
+      accounts: TSerialized[]
+    }
+    interface CreateRequest {
+      name: string
+      accountType: string
+      initialBalance: number
+    }
+    interface CreateResponse {
+      accounts: TSerialized[]
+    }
+    interface ChangeRequest {
+      name: string
+      accountType: string
+    }
+    interface ChangeResponse {
+      id: string
+      name: string
+      accountType: string
+    }
+    interface RemoveRequest {
+      accountIds: string[]
+    }
+    interface RemoveResponse {
+      type: string
+      success: {
+        count: number
+      }
     }
   }
 }

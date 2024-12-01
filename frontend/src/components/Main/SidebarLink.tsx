@@ -10,7 +10,7 @@ export const SidebarLink: React.FC<Props> = props => {
   return (
     <Link
       to={to}
-      className="flex py-1 pl-4 text-lg border-2 rounded-lg hover:bg-grass-300 hover:border-grass-600 hover:text-grass-800"
+      className="flex py-1 px-4 text-lg border-2 rounded-lg hover:bg-grass-300 hover:border-grass-600 hover:text-grass-800"
     >
       {children}
     </Link>

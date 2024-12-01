@@ -1,13 +1,8 @@
 /** Balance api object to interact with the back end */
-import type { ApiTypes } from "../../types/api"
-// import type {
-//   LogInSuccess,
-//   LogInInvalidCredential,
-// } from "../../../../utils/types/api/session"
-
 import session from "./session"
 import transaction from "./transaction"
 import category from "./category"
+import account from "./account"
 
 export const opts = {
   method: "POST",
@@ -24,6 +19,6 @@ export const pfetch = async (url: string, body?: Record<string, any>) => {
   return await fetch(url, options)
 }
 
-export const balance = { session, transaction, category }
+export const balance = { session, transaction, category, account }
 
 export default balance
