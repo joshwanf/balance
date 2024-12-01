@@ -16,6 +16,7 @@ import { CreateCategory } from "./CreateCategory"
 import { EditableText } from "../../lib/ComponentLibrary/EditableText"
 export const CategoryList = () => {
   const dispatch = useAppDispatch()
+  const curMonth = useAppSelector(state => state.session.settings.curMonth)
   const [isLoaded, setIsLoaded] = useState(false)
   const [selectedCat, setSelectedCat] = useState<string[]>([])
   const [checkAllItems, setCheckAllItems] = useState(false)
@@ -25,13 +26,6 @@ export const CategoryList = () => {
   const allCatIds = Object.values(categories).map(c => c.id)
 
   const isDisabledDelete = selectedCat.length < 1
-  // const onTextChange = (newValue: string) => {
-  //   console.log({ originalText, sampleText, newValue })
-  //   if (originalText !== newValue) {
-  //     console.log("edit category should fire!")
-  //     setSampleText(newValue)
-  //   }
-  // }
 
   const handleSelectCat =
     (id: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,7 +62,7 @@ export const CategoryList = () => {
 
   useEffect(() => {
     if (!isLoaded) {
-      dispatch(listCategoriesThunk())
+      dispatch(listCategoriesThunk({ startMonth: curMonth }))
       setIsLoaded(true)
     }
   }, [dispatch, setIsLoaded, listCategoriesThunk])

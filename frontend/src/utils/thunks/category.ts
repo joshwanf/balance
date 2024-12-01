@@ -7,14 +7,15 @@ import type { ApiTypes } from "../../types/api"
 import { ApiError } from "../classes/ApiError"
 import balance from "../api"
 
+type ListSearchParams = ApiTypes.Category.ListSearchParams
 type ListRes = ApiTypes.Category.ListResponse["categories"]
 
 export const listCategoriesThunk = createAsyncThunk<
   ListRes,
-  void,
+  ListSearchParams,
   { rejectValue: ApiError }
->("getCategories", async (_, thunkApi) => {
-  const res = await balance.category.list()
+>("getCategories", async (listOptions, thunkApi) => {
+  const res = await balance.category.list(listOptions)
   if (res instanceof ApiError) {
     return thunkApi.rejectWithValue(res)
   }

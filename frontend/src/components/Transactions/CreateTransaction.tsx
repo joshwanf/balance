@@ -12,6 +12,7 @@ import { createTransaction } from "../../utils/thunks/transactions"
 import { ApiTypes } from "../../types/api"
 import { AnimatePresence, motion } from "motion/react"
 import { Money } from "../../utils/classes/Money"
+import moment from "moment"
 
 type Account = { id: string; name: string }
 type CreateErrors = { date?: string; payee?: string; amount?: string }
@@ -40,22 +41,28 @@ export const CreateTransaction: React.FC<Props> = props => {
 
   const handleSubmitForm = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
+    const isValidDate = moment(form.date, "YYYY-MM-DD").isValid()
+    console.log(
+      isValidDate,
+      moment(form.date, "YYYY-MM-DD").format("YYYY-MM-DD"),
+    )
+    const isValidMoney = form.amount ? Money.isValidMoney(form.amount) : true
+
     const isValidForm =
-      selectedAcct &&
-      /\d{4}-\d{2}-\d{2}/g.test(form.date) &&
-      form.payee.length > 0 &&
-      Money.isValidMoney(form.amount)
+      selectedAcct && isValidDate && isValidMoney && form.payee.length > 0
+
     if (isValidForm) {
-      // console.log({ selectedAcct })
       const preparedAmount = Money.parse(form.amount).toInt()
+      const preparedDate = moment(form.date, "YYYY-MM-DD").format("YYYY-MM-DD")
       const preparedAccount = selectedAcct
       const preparedCatName = selectedCat
         ? categories[selectedCat].name
         : undefined
 
       const preparedForm = {
-        type: "outgoing",
         ...form,
+        type: "outgoing",
+        date: preparedDate,
         amount: preparedAmount,
         accountId: preparedAccount,
         categoryName: preparedCatName,
@@ -65,20 +72,22 @@ export const CreateTransaction: React.FC<Props> = props => {
         const res = await dispatch(createTransaction(preparedForm)).unwrap()
         setForm(emptyForm)
         if (onAfterSubmitForm) {
+          setCreateErrors({})
           onAfterSubmitForm()
         }
       } catch (e) {}
     } else {
       const accErrors: CreateErrors = {}
-      if (!/\d{4}-\d{2}-\d{2}/g.test(form.date)) {
+      if (!isValidDate) {
         accErrors.date = "Date must be YYYY-MM-DD"
       }
       if (form.payee.length < 1) {
         accErrors.payee = "Payee must be filled out"
       }
-      if (!Money.isValidMoney(form.amount)) {
+      if (!isValidMoney) {
         accErrors.amount = "Amount must be a valid dollar amount"
       }
+
       setCreateErrors(accErrors)
     }
   }

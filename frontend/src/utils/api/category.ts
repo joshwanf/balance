@@ -5,11 +5,14 @@ import { opts, pfetch } from "."
 /**
  * List all categories
  */
+type ListOptions = ApiTypes.Category.ListSearchParams
 interface List {
-  (): Promise<ApiTypes.Category.ListResponse | ApiError>
+  (listOptions: ListOptions): Promise<ApiTypes.Category.ListResponse | ApiError>
 }
-const list: List = async () => {
-  const url = "/api/category/list"
+const list: List = async listOptions => {
+  const params = Object.entries(listOptions).filter(([k, v]) => v)
+  const searchParams = new URLSearchParams(params).toString()
+  const url = `/api/category/list${"?" + searchParams}`
   const res = await pfetch(url)
   if (!res.ok) {
     throw new ApiError(await res.json(), res.status)
