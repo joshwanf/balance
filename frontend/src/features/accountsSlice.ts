@@ -4,7 +4,7 @@ import { ApiTypes } from "../types/api"
 import { RootState } from "../app/store"
 
 type Account = ApiTypes.Account.TSerialized
-type ChangeResponse = { id: string; name?: string; accountType?: string }
+type ChangeResponse = { id: string; name: string; accountType?: string }
 export type AccountSliceState = Record<string, Account>
 
 const initialState: AccountSliceState = {}
@@ -23,11 +23,21 @@ export const accountsSlice = createAppSlice({
       const partialAccounts = action.payload
       for (const p of partialAccounts) {
         const { id, name, accountType } = p
-        if (name) {
-          state[id].name = name
-        }
-        if (accountType) {
-          state[id].accountType = accountType
+        const recordExists = Object.keys(state).includes(id)
+        if (recordExists) {
+          if (name) {
+            state[id].name = name
+          }
+          if (accountType) {
+            state[id].accountType = accountType
+          }
+        } else {
+          state[id] = {
+            id: p.id,
+            name: p.name,
+            accountType: p.accountType || "standard account",
+            usedAmount: 0,
+          }
         }
       }
     },

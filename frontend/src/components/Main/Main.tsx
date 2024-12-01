@@ -22,6 +22,32 @@ export const Main = () => {
   //   }
   // }, [setHideSidebar])
 
+  // useEffect(() => {
+  //   const keyDown = (e: KeyboardEvent) => {
+  //     if (e.key === "m") {
+  //       e.preventDefault()
+  //       setHideSidebar(!hideSidebar)
+  //     }
+  //   }
+  //   const keyUp = (e: KeyboardEvent) => {
+  //     if (e.key === "m") {
+  //       console.log("m pressed")
+  //       setHideSidebar(!hideSidebar)
+  //     }
+  //   }
+  //   if (sidebarMenuRef.current) {
+  //     sidebarMenuRef.current.addEventListener("keydown", keyDown)
+  //   }
+  //   // window.addEventListener("keyup", keyUp)
+
+  //   return () => {
+  //     if (sidebarMenuRef.current) {
+  //       sidebarMenuRef.current.removeEventListener("keydown", keyDown)
+  //     }
+  //     // window.removeEventListener("keyup", keyUp)
+  //   }
+  // }, [setHideSidebar, hideSidebar, sidebarMenuRef])
+
   useEffect(() => {
     const setSidebarStatus = () => {
       const isSmViewport = window.matchMedia("(max-width: 1024px)").matches
