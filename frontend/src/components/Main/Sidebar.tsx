@@ -20,7 +20,7 @@ export const Sidebar: React.FC<Props> = props => {
   return (
     <div className="pt-4 px-4 flex flex-col items-start" hidden={hidden}>
       <div>Logo</div>
-      <div hidden={hideSidebar} className="">
+      <div hidden={hideSidebar} className="w-full">
         <div className="space-y-2 text-slate-600">
           <SidebarLink to="">
             <Fragment>
@@ -46,7 +46,7 @@ export const Sidebar: React.FC<Props> = props => {
               <span className="pl-2">Accounts</span>
             </Fragment>
           </SidebarLink>
-          <SidebarLink to="accounts">
+          <SidebarLink to="trends">
             <Fragment>
               <ChartNoAxesCombined className="w-6" />
               <span className="pl-2">Trends</span>
