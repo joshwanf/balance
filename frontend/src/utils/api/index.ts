@@ -3,6 +3,7 @@ import session from "./session"
 import transaction from "./transaction"
 import category from "./category"
 import account from "./account"
+import trend from "./trend"
 
 export const opts = {
   method: "POST",
@@ -19,6 +20,6 @@ export const pfetch = async (url: string, body?: Record<string, any>) => {
   return await fetch(url, options)
 }
 
-export const balance = { session, transaction, category, account }
+export const balance = { session, transaction, category, account, trend }
 
 export default balance

@@ -1,5 +1,5 @@
 import { ReactNode } from "react"
-import { Link } from "react-router-dom"
+import { Link, NavLink } from "react-router-dom"
 
 interface Props {
   children: ReactNode
@@ -8,11 +8,11 @@ interface Props {
 export const SidebarLink: React.FC<Props> = props => {
   const { children, to, ...rest } = props
   return (
-    <Link
+    <NavLink
       to={to}
-      className="flex py-1 px-4 text-lg border-2 rounded-lg hover:bg-grass-300 hover:border-grass-600 hover:text-grass-800"
+      className="flex py-1 px-4 w-full text-lg border-2 rounded-lg hover:bg-grass-300 hover:border-grass-600 hover:text-grass-800"
     >
       {children}
-    </Link>
+    </NavLink>
   )
 }

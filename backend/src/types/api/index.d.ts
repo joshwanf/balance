@@ -30,11 +30,11 @@ export declare namespace ApiTypes {
       username: string
     }
 
-    export interface LoginRequest {
+    interface LoginRequest {
       credential: string
       password: string
     }
-    export interface LoginResponse {
+    interface LoginResponse {
       status: "success"
       success: {
         user: SafeUser & {
@@ -52,53 +52,20 @@ export declare namespace ApiTypes {
         }
       }
     }
-    interface RestoreResponse extends LoginResponse {
-      status: "success"
-      success: {
-        user: SafeUser & {
-          accounts: {
-            id: string
-            name: string
-          }[]
-          categories: {
-            id: string
-            name: string
-            month: string
-            amount: number
-            usedAmount: number
-          }[]
-        }
-      }
-    }
-    export interface LogInInvalidRequest {
-      status: "rejected"
-      rejected: {
-        type: "request"
-        message: "Both credential and password must be supplied"
-      }
-    }
-    export interface LogInInvalidCredential {
-      status: "rejected"
-      rejected: {
-        type: "credential"
-        message: "Invalid credentials"
-      }
-    }
-    export interface LogInUnknownError {
-      status: "rejected"
-      rejected: {
-        type: "unknown"
-        message: string
-      }
-    }
-    export interface LogOutSuccessResponse {
+    interface RestoreResponse extends LoginResponse {}
+
+    interface LogOutResponse {
       type: "success"
       success: "Logged out"
     }
-    export interface LogOutErrorResponse {
-      type: "error"
-      error: string
+    interface CreateRequest {
+      firstName: string
+      lastName: string
+      email: string
+      username: string
+      password: string
     }
+    interface CreateResponse extends SafeUser {}
   }
 
   /** User */
@@ -335,7 +302,7 @@ export declare namespace ApiTypes {
   namespace Trend {
     interface SearchParams {
       startMonth: string
-      endMonth: string
+      endMonth?: string
     }
     interface OverviewRequest {}
     interface OverviewResponse {

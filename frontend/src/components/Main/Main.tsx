@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react"
 import { Cog, SquareChevronLeft, SquareChevronRight } from "lucide-react"
 import { motion, useTime, useTransform } from "motion/react"
 import { SettingsMenu } from "./SettingsMenu"
+import { SettingsButton } from "./SettingsButton"
 // import { useKeyPress } from "./useKeyPress"
 
 export const Main = () => {
@@ -90,7 +91,7 @@ export const Main = () => {
           {/* <Sidebar hidden={hideSidebar} /> */}
           {!hideSidebar && <Sidebar />}
         </div>
-        <SettingsMenu />
+        <SettingsButton />
       </div>
       <div className="w-full pt-4 px-2 pb-6 h-screen overflow-y-auto">
         <div className="bg-white rounded-t-3xl rounded-b-3xl px-4 pb-6">

@@ -39,7 +39,6 @@ export const TopBar: React.FC<Props> = () => {
     const response = await balance.session.logout()
     dispatch(logout())
     navigate("/")
-    // setIsLoggedIn(false)
   }
   return (
     <nav className="py-4 flex justify-between">

@@ -4,6 +4,7 @@ import express from "express"
 import login from "./login"
 import verify from "./verify"
 import logout from "./logout"
+import create from "./create"
 import protectedRoute from "../protected/protected"
 
 const router = express.Router()
@@ -15,8 +16,9 @@ router.post("/ping", async (req, res, next) => {
 
 // router.use(restoreUser)
 router.post("/verify", verify)
-router.use(login)
+router.post("/login", login)
 router.use(logout)
+router.post("/create", create)
 router.use(protectedRoute)
 
 export default router

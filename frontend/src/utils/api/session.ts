@@ -28,8 +28,6 @@ const restore: RestoreSession = async () => {
 
 type LoginRequest = ApiTypes.Session.LoginRequest
 type LoginResponse = ApiTypes.Session.LoginResponse
-type LogInInvalidCredentialType = ApiTypes.Session.LogInInvalidCredential
-type LogInUnknownErrorType = ApiTypes.Session.LogInUnknownError
 interface SubmitLogin {
   (input: LoginRequest): Promise<LoginResponse | ApiError>
 }
@@ -47,48 +45,35 @@ const loginDemoUser = async () => {
   return await login({ credential: "admin", password: "password" })
 }
 
-type LogoutResponseType = ApiTypes.Session.LogOutSuccessResponse
-type LogOutErrorResponseType = ApiTypes.Session.LogOutErrorResponse
+type LogoutResponseType = ApiTypes.Session.LogOutResponse
 interface SubmitLogout {
-  (): Promise<LogoutResponseType | LogOutErrorResponseType>
+  (): Promise<LogoutResponseType | ApiError>
 }
 const logout: SubmitLogout = async () => {
   const url = "/api/session/logout"
   const options = { ...opts, body: JSON.stringify({}) }
-  try {
-    const response = await fetch(url, options)
-    if (!response.ok) {
-      throw response
-    }
-    const data = (await response.json()) as LogoutResponseType
-    // console.log({ token: data.success.token })
-    return data
-  } catch (e: any) {
-    return { type: "error", error: "Logout error" }
+  const response = await fetch(url, options)
+  if (!response.ok) {
+    throw new ApiError(await response.json(), response.status)
   }
+  const data = (await response.json()) as LogoutResponseType
+
+  return data
 }
 
-type SignUpResponseType = ApiTypes.User.CreateUserResponse
+type CreateRequestType = ApiTypes.Session.CreateRequest
+type CreateResponseType = ApiTypes.Session.CreateResponse
 interface SignUp {
-  (input: {
-    firstName: string
-    lastName: string
-    email: string
-    username: string
-    password: string
-  }): Promise<SignUpResponseType | ApiError>
+  (input: CreateRequestType): Promise<CreateResponseType | ApiError>
 }
-const signup: SignUp = async newUserDetails => {
-  const url = "/api/session/signup"
-  const { password, ...rest } = newUserDetails
-  const hashedPassword = password
-  const options = { ...opts, body: JSON.stringify({ ...rest, hashedPassword }) }
-  const response = await fetch(url, { ...options })
+const create: SignUp = async newUserDetails => {
+  const url = "/api/session/create"
+  const response = await pfetch(url, newUserDetails)
   if (!response.ok) {
     throw new ApiError(await response.json(), response.status)
   }
 
   return await response.json()
 }
-const session = { restore, login, loginDemoUser, logout, signup }
+const session = { restore, login, loginDemoUser, logout, create }
 export default session

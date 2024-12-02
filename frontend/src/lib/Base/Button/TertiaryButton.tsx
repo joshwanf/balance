@@ -3,37 +3,48 @@ import { motion } from "motion/react"
 interface Props {
   children: any
   additionalClasses?: string[]
+  classSchema?: {
+    bgColor?: string
+    hoverBgColor?: string
+    borderColor?: string
+    hoverBorderColor?: string
+  }
   [key: string]: any
 }
 export const TertiaryButton: React.FC<Props> = props => {
   const { children, additionalClasses, ...rest } = props
+
+  const classSchema = props.classSchema || {}
+  const { bgColor, hoverBgColor, borderColor, hoverBorderColor } = classSchema
+
+  const unifiedBgColor = bgColor ?? "bg-beige"
+  const unifiedBorderColor = borderColor ?? "border-grass-700"
+  const unifiedHoverBgColor = hoverBgColor ?? "hover:bg-grass-100"
+  const unifiedHoverBorderColor = hoverBorderColor ?? "hover:border-grass-700"
+
   const defaultClasses = [
     // default style
     "px-3",
-    "py-1",
+    "py-0.5",
     "mx-1",
-    "bg-white",
     "border-2",
-    "border-blue-600",
-    // "outline-blue-600",
     "rounded-md",
-    //   "text-white",
-    // hover style
-    "hover:bg-blue-100",
-    // active style
-    "active:bg-blue-300",
-    // "active:shadow-lg",
+    unifiedBgColor,
+    unifiedBorderColor,
+    unifiedHoverBgColor,
+    unifiedHoverBorderColor,
+    "active:bg-grass-300",
     "active:ring-0",
-    "active:ring-blue-400",
   ]
-  const classNames = [...defaultClasses].join(" ")
+
   const unifiedClassNames = [
     ...defaultClasses,
     ...(additionalClasses || []),
   ].join(" ")
+
   return (
     <motion.button
-      whileTap={{ scale: 0.85 }}
+      whileTap={{ scale: 0.95 }}
       className={unifiedClassNames}
       {...rest}
     >
