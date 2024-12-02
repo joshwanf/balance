@@ -38,6 +38,7 @@ export const router = createBrowserRouter([
             children: [
               { path: "", element: <TrendsList /> },
               { path: "overview", element: <Overview /> },
+              { path: "compare", element: <h1>Compare</h1> },
             ],
           },
         ],
