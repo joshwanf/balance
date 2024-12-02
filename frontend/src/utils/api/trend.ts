@@ -4,15 +4,16 @@ import { ApiError } from "../classes/ApiError"
 
 type OverviewReq = {
   startMonth: string
-  endMonth?: string
+  endMonth: string
 }
 type OverviewRes = ApiTypes.Trend.OverviewResponse
 interface Overview {
   (overviewInput: OverviewReq): Promise<OverviewRes>
 }
 const overview: Overview = async input => {
-  const params = Object.entries(input).filter(([k, v]) => v)
-  const searchParams = new URLSearchParams(params).toString()
+  // don't need to filter empty entries if endMonth is required
+  // const params = Object.entries(input).filter(([k, v]) => v)
+  const searchParams = new URLSearchParams(input).toString()
   const url = `/api/trend/overview${"?" + searchParams}`
   const res = await pfetch(url, input)
   if (!res.ok) {

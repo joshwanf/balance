@@ -13,9 +13,15 @@ import { ApiTypes } from "../../types/api"
 import { AnimatePresence, motion } from "motion/react"
 import { Money } from "../../utils/classes/Money"
 import moment from "moment"
+import { validateDate } from "../../utils/helpers/date"
 
 type Account = { id: string; name: string }
-type CreateErrors = { date?: string; payee?: string; amount?: string }
+type CreateErrors = {
+  account?: string
+  date?: string
+  payee?: string
+  amount?: string
+}
 interface Props {
   onAfterSubmitForm?: () => void
 }
@@ -28,7 +34,9 @@ export const CreateTransaction: React.FC<Props> = props => {
   // const accounts = useAppSelector(selectAccounts)
   const accounts = useAppSelector(state => memoizedSelectAArr(state))
   const [selectedCat, setSelectedCat] = useState<string>("")
-  const [selectedAcct, setSelectedAcct] = useState<string>(accounts[0].id)
+  const [selectedAcct, setSelectedAcct] = useState<string>(
+    accounts[0]?.id || "",
+  )
   const [createErrors, setCreateErrors] = useState<CreateErrors>({})
 
   const handleChangeForm = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,15 +49,12 @@ export const CreateTransaction: React.FC<Props> = props => {
 
   const handleSubmitForm = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    const isValidDate = moment(form.date, "YYYY-MM-DD").isValid()
-    console.log(
-      isValidDate,
-      moment(form.date, "YYYY-MM-DD").format("YYYY-MM-DD"),
-    )
+    // const isValidDate = moment(form.date, "YYYY-MM-DD").isValid()
+    const isValidAccount = selectedAcct.length > 0
+    const isValidDate = validateDate({ date: form.date, format: "YYYY-MM-DD" })
     const isValidMoney = form.amount ? Money.isValidMoney(form.amount) : true
-
     const isValidForm =
-      selectedAcct && isValidDate && isValidMoney && form.payee.length > 0
+      isValidAccount && isValidDate && isValidMoney && form.payee.length > 0
 
     if (isValidForm) {
       const preparedAmount = Money.parse(form.amount).toInt()
@@ -78,8 +83,11 @@ export const CreateTransaction: React.FC<Props> = props => {
       } catch (e) {}
     } else {
       const accErrors: CreateErrors = {}
+      if (!isValidAccount) {
+        accErrors.account = "Select or create an account"
+      }
       if (!isValidDate) {
-        accErrors.date = "Date must be YYYY-MM-DD"
+        accErrors.date = "Date must be YYYY-MM-DD and after 1970-01-01"
       }
       if (form.payee.length < 1) {
         accErrors.payee = "Payee must be filled out"
@@ -141,6 +149,7 @@ export const CreateTransaction: React.FC<Props> = props => {
             selected={selectedAcct}
             onChange={setSelectedAcct}
           />
+          {createErrors.account && <div>{createErrors.account}</div>}
         </div>
         <div>
           <FormField

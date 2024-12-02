@@ -26,7 +26,7 @@ const route: Handler = async (req, res, next) => {
      */
 
     const startMonth = req.query.startMonth || moment().format("YYYY-MM")
-    const nextMonth =
+    const endMonth =
       req.query.endMonth || moment(startMonth).add(1, "month").format("YYYY-MM")
 
     const result = await pc.$transaction(async prisma => {
@@ -35,7 +35,7 @@ const route: Handler = async (req, res, next) => {
         _sum: { amount: true },
         where: {
           userId,
-          date: { gte: startMonth, lt: nextMonth },
+          date: { gte: startMonth, lt: endMonth },
           type: "outgoing",
         },
       })
@@ -43,7 +43,7 @@ const route: Handler = async (req, res, next) => {
         _sum: { amount: true },
         where: {
           userId,
-          date: { gte: startMonth, lt: nextMonth },
+          date: { gte: startMonth, lt: endMonth },
           type: "incoming",
         },
       })
@@ -57,7 +57,7 @@ const route: Handler = async (req, res, next) => {
         by: ["categoryId"],
         where: {
           userId,
-          date: { gte: startMonth, lt: nextMonth },
+          date: { gte: startMonth, lt: endMonth },
           type: "outgoing",
         },
         _sum: { amount: true },
@@ -66,7 +66,7 @@ const route: Handler = async (req, res, next) => {
         by: ["categoryId"],
         where: {
           userId,
-          date: { gte: startMonth, lt: nextMonth },
+          date: { gte: startMonth, lt: endMonth },
           type: "incoming",
         },
         _sum: { amount: true },

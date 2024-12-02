@@ -15,6 +15,7 @@ import { selectAccounts } from "../../features/accountsSlice"
 import { Money } from "../../utils/classes/Money"
 import { X } from "lucide-react"
 import moment from "moment"
+import { validateDate } from "../../utils/helpers/date"
 
 interface FormErrors {
   date?: string
@@ -60,7 +61,6 @@ export const TransactionDetails: React.FC<Props> = props => {
         formWithUpdatedData.amount = newAmount.toInt()
         console.log({ formWithUpdatedData })
       } catch (e) {
-        console.log("error in form.amount")
         if (typeof e === "string") {
           return setFormErrors({ amount: e })
         }
@@ -70,7 +70,7 @@ export const TransactionDetails: React.FC<Props> = props => {
     }
 
     const isValidDate = formWithUpdatedData.date
-      ? moment(formWithUpdatedData.date).isValid()
+      ? validateDate({ date: formWithUpdatedData.date, format: "YYYY-MM-DD" })
       : true
     const isValidPayee = Object.keys(formWithUpdatedData).includes("payee")
       ? formWithUpdatedData.payee.length > 0

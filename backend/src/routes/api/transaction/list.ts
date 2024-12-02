@@ -18,7 +18,7 @@ type Res = ApiTypes.Transaction.ListResponse
 type Handler = ApiTypes.CustomRouteHandler<Req, Res>
 
 const route: Handler = async (req, res, next) => {
-  console.log("list transactions")
+  // console.log("list transactions")
 
   /** isLoggedIn should already check for req.user, call next() for TS */
   const user = req.user
