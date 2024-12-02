@@ -42,25 +42,30 @@ export const TopBar: React.FC<Props> = () => {
   }
   return (
     <nav className="py-4 flex justify-between">
-      <div className="flex space-x-1">
-        <button onClick={changeCurMonth(-1)}>
-          <ChevronLeft />
-        </button>
-        <div className="text-center w-24">
-          {moment(curMonth).format("MMMM")}
-          <br />
-          {moment(curMonth).format("YYYY")}
+      {user ? (
+        <div className="flex space-x-1">
+          <button onClick={changeCurMonth(-1)}>
+            <ChevronLeft />
+          </button>
+          <div className="text-center w-24">
+            {moment(curMonth).format("MMMM")}
+            <br />
+            {moment(curMonth).format("YYYY")}
+          </div>
+          <button onClick={changeCurMonth(1)}>
+            <ChevronRight />
+          </button>
         </div>
-        <button onClick={changeCurMonth(1)}>
-          <ChevronRight />
-        </button>
-      </div>
+      ) : (
+        <div></div>
+      )}
       <div>
         {user ? (
-          <Btn.SecondaryButton onClick={handleLogout}>
-            Log Out
-          </Btn.SecondaryButton>
+          <div></div>
         ) : (
+          // <Btn.SecondaryButton onClick={handleLogout}>
+          //   Log Out
+          // </Btn.SecondaryButton>
           <>
             <Btn.PrimaryButton onClick={() => setDisplay("signup")}>
               Sign Up

@@ -40,9 +40,9 @@ export const setTokenCookie = (
 }
 
 export const isLoggedIn: RequestHandler = (req, res, next) => {
-  console.log("isLoggedIn")
+  // console.log("isLoggedIn")
   if (req.user) {
-    console.log("logged in")
+    // console.log("logged in")
     next()
   }
   if (!req.user) {
@@ -51,7 +51,7 @@ export const isLoggedIn: RequestHandler = (req, res, next) => {
       message: "Forbidden",
       status: 403,
     }
-    console.log("isLoggedIn couldn't find user")
+    // console.log("isLoggedIn couldn't find user")
     next(err)
   }
   // next()

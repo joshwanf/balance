@@ -10,6 +10,7 @@ import { restoreSession } from "./utils/thunks/session"
 import { AccountList } from "./components/Accounts/AccountList"
 import { TrendsList } from "./components/Trends/TrendsList"
 import { Dashboard } from "./components/Main/Dashboard"
+import { Overview } from "./components/Trends/Overview/Overview"
 
 const Layout = () => {
   return (
@@ -32,7 +33,13 @@ export const router = createBrowserRouter([
           { path: "budgets", element: <CategoryList /> },
           { path: "transactions", element: <TransactionsList /> },
           { path: "accounts", element: <AccountList /> },
-          { path: "trends", element: <TrendsList /> },
+          {
+            path: "trends",
+            children: [
+              { path: "", element: <TrendsList /> },
+              { path: "overview", element: <Overview /> },
+            ],
+          },
         ],
       },
     ],

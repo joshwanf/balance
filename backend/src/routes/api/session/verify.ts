@@ -22,7 +22,7 @@ type Res = {}
 type Handler = ApiTypes.CustomRouteHandler<Req, Res>
 
 const route: Handler = async (req, res, next) => {
-  console.log("verifyRoute")
+  // console.log("verifyRoute")
   const { token } = req.cookies
   const { jwtConfig } = config
   req.user = null

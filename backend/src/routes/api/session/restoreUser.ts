@@ -8,7 +8,7 @@ type Req = {}
 type Res = {}
 type Handler = ApiTypes.CustomRouteHandler<Req, Res>
 const restoreUser: Handler = (req, res, next) => {
-  console.log("restoreUser")
+  // console.log("restoreUser")
   const { jwtConfig } = config
   const { token } = req.cookies
   req.user = null
@@ -24,7 +24,7 @@ const restoreUser: Handler = (req, res, next) => {
       // }
 
       if (typeof jwtPayload === "object") {
-        console.log("jwtPayload is object")
+        // console.log("jwtPayload is object")
         try {
           const { id } = jwtPayload.data
           const user = await pc.user.findUnique({
@@ -42,12 +42,12 @@ const restoreUser: Handler = (req, res, next) => {
           if (user) {
             // const { hashedPassword, ...safeUser } = user
             req.user = user
-            console.log("restoreUser found user in db from token")
+            // console.log("restoreUser found user in db from token")
             // console.log("jwt found user", req.user)
             return next()
           }
         } catch (e) {
-          console.log("restore user catch")
+          // console.log("restore user catch")
           res.clearCookie("token")
           return next()
         }
