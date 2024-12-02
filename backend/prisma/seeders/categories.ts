@@ -8,14 +8,38 @@ export const user1Cat: Prisma.CategoryCreateManyInput[] = [
   /** user 1 */
   {
     id: uuidv7(),
-    name: "Basics",
-    cleanedName: cleanName("Basics"),
+    name: "Incoming",
+    cleanedName: cleanName("Incoming"),
+    userId: userIds[0],
+  },
+  {
+    id: uuidv7(),
+    name: "Dining Out",
+    cleanedName: cleanName("Dining Out"),
+    userId: userIds[0],
+  },
+  {
+    id: uuidv7(),
+    name: "Fitness",
+    cleanedName: cleanName("Fitness"),
+    userId: userIds[0],
+  },
+  {
+    id: uuidv7(),
+    name: "Shopping",
+    cleanedName: cleanName("Shopping"),
     userId: userIds[0],
   },
   {
     id: uuidv7(),
     name: "Groceries",
     cleanedName: cleanName("Groceries"),
+    userId: userIds[0],
+  },
+  {
+    id: uuidv7(),
+    name: "Transportaion",
+    cleanedName: cleanName("Transportaion"),
     userId: userIds[0],
   },
   {

@@ -143,13 +143,36 @@ export const TransactionDetails: React.FC<Props> = props => {
           ID: <code className="bg-slate-200 rounded-md p-1">{t.id}</code>
         </div>
         <div className="grid grid-cols-[20%_80%]">
+          <div className="mr-2 font-semibold text-right">Type:</div>
+          <div>
+            <div>
+              <label>
+                <input
+                  type="radio"
+                  // defaultChecked={form.type === "outgoing"}
+                  checked={form.type === "outgoing"}
+                  value="outgoing"
+                  onChange={e => setForm({ ...form, type: e.target.value })}
+                />
+                Outgoing
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  checked={form.type === "incoming"}
+                  value="incoming"
+                  onChange={e => setForm({ ...form, type: e.target.value })}
+                />
+                Incoming
+              </label>
+            </div>
+          </div>
           <div className="mr-2 font-semibold text-right">Account:</div>
           <div className="w-fit">
             <DropdownSelector
               field="account"
               options={Object.values(accounts)}
               disableBlankSelection={true}
-              // selected={form.accountId ? accounts[form.accountId].id : ""}
               selected={form.accountId ? form.accountId : ""}
               onChange={handleChangeForm("account")}
             />

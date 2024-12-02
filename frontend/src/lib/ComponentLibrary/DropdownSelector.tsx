@@ -25,7 +25,7 @@ export const DropdownSelector: React.FC<Props> = props => {
   return (
     // <div className="inline-block hover:cursor-pointer">
     <label htmlFor={field} className="flex">
-      <div className="mr-2 lg:hidden w-24 text-right text-bold">
+      <div className="mr-2 lg:hidden lg:w-24 text-right text-bold">
         {displayText}
       </div>
       <div className="inline-block bg-gray-100 border-2 rounded-lg hover:border-gray-300 focus-within:ring-red-500 focus:border-blue-500 ">

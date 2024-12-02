@@ -15,6 +15,7 @@ import { ApiError } from "../../utils/classes/ApiError"
 import { listTransactionsThunk } from "../../utils/thunks/transactions"
 import { CreateTransaction } from "./CreateTransaction"
 import { AnimatePresence, motion } from "motion/react"
+import { SearchBar } from "./SearchBar"
 
 type Transaction = ApiTypes.Transaction.ListResponse
 
@@ -72,11 +73,11 @@ export const TransactionsList: React.FC = () => {
         className="flex flex-col justify-between bg-grass-100
       px-4 py-4 rounded-2xl space-y-4"
       >
-        <div className="flex flex-row justify-around">
-          <div>
+        <div className="flex flex-row justify-around items-center">
+          <div className="w-1/4">
             <motion.button
               whileTap={{ scale: 0.95 }}
-              onClick={e => setShowAddItem(!showAddItem)}
+              onClick={() => setShowAddItem(!showAddItem)}
               className={`
                 px-4 rounded-md border-2 
               ${!showAddItem ? "bg-grass-700" : "bg-grass-300"}
@@ -87,7 +88,7 @@ export const TransactionsList: React.FC = () => {
               Add Transaction
             </motion.button>
           </div>
-          <div>Search (coming soon)</div>
+          <SearchBar />
         </div>
         <AnimatePresence>
           {showAddItem && (
@@ -104,6 +105,7 @@ export const TransactionsList: React.FC = () => {
             <th className="py-2 pl-2 text-left">
               <input
                 type="checkbox"
+                name="allTransactions"
                 checked={checkAllItems}
                 onChange={handleSelectAllItems}
                 onClick={e => e.stopPropagation()}

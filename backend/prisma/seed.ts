@@ -16,36 +16,36 @@ async function main() {
     const result = await prisma.user.create({
       data: x,
     })
-    console.log(`Created user with id: ${result.id}`)
   }
+  console.log(`Seeded users`)
 
   for (const x of accounts) {
     const result = await prisma.account.create({
       data: x,
     })
-    console.log(`Created user with id: ${result.id}`)
   }
+  console.log(`Seeded accounts`)
 
   for (const x of categories) {
     const result = await prisma.category.create({
       data: x,
     })
-    console.log(`Created user with id: ${result.id}`)
   }
+  console.log(`Seeded categories`)
 
   for (const x of categoryMonths) {
     const result = await prisma.categoryMonth.create({
       data: x,
     })
-    console.log(`Created user with id: ${result.id}`)
   }
+  console.log(`Seeded category months`)
 
   for (const x of transactions) {
     const result = await prisma.transaction.create({
       data: x,
     })
-    console.log(`Created user with id: ${result.id}`)
   }
+  console.log(`Seeded transactions`)
 
   console.log(`Seeding finished.`)
 }

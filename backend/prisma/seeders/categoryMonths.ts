@@ -8,43 +8,59 @@ const userIds = users.map(user => user.id)
 const user1CatIds = user1Cat.map(cat => cat.id)
 const user2CatIds = user2Cat.map(cat => cat.id)
 
-export const categoryMonths: Prisma.CategoryMonthCreateManyInput[] = [
+export const user1CategoryMonths: Prisma.CategoryMonthCreateManyInput[] = [
   /** user 1 */
   {
     id: uuidv7(),
     userId: userIds[0],
-    categoryId: user1CatIds[0],
+    categoryId: user1CatIds[0], // Basics
     month: "2024-11",
-    amount: 300000,
+    amount: 400000,
   },
   {
     id: uuidv7(),
     userId: userIds[0],
-    categoryId: user1CatIds[0],
-    month: "2024-12",
-    amount: 300000,
+    categoryId: user1CatIds[1], // Dining out
+    month: "2024-11",
+    amount: 200000,
   },
   {
     id: uuidv7(),
     userId: userIds[0],
-    categoryId: user1CatIds[1],
+    categoryId: user1CatIds[2], // Fitness
     month: "2024-11",
     amount: 40000,
   },
   {
     id: uuidv7(),
     userId: userIds[0],
-    categoryId: user1CatIds[1],
-    month: "2024-12",
-    amount: 40000,
+    categoryId: user1CatIds[3], // Shopping
+    month: "2024-11",
+    amount: 150000,
   },
   {
     id: uuidv7(),
     userId: userIds[0],
-    categoryId: user1CatIds[2],
+    categoryId: user1CatIds[4], // Groceries
     month: "2024-11",
-    amount: 300000,
+    amount: 25000,
   },
+  {
+    id: uuidv7(),
+    userId: userIds[0],
+    categoryId: user1CatIds[5], // Transportation
+    month: "2024-11",
+    amount: 20000,
+  },
+  {
+    id: uuidv7(),
+    userId: userIds[0],
+    categoryId: user1CatIds[6], // Travel
+    month: "2024-11",
+    amount: 800000,
+  },
+]
+export const user2CategoryMonths: Prisma.CategoryMonthCreateManyInput[] = [
   /** user 2 */
   {
     id: uuidv7(),
@@ -54,3 +70,5 @@ export const categoryMonths: Prisma.CategoryMonthCreateManyInput[] = [
     amount: 500000,
   },
 ]
+
+export const categoryMonths = [...user1CategoryMonths, ...user2CategoryMonths]

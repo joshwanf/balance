@@ -47,6 +47,7 @@ export const TransactionCard: React.FC<Props> = props => {
       <td onClick={e => e.stopPropagation()} className="pl-2">
         <input
           type="checkbox"
+          name={t.id}
           checked={checked}
           onChange={onChange}
           onClick={e => e.stopPropagation()}
@@ -56,7 +57,7 @@ export const TransactionCard: React.FC<Props> = props => {
       <td>{t.payee}</td>
       <td>{accounts[t.accountId]?.name}</td>
       <td className="py-2 text-left">{tAmount.format()}</td>
-      <td>{t.categoryId ? categories[t.categoryId].name : "(unassigned)"}</td>
+      <td>{t.categoryId ? categories[t.categoryId]?.name : "(unassigned)"}</td>
       <AnimatePresence>
         {showModal && (
           <SideModal

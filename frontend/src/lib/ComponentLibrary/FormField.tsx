@@ -9,7 +9,7 @@ export const FormField: React.FC<Props> = props => {
   const { field, displayText, placeholder, value, onChange, ...rest } = props
   return (
     <label htmlFor={field} className="flex">
-      <div className="mr-2 lg:hidden w-24 text-right">{displayText}</div>
+      <div className="mr-2 lg:hidden lg:w-24 text-right">{displayText}</div>
       <input
         className="bg-transparent py-0.5 pl-2 
         border-2 border-grass-300 rounded-md 

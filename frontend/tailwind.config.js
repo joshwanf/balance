@@ -25,6 +25,9 @@ export default {
         "grass-800": "#525e5e",
         "grass-900": "#313838",
       },
+      animation: {
+        "spin-slow": "spin 3s linear infinite",
+      },
     },
   },
   plugins: [],

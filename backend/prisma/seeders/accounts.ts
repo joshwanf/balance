@@ -5,7 +5,7 @@ import { cleanName } from "../../src/utils/helpers/cleanName"
 import { users } from "./users"
 
 const userIds = users.map(u => u.id)
-export const accounts: Prisma.AccountCreateManyInput[] = [
+export const user1Accounts: Prisma.AccountCreateManyInput[] = [
   {
     id: uuidv7(),
     name: "Schwab Checking",
@@ -16,26 +16,30 @@ export const accounts: Prisma.AccountCreateManyInput[] = [
   },
   {
     id: uuidv7(),
-    name: "Chase Private Client",
-    cleanedName: cleanName("Chase Private Client"),
-    accountType: "savings",
+    name: "Sapphire Reserved",
+    cleanedName: cleanName("Sapphire Reserved"),
+    accountType: "credit",
     // initialBalance: 10000,
     userId: userIds[0],
   },
   {
     id: uuidv7(),
-    name: "BOA",
-    cleanedName: cleanName("BOA"),
-    accountType: "checking",
+    name: "Amex Platinum",
+    cleanedName: cleanName("Amex Platinum"),
+    accountType: "credit",
     // initialBalance: 100,
-    userId: userIds[1],
+    userId: userIds[0],
   },
+]
+export const user2Accounts: Prisma.AccountCreateManyInput[] = [
   {
     id: uuidv7(),
     name: "Bank of America",
     cleanedName: cleanName("Bank of America"),
     accountType: "checking",
     // initialBalance: 40000,
-    userId: userIds[2],
+    userId: userIds[1],
   },
 ]
+
+export const accounts = [...user1Accounts, ...user2Accounts]
