@@ -331,4 +331,24 @@ export declare namespace ApiTypes {
       }
     }
   }
+
+  namespace Trend {
+    interface SearchParams {
+      startMonth: string
+      endMonth: string
+    }
+    interface OverviewRequest {}
+    interface OverviewResponse {
+      total: {
+        outgoing: number
+        incoming: number
+      }
+      categories: {
+        id: string
+        name: string
+        outgoing: number
+        incoming: number
+      }[]
+    }
+  }
 }

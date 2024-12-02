@@ -2,9 +2,12 @@ import { useState } from "react"
 import { RootState } from "../../app/store"
 import { TopBar } from "./TopBar"
 import * as Btn from "../../lib/Base/Button"
+import { useAppSelector } from "../../app/hooks"
 
 interface Props {}
 export const Landing: React.FC<Props> = props => {
+  const session = useAppSelector(state => state.session.user)
+  const url = session ? "my-balance" : ""
   return (
     <div className="bg-beige">
       <TopBar />
@@ -27,10 +30,10 @@ export const Landing: React.FC<Props> = props => {
 
           <div className="mt-[10%]">
             <a
-              href=""
+              href={url}
               className="inline-block px-6 py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-900 transition"
             >
-              Start balancing
+              Start Balancing
             </a>
           </div>
         </div>

@@ -16,7 +16,8 @@
     "migrate": "npx prisma migrate dev",
     "gen": "npx prisma generate",
     "push": "npx prisma db push",
-    "seed": "npx prisma db seed"
+    "seed": "npx prisma db seed",
+    "reseed": "npm run drop && npm run push && npm run seed"
   },
   "author": "",
   "license": "ISC",

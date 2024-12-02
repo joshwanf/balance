@@ -94,6 +94,19 @@ export const CategoryList = () => {
             </div>
             <div>
               <motion.button
+                whileTap={{ scale: 0.95 }}
+                className={`
+                px-4 rounded-md border-2 
+              ${!showEditCat ? "bg-grass-700" : "bg-grass-300"}
+              ${!showEditCat ? "text-grass-200" : "text-grass-800"}
+              ${!showEditCat ? "border-grass-700" : "border-grass-800"}
+              `}
+              >
+                Fill from previous month
+              </motion.button>
+            </div>
+            <div>
+              <motion.button
                 whileTap={isDisabledDelete ? {} : { scale: 0.95 }}
                 disabled={isDisabledDelete}
                 onClick={handleDeleteCats}

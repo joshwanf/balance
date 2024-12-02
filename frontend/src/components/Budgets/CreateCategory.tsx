@@ -83,7 +83,7 @@ export const CreateCategory: React.FC<Props> = props => {
       className="align-top shadow-xl
       bg-grass-50 py-6 px-2 rounded-lg border-2 border-grass-600"
     >
-      <div className="flex flex-col md:flex-col lg:flex-col xl:flex-row lg:space-x-2 w-fit items-center text-sm">
+      <div className="flex flex-col lg:flex-row lg:space-x-2 w-fit items-center text-sm">
         <div>
           <FormField
             field="name"
