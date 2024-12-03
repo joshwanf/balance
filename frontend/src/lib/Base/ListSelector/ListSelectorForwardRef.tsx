@@ -31,7 +31,7 @@ export const ListSelectorForwardRef: React.FC<Props> = props => {
   }, [])
 
   return (
-    <div ref={listRef}>
+    <div ref={listRef} className="border-2 border-grass-300 rounded-lg">
       {list.map(item => (
         <div
           className={`list-selector ${

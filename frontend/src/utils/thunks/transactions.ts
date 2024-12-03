@@ -42,7 +42,6 @@ export const createTransaction = createAsyncThunk<
 >("createTransaction", async (createInput, thunkApi) => {
   try {
     const res = await balance.transaction.create(createInput)
-    console.log("--", res)
     if (res instanceof ApiError) {
       return thunkApi.rejectWithValue(res)
     }

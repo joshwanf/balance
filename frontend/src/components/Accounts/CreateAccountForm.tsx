@@ -39,7 +39,7 @@ export const CreateAccountForm: React.FC<Props> = props => {
         accErrors.balance = "Must be a valid money"
       }
       if (isValidBalance && !isPositiveBalance) {
-        accErrors.balance = "Balance must be positive"
+        accErrors.balance = "Balance must be positive and above $0.00"
       }
       if (!isValidName) {
         accErrors.name = "Must have a name"
