@@ -1,13 +1,26 @@
 import { useState } from "react"
-import { RootState } from "../../app/store"
 import { TopBar } from "./TopBar"
 import * as Btn from "../../lib/Base/Button"
 import { useAppSelector } from "../../app/hooks"
+import { AnimatePresence } from "motion/react"
+import { Modal } from "../../lib/ComponentLibrary/Modal"
+import { SignupForm } from "./SignupForm"
+import { useNavigate } from "react-router"
 
 interface Props {}
 export const Landing: React.FC<Props> = props => {
+  const navigate = useNavigate()
   const session = useAppSelector(state => state.session.user)
+  const [display, setDisplay] = useState("")
   const url = session ? "my-balance" : ""
+
+  const startBalancing = () => {
+    if (session) {
+      navigate("my-balance")
+    } else {
+      setDisplay("signup")
+    }
+  }
   return (
     <div className="bg-beige">
       <TopBar />
@@ -29,15 +42,24 @@ export const Landing: React.FC<Props> = props => {
           </div>
 
           <div className="mt-[10%]">
-            <a
-              href={url}
-              className="inline-block px-6 py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-900 transition"
+            <Btn.SecondaryButton
+              onClick={startBalancing}
+              className="inline-block px-6 py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-900 transition-all duration-1000"
             >
               Start Balancing
-            </a>
+            </Btn.SecondaryButton>
           </div>
         </div>
       </div>
+      <AnimatePresence>
+        {display === "signup" && (
+          <Modal
+            selector="#authNode"
+            closeModal={() => setDisplay("")}
+            element={<SignupForm closeModal={() => setDisplay("")} />}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }

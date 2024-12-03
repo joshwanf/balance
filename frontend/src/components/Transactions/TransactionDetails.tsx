@@ -168,15 +168,15 @@ export const TransactionDetails: React.FC<Props> = props => {
             </div>
           </div>
           <div className="mr-2 font-semibold text-right">Account:</div>
-          <div className="w-fit">
-            <DropdownSelector
-              field="account"
-              options={Object.values(accounts)}
-              disableBlankSelection={true}
-              selected={form.accountId ? form.accountId : ""}
-              onChange={handleChangeForm("account")}
-            />
-          </div>
+          {/* <div className="w-fit"> */}
+          <DropdownSelector
+            field="account"
+            options={Object.values(accounts)}
+            disableBlankSelection={true}
+            selected={form.accountId ? form.accountId : ""}
+            onChange={handleChangeForm("account")}
+          />
+          {/* </div> */}
           <div className="mr-2 font-semibold text-right">Date:</div>
           <div className="w-fit">
             <EditableText

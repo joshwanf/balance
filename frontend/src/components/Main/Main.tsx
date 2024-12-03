@@ -9,6 +9,7 @@ import { Cog, SquareChevronLeft, SquareChevronRight } from "lucide-react"
 import { motion, useTime, useTransform } from "motion/react"
 import { SettingsMenu } from "./SettingsMenu"
 import { SettingsButton } from "./SettingsButton"
+import { SelectMonth } from "./SelectMonth"
 // import { useKeyPress } from "./useKeyPress"
 
 export const Main = () => {
@@ -95,7 +96,7 @@ export const Main = () => {
       </div>
       <div className="w-full pt-4 px-2 pb-6 h-screen overflow-y-auto">
         <div className="bg-white rounded-t-3xl rounded-b-3xl px-4 pb-6">
-          <TopBar />
+          <SelectMonth />
           <Outlet />
         </div>
       </div>
