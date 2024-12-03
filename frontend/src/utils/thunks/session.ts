@@ -16,12 +16,13 @@ type SessionInfo = ApiTypes.Session.LoginResponse
 export const loginThunk = createAsyncThunk<
   SafeUser,
   LoginDetails,
-  { rejectValue: ApiError }
+  // { rejectValue: ApiError }
+  { rejectValue: string }
 >("loginUser", async (loginDetails, thunkApi) => {
   const res = await balance.session.login(loginDetails)
 
   if (res instanceof ApiError) {
-    return thunkApi.rejectWithValue(res)
+    return thunkApi.rejectWithValue(res.err.message)
   }
   const {
     success: {

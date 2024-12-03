@@ -5,6 +5,7 @@ import { Money } from "../../utils/classes/Money"
 import { useAppDispatch } from "../../app/hooks"
 import { createAccountThunk } from "../../utils/thunks/account"
 import * as Btn from "../../lib/Base/Button"
+import { Errors } from "../../lib/ComponentLibrary/Errors"
 
 interface FormErrors {
   name?: string
@@ -25,18 +26,25 @@ export const CreateAccountForm: React.FC<Props> = props => {
   const handleSubmitForm = async () => {
     /** prepare form fields for submitting */
     const isValidBalance = Money.isValidMoney(acctBalance || "0")
+    const isPositiveBalance = isValidBalance
+      ? Money.parse(acctBalance || "0").isPositive()
+      : false
     const isValidName = acctName.length > 0
-    console.log(isValidBalance)
 
-    const isValidForm = isValidName && isValidBalance
+    const isValidForm = isValidName && isValidBalance && isPositiveBalance
+
     if (!isValidForm) {
       const accErrors: FormErrors = {}
       if (!isValidBalance) {
         accErrors.balance = "Must be a valid money"
       }
+      if (isValidBalance && !isPositiveBalance) {
+        accErrors.balance = "Balance must be positive"
+      }
       if (!isValidName) {
         accErrors.name = "Must have a name"
       }
+
       setFormErrors(accErrors)
     } else {
       setFormErrors({})
@@ -46,7 +54,6 @@ export const CreateAccountForm: React.FC<Props> = props => {
         accountType: acctType,
         initialBalance: pBalance.toInt(),
       }
-      console.log({ pForm })
       await dispatch(createAccountThunk(pForm))
       if (closeForm) {
         closeForm()
@@ -64,48 +71,49 @@ export const CreateAccountForm: React.FC<Props> = props => {
         <X />
       </div>
       <div>
-        <div>Name: {formErrors.name && <span>{formErrors.name}</span>}</div>
-        <TextInput text={acctName} onChange={setAcctName} />
-      </div>
-      <div>
-        Type:
-        <div className="space-x-2">
-          <label>
-            <input
-              type="radio"
-              name="accountType"
-              value="checking"
-              checked={acctType === "checking"}
-              onChange={e => setAcctType(e.target.value)}
-            />
-            Checking
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="accountType"
-              value="savings"
-              checked={acctType === "savings"}
-              onChange={e => setAcctType(e.target.value)}
-            />
-            Savings
-          </label>
-        </div>
-      </div>
-      <div>
         <div>
-          Initial balance:{" "}
-          {formErrors.balance && <span>{formErrors.balance}</span>}
+          Name:
+          <TextInput text={acctName} onChange={setAcctName} />
+          {formErrors.name && <Errors errors={formErrors.name} />}
         </div>
-        <TextInput text={acctBalance} onChange={setAcctBalance} />
-      </div>
-      <div>
-        <Btn.PrimaryButton
-          additionalClasses={["py-1", "px-2", "bg-grass-50"]}
-          onClick={handleSubmitForm}
-        >
-          Add new account
-        </Btn.PrimaryButton>
+        <div>
+          Type:
+          <div className="space-x-2">
+            <label>
+              <input
+                type="radio"
+                name="accountType"
+                value="checking"
+                checked={acctType === "checking"}
+                onChange={e => setAcctType(e.target.value)}
+              />
+              Checking
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="accountType"
+                value="savings"
+                checked={acctType === "savings"}
+                onChange={e => setAcctType(e.target.value)}
+              />
+              Savings
+            </label>
+          </div>
+        </div>
+        <div>
+          <div>Initial balance: </div>
+          <TextInput text={acctBalance} onChange={setAcctBalance} />
+          {formErrors.balance && <Errors errors={formErrors.balance} />}
+        </div>
+        <div>
+          <Btn.PrimaryButton
+            additionalClasses={["py-1", "px-2", "bg-grass-50"]}
+            onClick={handleSubmitForm}
+          >
+            Add new account
+          </Btn.PrimaryButton>
+        </div>
       </div>
     </div>
   )

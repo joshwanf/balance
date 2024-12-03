@@ -46,7 +46,7 @@ export const validateDate = (input: ValidateDateInput) => {
     return false
   }
 
-  const isAfter1970 = momentObj.isAfter("1970-01-01")
+  const isAfter1970 = momentObj.isSameOrAfter("1970-01-01")
   if (!isAfter1970) {
     return false
   }

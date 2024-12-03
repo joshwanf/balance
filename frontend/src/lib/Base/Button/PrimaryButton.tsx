@@ -1,4 +1,5 @@
-import { motion } from "motion/react"
+// import { motion } from "motion/react"
+import { m, LazyMotion, domAnimation } from "motion/react"
 
 interface Props {
   children: any
@@ -8,6 +9,8 @@ interface Props {
     hoverBgColor?: string
     borderColor?: string
     hoverBorderColor?: string
+    textColor?: string
+    hoverTextColor?: string
   }
   [key: string]: any
 }
@@ -15,12 +18,20 @@ export const PrimaryButton = (props: Props) => {
   const { children, additionalClasses, ...rest } = props
 
   const classSchema = props.classSchema || {}
-  const { bgColor, hoverBgColor, borderColor, hoverBorderColor } = classSchema
+  const {
+    bgColor,
+    hoverBgColor,
+    borderColor,
+    hoverBorderColor,
+    textColor,
+    hoverTextColor,
+  } = classSchema
 
   const unifiedBgColor = bgColor ?? "bg-grass-700"
   const unifiedBorderColor = borderColor ?? "border-grass-700"
   const unifiedHoverBgColor = hoverBgColor ?? "hover:bg-grass-600"
   const unifiedHoverBorderColor = hoverBorderColor ?? "hover:border-grass-600"
+  const unifiedTextColor = textColor ?? "text-white"
 
   const defaultClasses = [
     "px-3",
@@ -30,7 +41,8 @@ export const PrimaryButton = (props: Props) => {
     unifiedBorderColor,
     "border-2",
     "rounded-md",
-    "text-white",
+    // "text-white",
+    unifiedTextColor,
     unifiedHoverBgColor,
     unifiedHoverBorderColor,
     "active:bg-grass-800",
@@ -45,12 +57,14 @@ export const PrimaryButton = (props: Props) => {
   ].join(" ")
 
   return (
-    <motion.button
-      whileTap={{ scale: 0.95 }}
-      className={unifiedClassNames}
-      {...rest}
-    >
-      {children}
-    </motion.button>
+    <LazyMotion features={domAnimation}>
+      <m.button
+        whileTap={{ scale: 0.95 }}
+        className={unifiedClassNames}
+        {...rest}
+      >
+        {children}
+      </m.button>
+    </LazyMotion>
   )
 }

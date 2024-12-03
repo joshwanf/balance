@@ -35,7 +35,8 @@ const login: SubmitLogin = async loginDetails => {
   const url = "/api/session/login"
   const response = await pfetch(url, loginDetails)
   if (!response.ok) {
-    throw new ApiError(await response.json(), response.status)
+    const error = await response.json()
+    return new ApiError(error, response.status)
   }
   const data = await response.json()
   return data

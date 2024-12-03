@@ -1,4 +1,4 @@
-// import "./ListSelector.css"
+import "./ListSelector.css"
 
 interface Props {
   inputValue: string

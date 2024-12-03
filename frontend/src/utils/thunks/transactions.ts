@@ -53,7 +53,7 @@ export const createTransaction = createAsyncThunk<
       return thunkApi.rejectWithValue(e)
     } else {
       return thunkApi.rejectWithValue(
-        new ApiError({ title: "unknown error", status: 400, error: e }, 400),
+        new ApiError({ title: "unknown error", status: 400, message: e }, 400),
       )
     }
   }

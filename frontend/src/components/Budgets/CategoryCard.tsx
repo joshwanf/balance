@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useAppDispatch, useAppSelector } from "../../app/hooks"
 import { EditableText } from "../../lib/ComponentLibrary/EditableText"
 import { Money } from "../../utils/classes/Money"
-import { ApiTypes } from "../../types/api"
+import type { ApiTypes } from "../../types/api"
 import { changeCategoryThunk } from "../../utils/thunks/category"
 
 interface ChangeForm {

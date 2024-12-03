@@ -46,7 +46,7 @@ export const transactionsSlice = createAppSlice({
       const rejectedValue = action.payload
       if (rejectedValue instanceof ApiError) {
         const { err } = rejectedValue
-        const errors = err.error as { msg: string; path: string }[]
+        const errors = err.message as { msg: string; path: string }[]
         state.error = {}
         for (const e of errors) {
           state.error[e.path] = e.msg

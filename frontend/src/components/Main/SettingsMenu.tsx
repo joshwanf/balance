@@ -1,7 +1,6 @@
-import { Cog, LogOut } from "lucide-react"
-import { motion, useTime, useTransform } from "motion/react"
+import { LogOut } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
-import * as Btn from "../../lib/Base/Button"
+import { SecondaryButton } from "../../lib/Base/Button"
 import { useAppDispatch } from "../../app/hooks"
 import balance from "../../utils/api"
 import { logout, setCurMonth } from "../../features/sessionSlice"
@@ -63,7 +62,7 @@ export const SettingsMenu: React.FC<Props> = props => {
       </div> */}
       {/* {showMenu && ( */}
       <div className="absolute bottom-20 left-2 p-2 border-2 rounded-lg bg-grass-300 border-grass-700 text-grass-800">
-        <Btn.SecondaryButton
+        <SecondaryButton
           onClick={handleLogout}
           additionalClasses={[
             "py-0.5",
@@ -81,7 +80,7 @@ export const SettingsMenu: React.FC<Props> = props => {
         >
           <LogOut size={16} className="mr-2" />
           Logout
-        </Btn.SecondaryButton>
+        </SecondaryButton>
         <div>User settings</div>
       </div>
       {/* )} */}

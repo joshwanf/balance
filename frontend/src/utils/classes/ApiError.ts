@@ -1,7 +1,8 @@
 type Error = {
   title: string
   status: number
-  error: any
+  message?: any
+  error?: any
 }
 export class ApiError {
   constructor(

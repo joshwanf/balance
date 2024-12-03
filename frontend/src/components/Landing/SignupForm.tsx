@@ -17,7 +17,6 @@ interface FormErrors {
   confirmPassword?: string
 }
 interface Props {
-  // setIsLoggedIn: (input: boolean) => void
   closeModal: () => void
 }
 export const SignupForm: React.FC<Props> = props => {
@@ -38,10 +37,6 @@ export const SignupForm: React.FC<Props> = props => {
 
   const handleChangeForm = (field: string) => (input: string) => {
     setForm({ ...form, [field]: input })
-    try {
-    } catch (e) {
-      console.log(e)
-    }
   }
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -84,16 +79,16 @@ export const SignupForm: React.FC<Props> = props => {
       }
     } catch (e) {
       if (e instanceof ApiError) {
-        console.log(e)
+        // console.log(e)
         setErrors(e.err.error)
       }
     }
   }
 
   return (
-    <div className="border-2 bg-white rounded-md p-4 m-6 space-y-2">
+    <div className="border-2 bg-white rounded-md p-4 m-6">
       {errors && <Errors errors={errors} />}
-      <form onSubmit={handleSignUp}>
+      <form onSubmit={handleSignUp} className="space-y-2">
         <div>
           <div>
             <p>First name</p>

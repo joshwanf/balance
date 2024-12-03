@@ -1,5 +1,6 @@
 import {
   Chart as ChartJS,
+  Colors,
   CategoryScale,
   LinearScale,
   BarElement,
@@ -11,31 +12,45 @@ import {
 import { Bar } from "react-chartjs-2"
 import { useRef, useState } from "react"
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  Colors,
+)
 
 interface Props {
   categories:
     | {
         name: string
-        outgoing: number
+        outgoing: Array<number>
       }[]
     | null
+  labels: string[]
 }
 
 export const OverviewChart: React.FC<Props> = props => {
-  const { categories, ...rest } = props
-  const labels = categories?.map(c => c.name) || []
-  const yVals = categories?.map(c => c.outgoing) || []
+  const { categories, labels, ...rest } = props
+  const datasets =
+    categories?.map(c => ({
+      label: c.name,
+      data: c.outgoing,
+    })) || []
+
   const data = {
     labels: labels,
-    datasets: [
-      {
-        label: "My First dataset",
-        backgroundColor: "rgb(255, 99, 132)",
-        borderColor: "rgb(255, 99, 132)",
-        data: yVals,
-      },
-    ],
+    datasets: datasets,
+    // datasets: [
+    //   {
+    //     label: "My First dataset",
+    //     backgroundColor: "rgb(255, 99, 132)",
+    //     borderColor: "rgb(255, 99, 132)",
+    //     data: yVals,
+    //   },
+    // ],
   }
   const options = {
     aspectRatio: 1,
@@ -61,10 +76,37 @@ export const OverviewChart: React.FC<Props> = props => {
     },
   }
 
+  const newData = {
+    labels: ["month1", "month2", "month3"],
+    datasets: [
+      {
+        label: "category1",
+        backgroundColor: "pink",
+        data: [1, 2, 3],
+      },
+      {
+        label: "category2",
+        backgroundColor: "green",
+        data: [undefined, 2, 3],
+      },
+      {
+        label: "category3",
+        backgroundColor: "blue",
+        data: [undefined, undefined, undefined],
+      },
+      {
+        label: "category4",
+        backgroundColor: "yellow",
+        data: [undefined, 2, undefined],
+      },
+    ],
+  }
+
   const config = {
     type: "bar",
     data: data,
   }
 
+  // return <Bar data={data} options={options} />
   return <Bar data={data} options={options} />
 }
