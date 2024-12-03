@@ -65,7 +65,6 @@ export const TransactionDetails: React.FC<Props> = props => {
       try {
         const newAmount = Money.parse(newValue)
         formWithUpdatedData.amount = newAmount.toInt()
-        console.log({ formWithUpdatedData })
       } catch (e) {
         if (typeof e === "string") {
           return setFormErrors({ amount: e })

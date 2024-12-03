@@ -13,7 +13,7 @@ export const EditableText = (props: Props) => {
   const divRef = useRef<HTMLDivElement>(null)
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    editText(e.currentTarget.textContent || "")
+    // editText(e.currentTarget.textContent || "")
     e.stopPropagation()
     if (e.key === "Enter") {
       e.preventDefault()
