@@ -1,4 +1,4 @@
-import { motion } from "motion/react"
+import { m, LazyMotion, domAnimation } from "motion/react"
 
 interface Props {
   children: any
@@ -43,12 +43,14 @@ export const TertiaryButton: React.FC<Props> = props => {
   ].join(" ")
 
   return (
-    <motion.button
-      whileTap={{ scale: 0.95 }}
-      className={unifiedClassNames}
-      {...rest}
-    >
-      {children}
-    </motion.button>
+    <LazyMotion features={domAnimation}>
+      <m.button
+        whileTap={{ scale: 0.95 }}
+        className={unifiedClassNames}
+        {...rest}
+      >
+        {children}
+      </m.button>
+    </LazyMotion>
   )
 }

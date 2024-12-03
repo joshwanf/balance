@@ -8,7 +8,7 @@ interface Props {
 export const FormField: React.FC<Props> = props => {
   const { field, displayText, placeholder, value, onChange, ...rest } = props
   return (
-    <label htmlFor={field} className="grid grid-cols-2">
+    <label htmlFor={field} className="grid grid-cols-[30%_70%]">
       <div className="mr-2 justify-self-end">{displayText}</div>
       <input
         className="bg-transparent py-0.5 pl-2 

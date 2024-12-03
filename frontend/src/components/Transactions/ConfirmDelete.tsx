@@ -1,5 +1,4 @@
-import { motion } from "motion/react"
-import * as Btn from "../../lib/Base/Button"
+import { PrimaryButton } from "../../lib/Base/Button"
 interface Props {
   closeModal: () => void
   deleteT: (e: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) => void
@@ -7,30 +6,29 @@ interface Props {
 export const ConfirmDelete: React.FC<Props> = props => {
   const { closeModal, deleteT, ...rest } = props
   return (
-    <motion.div
-      // initial={{ scale: 0, opacity: 0 }}
-      // animate={{ scale: 1, opacity: 1 }}
-      // exit={{ scale: 0, opacity: 0 }}
-      className="bg-white p-6 space-y-2 rounded-md"
-    >
+    <div className="bg-white p-6 space-y-2 rounded-md">
       <div>Are you sure you want to delete the transaction?</div>
       <div className="space-x-4">
-        <Btn.PrimaryButton
+        <PrimaryButton
           additionalClasses={[
             "px-6",
             "py-0.5",
             "rounded-md",
-            "bg-slate-200",
-            "text-red-600",
             "font-semibold",
-            "hover:bg-red-700",
             "hover:text-white",
           ]}
           onClick={deleteT}
+          classSchema={{
+            bgColor: "bg-slate-200",
+            hoverBgColor: "hover:bg-red-700",
+            borderColor: "bg-slate-200",
+            hoverBorderColor: "hover:bg-red-700",
+            textColor: "text-red-600",
+          }}
         >
           Delete
-        </Btn.PrimaryButton>
-        <Btn.PrimaryButton
+        </PrimaryButton>
+        <PrimaryButton
           additionalClasses={[
             "px-6",
             "py-0.5",
@@ -43,8 +41,8 @@ export const ConfirmDelete: React.FC<Props> = props => {
           onClick={closeModal}
         >
           Cancel
-        </Btn.PrimaryButton>
+        </PrimaryButton>
       </div>
-    </motion.div>
+    </div>
   )
 }

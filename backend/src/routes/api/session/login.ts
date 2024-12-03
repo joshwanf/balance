@@ -50,7 +50,7 @@ const route: Handler = async (req, res, next) => {
   if (!result) {
     return next({
       title: "Login",
-      message: "Couldn't find user",
+      message: "Couldn't find user, check login info",
       status: 404,
     })
   }

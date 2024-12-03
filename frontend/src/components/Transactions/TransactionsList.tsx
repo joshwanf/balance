@@ -1,21 +1,13 @@
 import { useEffect, useState } from "react"
 import { useAppSelector, useAppDispatch } from "../../app/hooks"
-import { selectUser } from "../../features/sessionSlice"
-import balance from "../../utils/api"
-import { ApiTypes } from "../../types/api"
+import type { ApiTypes } from "../../types/api"
 import { TransactionCard } from "./TransactionCard"
-import {
-  addManyTs,
-  selectTArr,
-  memoizedSelectTArr,
-  selectTransactions,
-} from "../../features/transactionsSlice"
-import { addManyCategories } from "../../features/categoriesSlice"
-import { ApiError } from "../../utils/classes/ApiError"
+import { memoizedSelectTArr } from "../../features/transactionsSlice"
 import { listTransactionsThunk } from "../../utils/thunks/transactions"
 import { CreateTransaction } from "./CreateTransaction"
-import { AnimatePresence, motion } from "motion/react"
+import { AnimatePresence } from "motion/react"
 import { SearchBar } from "./SearchBar"
+import { PrimaryButton } from "../../lib/Base/Button"
 
 type Transaction = ApiTypes.Transaction.ListResponse
 
@@ -75,8 +67,7 @@ export const TransactionsList: React.FC = () => {
       >
         <div className="flex flex-row justify-around items-center">
           <div className="w-1/4">
-            <motion.button
-              whileTap={{ scale: 0.95 }}
+            <PrimaryButton
               onClick={() => setShowAddItem(!showAddItem)}
               className={`
                 px-4 rounded-md border-2 
@@ -86,7 +77,7 @@ export const TransactionsList: React.FC = () => {
               `}
             >
               Add Transaction
-            </motion.button>
+            </PrimaryButton>
           </div>
           <SearchBar />
         </div>

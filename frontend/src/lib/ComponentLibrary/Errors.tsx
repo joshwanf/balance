@@ -5,7 +5,7 @@ export const Errors: React.FC<Props> = ({ errors }) => {
   const baseTwClasses = []
   if (typeof errors === "string") {
     return (
-      <div className="error bg-red-100 border-2 border-red-300 rounded-md text-center">
+      <div className="error bg-red-100 border-2 border-red-300 rounded-md text-center text-wrap">
         {errors}
       </div>
     )

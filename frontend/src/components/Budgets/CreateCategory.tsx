@@ -1,11 +1,13 @@
 import { useState } from "react"
-import { FormField } from "../../lib/ComponentLibrary/FormField"
 import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import { motion } from "motion/react"
+import { m, LazyMotion, domAnimation } from "motion/react"
+import { CirclePlus } from "lucide-react"
 import { createCategoriesThunk } from "../../utils/thunks/category"
 import { ApiError } from "../../utils/classes/ApiError"
 import { Money } from "../../utils/classes/Money"
-import { CirclePlus } from "lucide-react"
+import { FormField } from "../../lib/ComponentLibrary/FormField"
+import { PrimaryButton } from "../../lib/Base/Button"
+import { Errors } from "../../lib/ComponentLibrary/Errors"
 
 type CreateErrors = { name?: string; amount?: string }
 interface Props {
@@ -49,7 +51,7 @@ export const CreateCategory: React.FC<Props> = props => {
         }
       } catch (e) {
         if (e instanceof ApiError) {
-          setCreateErrors({ ...e.err.error })
+          setCreateErrors({ ...e.err.message })
         }
       }
     } else {
@@ -58,68 +60,67 @@ export const CreateCategory: React.FC<Props> = props => {
         accErrors.name = "Name must be filled out"
       }
       if (!/\d+/.test(form.amount)) {
-        accErrors.amount = "Amount must be a valid dollar amount"
+        accErrors.amount = "Amount must be a valid positive dollar amount"
       }
       setCreateErrors(accErrors)
     }
   }
   return (
-    <motion.div
-      key="createTransaction"
-      initial={{ height: 0, opacity: 0 }}
-      animate={{
-        height: "auto",
-        opacity: 1,
-        transition: {
-          height: { duration: 0.2 },
-          opacity: { duration: 0.1, delay: 0.2 },
-        },
-      }}
-      exit={{
-        height: 0,
-        opacity: 0,
-        transition: { height: { duration: 0.2 }, opacity: { duration: 0.2 } },
-      }}
-      className="align-top shadow-xl
+    <LazyMotion features={domAnimation}>
+      <m.div
+        key="createCategory"
+        initial={{ height: 0, opacity: 0 }}
+        animate={{
+          height: "auto",
+          opacity: 1,
+          transition: {
+            height: { duration: 0.2 },
+            opacity: { duration: 0.1, delay: 0.2 },
+          },
+        }}
+        exit={{
+          height: 0,
+          opacity: 0,
+          transition: { height: { duration: 0.2 }, opacity: { duration: 0.2 } },
+        }}
+        className="align-top shadow-xl
       bg-grass-50 py-6 px-2 rounded-lg border-2 border-grass-600"
-    >
-      <div className="flex flex-col lg:flex-row lg:space-x-2 w-fit items-center text-sm">
-        <div>
-          <FormField
-            field="name"
-            displayText="Name"
-            placeholder="Category name..."
-            value={form.name}
-            onChange={e => handleChangeForm(e)}
-          />
-          {createErrors.name && <div>{createErrors.name}</div>}
+      >
+        <div className="flex flex-col lg:flex-row lg:space-x-2 w-fit items-center text-sm">
+          <div>
+            <FormField
+              field="name"
+              displayText="Name"
+              placeholder="Category name..."
+              value={form.name}
+              onChange={e => handleChangeForm(e)}
+            />
+            {createErrors.name && <Errors errors={createErrors.name} />}
+          </div>
+          <div>
+            <FormField
+              field="amount"
+              displayText="Amount"
+              placeholder="Amount..."
+              value={form.amount}
+              onChange={e => handleChangeForm(e)}
+            />
+            {createErrors.amount && <Errors errors={createErrors.amount} />}
+          </div>
+          {/* </div> */}
+          <div>
+            <PrimaryButton
+              onClick={handleSubmitForm}
+              className={`${addCatButtonClassnames}
+              flex items-center
+              border-2 border-grass-300 rounded-md px-4`}
+            >
+              <CirclePlus size={18} />
+              Add new category
+            </PrimaryButton>
+          </div>
         </div>
-        <div>
-          <FormField
-            field="amount"
-            displayText="Amount"
-            placeholder="Amount..."
-            value={form.amount}
-            onChange={e => handleChangeForm(e)}
-          />
-          {createErrors.amount && <div>{createErrors.amount}</div>}
-        </div>
-        {/* </div> */}
-        <div>
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={handleSubmitForm}
-            className={`
-          ${addCatButtonClassnames}
-          flex items-center
-          border-2 border-grass-300 rounded-md px-4 
-        `}
-          >
-            <CirclePlus size={18} />
-            Add new category
-          </motion.button>
-        </div>
-      </div>
-    </motion.div>
+      </m.div>
+    </LazyMotion>
   )
 }

@@ -8,6 +8,7 @@ import { OverviewChart } from "./OverviewChart"
 import moment from "moment"
 import { Link } from "react-router"
 import { MonthRangeSelector } from "./MonthRangeSelector"
+import { diffMonths } from "../../../utils/helpers/date"
 
 type OverviewResponse = ApiTypes.Trend.OverviewResponse
 interface Props {}
@@ -25,6 +26,14 @@ export const Overview: React.FC<Props> = props => {
     startMonth: moment().format("YYYY-MM"),
     endMonth: moment().add(1, "month").format("YYYY-MM"),
   })
+  const numMonths = diffMonths(selectedRange.startMonth, selectedRange.endMonth)
+  const months: string[] = []
+  const starting = moment(selectedRange.startMonth, "YYYY-MM", true)
+  for (let i = 0; i < numMonths; i++) {
+    /** Moment objects are mutable... */
+    months.push(starting.format("YYYY-MM"))
+    starting.add(1, "month").format("YYYY-MM")
+  }
 
   useEffect(() => {
     const getData = async () => {
@@ -42,12 +51,12 @@ export const Overview: React.FC<Props> = props => {
     }
     getData().then(r => {
       if (r) {
-        const { total, categories } = r
+        const { summary, categories } = r
         const sortedOutgoing = [...categories]
           .sort((a, b) => {
-            if (a.outgoing < b.outgoing) {
+            if (a.name < b.name) {
               return -1
-            } else if (a.outgoing > b.outgoing) {
+            } else if (a.name > b.name) {
               return 1
             } else {
               return a.id < b.id ? -1 : 1
@@ -55,7 +64,12 @@ export const Overview: React.FC<Props> = props => {
           })
           .map(c => ({
             ...c,
-            outgoing: Money.fromCents(c.outgoing.toString()).dollars,
+            outgoing: c.outgoing.map(
+              o => Money.fromCents(o?.toString() || "0").dollars,
+            ),
+            incoming: c.incoming.map(
+              i => Money.fromCents(i?.toString() || "0").dollars,
+            ),
           }))
         setData(r)
         setOutgoing(sortedOutgoing)
@@ -68,8 +82,8 @@ export const Overview: React.FC<Props> = props => {
   }
 
   const total = {
-    outgoing: Money.fromCents(data.total.outgoing.toString()),
-    incoming: Money.fromCents(data.total.incoming.toString()),
+    outgoing: Money.fromCents(data.summary.total.outgoing.toString()),
+    incoming: Money.fromCents(data.summary.total.incoming.toString()),
   }
 
   return (
@@ -77,10 +91,8 @@ export const Overview: React.FC<Props> = props => {
       <div>
         <Link to="../">Trends</Link> &gt; <Link to="">Overview</Link>
       </div>
+
       <MonthRangeSelector setSelectedRange={setSelectedRange} />
-      <h1 className="font-bold">
-        {moment(curMonth, "YYYY-MM").format("MMMM YYYY")} Overview
-      </h1>
 
       <div>
         You spent {total.outgoing.format()} and brought in{" "}
@@ -88,7 +100,7 @@ export const Overview: React.FC<Props> = props => {
         {selectedRange.diff === 1 ? "month" : "months"}.
       </div>
       <div className="w-1/2">
-        <OverviewChart categories={outgoing} />
+        <OverviewChart categories={outgoing} labels={months} />
       </div>
     </div>
   )

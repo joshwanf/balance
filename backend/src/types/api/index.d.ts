@@ -17,7 +17,7 @@ export declare namespace ApiTypes {
   type CustomRouteHandler<TReq, TRes> = (
     req: Request<ParamsDictionary, {}, TReq, ParsedQs>,
     res: Response<TRes>,
-    next: NextFunction
+    next: NextFunction,
   ) => Promise<void> | void
 
   namespace Session {
@@ -306,15 +306,21 @@ export declare namespace ApiTypes {
     }
     interface OverviewRequest {}
     interface OverviewResponse {
-      total: {
-        outgoing: number
-        incoming: number
+      summary: {
+        total: {
+          outgoing: number
+          incoming: number
+        }
+        byMonth: {
+          outgoing: Array<number | undefined>
+          incoming: Array<number | undefined>
+        }
       }
       categories: {
         id: string
         name: string
-        outgoing: number
-        incoming: number
+        outgoing: Array<number>
+        incoming: Array<number>
       }[]
     }
   }

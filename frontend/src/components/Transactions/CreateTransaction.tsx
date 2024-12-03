@@ -5,13 +5,12 @@ import { selectCategories } from "../../features/categoriesSlice"
 import { DropdownSelector } from "../../lib/ComponentLibrary/DropdownSelector"
 import { memoizedSelectAArr } from "../../features/accountsSlice"
 import { createTransaction } from "../../utils/thunks/transactions"
-import { motion } from "motion/react"
+import { m, LazyMotion, domAnimation } from "motion/react"
 import { Money } from "../../utils/classes/Money"
 import moment from "moment"
 import { validateDate } from "../../utils/helpers/date"
 import { Errors } from "../../lib/ComponentLibrary/Errors"
 
-type Account = { id: string; name: string }
 type CreateErrors = {
   account?: string
   date?: string
@@ -96,87 +95,89 @@ export const CreateTransaction: React.FC<Props> = props => {
   }
 
   return (
-    <motion.div
-      key="createTransaction"
-      initial={{ height: 0, opacity: 0 }}
-      animate={{
-        height: "auto",
-        opacity: 1,
-        transition: {
-          height: { duration: 0.2 },
-          opacity: { duration: 0.1, delay: 0.2 },
-        },
-      }}
-      exit={{
-        height: 0,
-        opacity: 0,
-        transition: { height: { duration: 0.1 } },
-      }}
-      className="align-top shadow-xl
+    <LazyMotion features={domAnimation}>
+      <m.div
+        key="createTransaction"
+        initial={{ height: 0, opacity: 0 }}
+        animate={{
+          height: "auto",
+          opacity: 1,
+          transition: {
+            height: { duration: 0.2 },
+            opacity: { duration: 0.1, delay: 0.2 },
+          },
+        }}
+        exit={{
+          height: 0,
+          opacity: 0,
+          transition: { height: { duration: 0.1 } },
+        }}
+        className="align-top shadow-xl
       bg-grass-50 py-6 px-2 rounded-lg border-2 border-grass-600"
-    >
-      {/* <div className="flex flex-col md:flex-col lg:flex-col xl:flex-row lg:space-x-2 text-sm"> */}
-      <div className="grid grid-cols-2 text-sm">
-        <FormField
-          field="date"
-          displayText="Date"
-          placeholder="YYYY-MM-DD"
-          value={form.date}
-          onChange={e => handleChangeForm(e)}
-        />
-        {createErrors.date ? (
-          <Errors errors={createErrors.date} />
-        ) : (
-          <div></div>
-        )}
-        <FormField
-          field="payee"
-          displayText="Payee"
-          placeholder="Payee"
-          value={form.payee}
-          onChange={e => handleChangeForm(e)}
-        />
-        {createErrors.payee ? (
-          <Errors errors={createErrors.payee} />
-        ) : (
-          <div></div>
-        )}
-        <DropdownSelector
-          field="account"
-          options={accounts}
-          displayText="Account"
-          disableBlankSelection={true}
-          selected={selectedAcct}
-          onChange={setSelectedAcct}
-        />
-        {createErrors.account ? (
-          <Errors errors={createErrors.account} />
-        ) : (
-          <div></div>
-        )}
-        <FormField
-          field="amount"
-          displayText="Amount"
-          placeholder="Amount"
-          value={form.amount}
-          onChange={e => handleChangeForm(e)}
-        />
-        {createErrors.amount ? (
-          <Errors errors={createErrors.amount} />
-        ) : (
-          <div></div>
-        )}
-        <DropdownSelector
-          field="category"
-          displayText="Category"
-          options={Object.values(categories)}
-          selected={selectedCat}
-          onChange={handleChangeCat}
-        />
-      </div>
-      <div>
-        <button onClick={handleSubmitForm}>Add transaction</button>
-      </div>
-    </motion.div>
+      >
+        {/* <div className="flex flex-col md:flex-col lg:flex-col xl:flex-row lg:space-x-2 text-sm"> */}
+        <div className="grid grid-cols-2 text-sm">
+          <FormField
+            field="date"
+            displayText="Date"
+            placeholder="YYYY-MM-DD"
+            value={form.date}
+            onChange={e => handleChangeForm(e)}
+          />
+          {createErrors.date ? (
+            <Errors errors={createErrors.date} />
+          ) : (
+            <div></div>
+          )}
+          <FormField
+            field="payee"
+            displayText="Payee"
+            placeholder="Payee"
+            value={form.payee}
+            onChange={e => handleChangeForm(e)}
+          />
+          {createErrors.payee ? (
+            <Errors errors={createErrors.payee} />
+          ) : (
+            <div></div>
+          )}
+          <DropdownSelector
+            field="account"
+            options={accounts}
+            displayText="Account"
+            disableBlankSelection={true}
+            selected={selectedAcct}
+            onChange={setSelectedAcct}
+          />
+          {createErrors.account ? (
+            <Errors errors={createErrors.account} />
+          ) : (
+            <div></div>
+          )}
+          <FormField
+            field="amount"
+            displayText="Amount"
+            placeholder="Amount"
+            value={form.amount}
+            onChange={e => handleChangeForm(e)}
+          />
+          {createErrors.amount ? (
+            <Errors errors={createErrors.amount} />
+          ) : (
+            <div></div>
+          )}
+          <DropdownSelector
+            field="category"
+            displayText="Category"
+            options={Object.values(categories)}
+            selected={selectedCat}
+            onChange={handleChangeCat}
+          />
+        </div>
+        <div>
+          <button onClick={handleSubmitForm}>Add transaction</button>
+        </div>
+      </m.div>
+    </LazyMotion>
   )
 }

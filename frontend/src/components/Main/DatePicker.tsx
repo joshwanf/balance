@@ -1,7 +1,6 @@
 import { useState } from "react"
-import { useAppSelector } from "../../app/hooks"
 import { TextInput } from "../../lib/Base/Input"
-import * as Btn from "../../lib/Base/Button"
+import { PrimaryButton } from "../../lib/Base/Button"
 import { DropdownSelector } from "../../lib/ComponentLibrary/DropdownSelector"
 import moment from "moment"
 import { validateDate } from "../../utils/helpers/date"
@@ -46,7 +45,7 @@ export const DatePicker: React.FC<Props> = props => {
   }
   return (
     <div
-      className="absolute bg-grass-100 border-2 border-grass-300 w-48 space-y-2 p-2 rounded-lg"
+      className="absolute bg-grass-100 border-2 border-grass-300 w-48 space-y-2 p-2 rounded-lg z-10"
       onClick={e => e.stopPropagation()}
     >
       <div>
@@ -73,7 +72,7 @@ export const DatePicker: React.FC<Props> = props => {
         />
         {error && <div>{error}</div>}
       </div>
-      <Btn.PrimaryButton onClick={handleClick}>Go to month</Btn.PrimaryButton>
+      <PrimaryButton onClick={handleClick}>Go to month</PrimaryButton>
     </div>
   )
 }

@@ -15,7 +15,7 @@ export const SideModal: React.FC<Props> = props => {
       {createPortal(
         <div
           onClick={closeModal}
-          className="fixed inset-0  flex justify-end items-center z-50 backdrop-blur-sm transition-opacity duration-1000"
+          className="fixed inset-0 flex justify-end items-start z-50 backdrop-blur-sm transition-opacity duration-1000"
         >
           <motion.div
             animate={{
@@ -24,7 +24,7 @@ export const SideModal: React.FC<Props> = props => {
             }}
             exit={{ opacity: 0, scale: 1.3 }}
             onClick={e => e.stopPropagation()}
-            className="bg-white h-screen shadow-lg w-1/2"
+            className="bg-white h-screen shadow-lg w-1/2 px-4"
           >
             {element}
           </motion.div>

@@ -37,10 +37,6 @@ export const SignupForm: React.FC<Props> = props => {
 
   const handleChangeForm = (field: string) => (input: string) => {
     setForm({ ...form, [field]: input })
-    try {
-    } catch (e) {
-      console.log(e)
-    }
   }
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -83,7 +79,7 @@ export const SignupForm: React.FC<Props> = props => {
       }
     } catch (e) {
       if (e instanceof ApiError) {
-        console.log(e)
+        // console.log(e)
         setErrors(e.err.error)
       }
     }

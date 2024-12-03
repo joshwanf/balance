@@ -1,11 +1,27 @@
+.tag-editable-text {
+  @apply border-0 border-grass-300 text-grass-800 outline-none;
+}
+
+.tag-editable-text:empty::before {
+  content: "Enter tags...";
+  pointer-events: none;
+}
+
+/* Optional: Prevent placeholder text when the user types */
+.tag-editable-text:focus:empty::before {
+  content: "Enter tags...";
+}
+
 .list-selector {
-  border: 1px solid red;
+  /* border: 1px solid red; */
+  @apply pl-2 py-1 rounded-lg text-grass-700 hover:bg-grass-100;
 }
 .list-selector:hover {
-  background-color: lightgray;
+  /* background-color: lightgray; */
   cursor: pointer;
 }
 
 .list-selector-highlight {
-  background-color: lightblue;
+  /* background-color: lightblue; */
+  @apply bg-grass-100;
 }

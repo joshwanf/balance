@@ -6,6 +6,7 @@ export default {
       colors: {
         "waikawa-gray": "#5a698c",
         beige: "#EDECEC",
+        "dark-beige": "#D9D9D9",
         prelude: "#c3b7dc",
         mischka: "#dbd1df",
         edgewater: "#bbdcce",

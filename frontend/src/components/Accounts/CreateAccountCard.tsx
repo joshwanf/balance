@@ -1,7 +1,4 @@
-import { FilePlus } from "lucide-react"
-import { motion } from "motion/react"
 import { useState } from "react"
-import { TextInput } from "../../lib/Base/Input"
 import { CreateAccountButton } from "./CreateAccountButton"
 import { CreateAccountForm } from "./CreateAccountForm"
 
@@ -13,9 +10,6 @@ export const CreateAccountCard: React.FC<Props> = props => {
   const [isEditing, setIsEditing] = useState(false)
   const [form, setForm] = useState({ name: "", type: "", initialBalance: "" })
 
-  const handleChangeForm = (field: string) => (value: string) => {
-    setForm({ ...form, [field]: value })
-  }
   return (
     <div>
       <div

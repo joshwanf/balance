@@ -23,6 +23,7 @@ model User {
   transactions  Transaction[]
   categories    Category[]
   CategoryMonth CategoryMonth[]
+  Tags          Tags[]
 
   @@index(fields: [email])
   @@index(fields: [username])
@@ -55,8 +56,9 @@ model Transaction {
   accountId String  @db.Uuid
   account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
-  categoryId String?   @db.Uuid
-  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  categoryId String?           @db.Uuid
+  category   Category?         @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  tags       TransactionTags[]
 }
 
 model Category {
@@ -86,4 +88,28 @@ model CategoryMonth {
 
   @@id(fields: [userId, categoryId, month])
   @@index(fields: [userId, categoryId, month])
+}
+
+model Tags {
+  id          String @unique @db.Uuid
+  name        String
+  cleanedName String
+
+  userId String @db.Uuid
+  user   User   @relation(fields: [userId], references: [id])
+
+  transactions TransactionTags[]
+
+  @@id(fields: [userId, cleanedName])
+  @@index(fields: [userId, cleanedName])
+}
+
+model TransactionTags {
+  transactionId String      @db.Uuid
+  transactions  Transaction @relation(fields: [transactionId], references: [id])
+
+  tagId String @db.Uuid
+  tags  Tags   @relation(fields: [tagId], references: [id])
+
+  @@id([transactionId, tagId])
 }

@@ -4,16 +4,12 @@ import {
   listCategoriesThunk,
   removeCategoriesThunk,
 } from "../../utils/thunks/category"
-import {
-  memoizedSelectCArr,
-  selectCategories,
-  selectCatIds,
-} from "../../features/categoriesSlice"
+import { selectCategories } from "../../features/categoriesSlice"
 import { CategoryCard } from "./CategoryCard"
-import { EditCategory } from "./EditCategory"
-import { AnimatePresence, motion } from "motion/react"
+import { AnimatePresence } from "motion/react"
 import { CreateCategory } from "./CreateCategory"
-import { EditableText } from "../../lib/ComponentLibrary/EditableText"
+import { PrimaryButton } from "../../lib/Base/Button"
+
 export const CategoryList = () => {
   const dispatch = useAppDispatch()
   const curMonth = useAppSelector(state => state.session.settings.curMonth)
@@ -79,20 +75,18 @@ export const CategoryList = () => {
         >
           <div className="flex flex-row justify-around">
             <div>
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                onClick={e => setShowEditCat(!showEditCat)}
-                className={`
-                px-4 rounded-md border-2 
-              ${!showEditCat ? "bg-grass-700" : "bg-grass-300"}
-              ${!showEditCat ? "text-grass-200" : "text-grass-800"}
-              ${!showEditCat ? "border-grass-700" : "border-grass-800"}
-              `}
+              <PrimaryButton
+                onClick={() => setShowEditCat(!showEditCat)}
+                className={`px-4 rounded-md border-2 
+                  ${!showEditCat ? "bg-grass-700" : "bg-grass-300"}
+                  ${!showEditCat ? "text-grass-200" : "text-grass-800"}
+                  ${!showEditCat ? "border-grass-700" : "border-grass-800"}
+                  `}
               >
                 Add Category
-              </motion.button>
+              </PrimaryButton>
             </div>
-            <div>
+            {/* <div>
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 className={`
@@ -104,20 +98,19 @@ export const CategoryList = () => {
               >
                 Fill from previous month
               </motion.button>
-            </div>
+            </div> */}
             <div>
-              <motion.button
-                whileTap={isDisabledDelete ? {} : { scale: 0.95 }}
+              <PrimaryButton
                 disabled={isDisabledDelete}
                 onClick={handleDeleteCats}
                 className={`px-4 rounded-md border-2 
-              ${isDisabledDelete ? "bg-grass-200" : "bg-grass-700"}
-              ${isDisabledDelete ? "text-grass-600" : "text-grass-200"}
-              ${isDisabledDelete ? "border-grass-200" : "border-grass-700"}
-              `}
+                  ${isDisabledDelete ? "bg-grass-200" : "bg-grass-700"}
+                  ${isDisabledDelete ? "text-grass-600" : "text-grass-200"}
+                  ${isDisabledDelete ? "border-grass-200" : "border-grass-700"}
+                  `}
               >
                 Delete {selectedCat.length <= 1 ? "category" : "categories"}
-              </motion.button>
+              </PrimaryButton>
             </div>
             <div>Search</div>
           </div>

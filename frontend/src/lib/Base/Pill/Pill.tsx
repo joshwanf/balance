@@ -1,4 +1,4 @@
-// import "./Pill.css"
+import "./Pill.css"
 
 interface Props {
   text: string
@@ -9,7 +9,7 @@ export const Pill = (props: Props) => {
   const { text, ...rest } = props
   return (
     <div className="pill" {...rest}>
-      <div className="pill-close">x</div>
+      <div className="pill-close">&times;</div>
       {text}
     </div>
   )
