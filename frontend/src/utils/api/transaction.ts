@@ -1,7 +1,6 @@
-import { ApiTypes } from "../../types/api"
+import type { ApiTypes } from "../../types/api"
 import { ApiError } from "../classes/ApiError"
-import { opts, pfetch } from "."
-import moment from "moment"
+import { pfetch } from "."
 
 /**
  * List all transactions

@@ -212,6 +212,7 @@ export class Money extends MoneyPredicates {
     return this.cents >= operand.cents
   }
   lt(operand: Money) {
+    console.log(this.cents, operand.cents, this.cents < operand.cents)
     return this.cents < operand.cents
   }
   lte(operand: Money) {

@@ -68,7 +68,7 @@ export const LoginForm: React.FC<Props> = ({ closeModal }) => {
 
   return (
     <div>
-      <div className="bg-white border-0 border-slate-300 rounded-md p-4 m-6 space-y-2">
+      <div className="bg-white border-0 border-slate-300 rounded-md p-4 space-y-2">
         {errors.invalid && <Errors errors={errors.invalid} />}
         <form className="space-y-2" onSubmit={handleLogin}>
           <p>Email/username</p>

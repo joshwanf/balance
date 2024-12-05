@@ -15,7 +15,7 @@ interface Props {
   [key: string]: any
 }
 export const PrimaryButton = (props: Props) => {
-  const { children, additionalClasses, ...rest } = props
+  const { children, additionalClasses, classSchema: cs, ...rest } = props
 
   const classSchema = props.classSchema || {}
   const {

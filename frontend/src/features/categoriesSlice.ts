@@ -7,7 +7,6 @@ import {
 import { createAppSlice } from "../app/createAppSlice"
 import { ApiTypes } from "../types/api"
 import { RootState } from "../app/store"
-import moment from "moment"
 
 type Category = ApiTypes.Category.TSerialized
 // type CategoryFromLogin = { id: string; name: string; month: string }
@@ -31,13 +30,9 @@ export const categoriesSlice = createAppSlice({
   reducers: {
     addManyPartialCategories(state, action: PayloadAction<CategoryFromLogin>) {
       const categories = action.payload
-      // const month = moment().format("YYYY-MM")
       for (const c of categories) {
-        // state[c.id] = { ...c, month, amount: 0, usedAmount: 0 }
         state[c.id] = c
       }
-      // const tempHydratedCategories = categories.map(c => ({ ...c, month, amount: 0, usedAmount: 0 }))
-      // state = tempHydratedCategories
     },
     addCategoryFromTransaction(
       state,

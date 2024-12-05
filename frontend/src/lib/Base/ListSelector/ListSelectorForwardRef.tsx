@@ -11,39 +11,48 @@ interface Props {
 export const ListSelectorForwardRef: React.FC<Props> = props => {
   const { inputValue, list, addToSelected, closeMenu, ...rest } = props as Props
   const listRef = useRef<HTMLDivElement>(null)
-
   const handleClick = (item: string) => (e: React.MouseEvent) => {
     e.stopPropagation()
     addToSelected(item)
   }
 
-  const handleClickOutside = (e: MouseEvent) => {
-    console.log("click outside")
-    if (listRef.current && !listRef.current.contains(e.target as Node)) {
-      closeMenu(false)
-    }
-  }
+  // const handleClickOutside = (e: MouseEvent) => {
+  //   console.log("click outside")
+  //   if (listRef.current && !listRef.current.contains(e.target as Node)) {
+  //     closeMenu(false)
+  //   }
+  // }
 
-  useEffect(() => {
-    document.addEventListener("click", handleClickOutside)
+  // useEffect(() => {
+  //   console.log("in use effect")
+  //   if (listRef.current) {
+  //     console.log("listref", listRef.current)
+  //     listRef.current.addEventListener("click", handleClickOutside)
+  //   }
 
-    return () => document.removeEventListener("click", handleClickOutside)
-  }, [])
+  //   return () => {
+  //     if (listRef.current) {
+  //       listRef.current.removeEventListener("click", handleClickOutside)
+  //     }
+  //   }
+  // }, [handleClickOutside])
 
   return (
-    <div ref={listRef} className="border-2 border-grass-300 rounded-lg">
-      {list.map(item => (
-        <div
-          className={`list-selector ${
-            inputValue && item === inputValue ? "list-selector-highlight" : ""
-          }`}
-          key={item}
-          onClick={handleClick(item)}
-          {...rest}
-        >
-          {item}
-        </div>
-      ))}
+    <div ref={listRef} className="w-full relative">
+      <div className="tag-list">
+        {list.map(item => (
+          <div
+            className={`list-selector ${
+              inputValue && item === inputValue ? "list-selector-highlight" : ""
+            }`}
+            key={item}
+            onClick={handleClick(item)}
+            {...rest}
+          >
+            {item}
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

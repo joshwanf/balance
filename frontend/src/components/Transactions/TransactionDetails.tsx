@@ -18,6 +18,7 @@ import { validateDate } from "../../utils/helpers/date"
 import { InputWithSelector } from "../../lib/ComponentLibrary/InputDropdownSelector/InputWithSelector"
 import { Errors } from "../../lib/ComponentLibrary/Errors"
 import { PrimaryButton } from "../../lib/Base/Button"
+import { TagSelector } from "./TagSelector"
 
 interface FormErrors {
   date?: string
@@ -39,7 +40,7 @@ export const TransactionDetails: React.FC<Props> = props => {
   const [formErrors, setFormErrors] = useState<FormErrors>({})
   const [showConfirmDelete, setShowConfirmDelete] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
-  const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [selectedTags, setSelectedTags] = useState<string[]>(t.tags)
 
   const handleChangeForm = (field: string) => async (newValue: string) => {
     const formWithUpdatedData: { id: string; amount?: number } & Record<
@@ -127,8 +128,6 @@ export const TransactionDetails: React.FC<Props> = props => {
       setConfirmDelete(true)
     }
   }
-
-  const fakeTags = ["Tag 1", "Tag 2", "Tag 3", "Tag 4"]
 
   return (
     <LazyMotion features={domAnimation}>
@@ -231,11 +230,12 @@ export const TransactionDetails: React.FC<Props> = props => {
             </div>
             <div className="mr-2 font-semibold text-right">Tags:</div>
             {/* <div className="w-fit"> */}
-            <InputWithSelector
+            {/* <InputWithSelector
               list={fakeTags}
               selected={selectedTags}
               setSelected={setSelectedTags}
-            />
+            /> */}
+            <TagSelector transactionId={t.id} transactionTags={t.tags} />
             {/* </div> */}
           </div>
           <div>

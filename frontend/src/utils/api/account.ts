@@ -1,7 +1,6 @@
-import { ApiTypes } from "../../types/api"
+import type { ApiTypes } from "../../types/api"
 import { ApiError } from "../classes/ApiError"
-import { opts, pfetch } from "."
-import moment from "moment"
+import { pfetch } from "."
 
 /**
  * List all accounts
@@ -75,10 +74,9 @@ const change: Change = async input => {
 interface Remove {
   (accountIds: string[]): Promise<ApiTypes.Account.RemoveResponse | ApiError>
 }
-const remove: Remove = async id => {
+const remove: Remove = async accountIds => {
   const url = `/api/account/remove`
-  const res = await pfetch(url)
-  console.log(res)
+  const res = await pfetch(url, { accountIds })
   if (!res.ok) {
     throw new ApiError(await res.json(), res.status)
   }

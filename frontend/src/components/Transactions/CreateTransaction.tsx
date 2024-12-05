@@ -7,9 +7,9 @@ import { memoizedSelectAArr } from "../../features/accountsSlice"
 import { createTransaction } from "../../utils/thunks/transactions"
 import { m, LazyMotion, domAnimation } from "motion/react"
 import { Money } from "../../utils/classes/Money"
-import moment from "moment"
 import { validateDate } from "../../utils/helpers/date"
 import { Errors } from "../../lib/ComponentLibrary/Errors"
+import dayjs from "dayjs"
 
 type CreateErrors = {
   account?: string
@@ -43,7 +43,6 @@ export const CreateTransaction: React.FC<Props> = props => {
 
   const handleSubmitForm = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    // const isValidDate = moment(form.date, "YYYY-MM-DD").isValid()
     const isValidAccount = selectedAcct.length > 0
     const isValidDate = validateDate({ date: form.date, format: "YYYY-MM-DD" })
     const isValidMoney = Money.isValidMoney(form.amount)
@@ -52,7 +51,7 @@ export const CreateTransaction: React.FC<Props> = props => {
 
     if (isValidForm) {
       const preparedAmount = Money.parse(form.amount).toInt()
-      const preparedDate = moment(form.date, "YYYY-MM-DD").format("YYYY-MM-DD")
+      const preparedDate = dayjs(form.date, "YYYY-MM-DD").format("YYYY-MM-DD")
       const preparedAccount = selectedAcct
       const preparedCatName = selectedCat
         ? categories[selectedCat].name

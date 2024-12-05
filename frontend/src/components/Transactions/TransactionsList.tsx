@@ -18,8 +18,6 @@ export const TransactionsList: React.FC = () => {
     user,
     settings: { curMonth },
   } = session
-  // const transactions = useAppSelector(state => memoizedSelectTArr(state))
-  // const transactions = useAppSelector(selectTransactions)
   const transactions = useAppSelector(memoizedSelectTArr)
   const allTransIds = transactions.map(t => t.id)
   const [selectedItem, setSelectedItem] = useState<string[]>([])

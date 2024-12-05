@@ -23,4 +23,17 @@ const overview: Overview = async input => {
   return await res.json()
 }
 
-export default { overview }
+type CompareRequest = ApiTypes.Trend.CompareRequest
+type CompareResponse = ApiTypes.Trend.CompareResponse
+type Compare = (months: CompareRequest) => Promise<CompareResponse>
+
+const compare: Compare = async months => {
+  const url = "/api/trend/compare"
+  const res = await pfetch(url, months)
+  if (!res.ok) {
+    throw new ApiError(await res.json(), res.status)
+  }
+
+  return await res.json()
+}
+export default { overview, compare }

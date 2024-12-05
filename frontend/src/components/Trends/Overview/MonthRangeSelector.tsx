@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { diffMonths, getNthMonth } from "../../../utils/helpers/date"
-import moment from "moment"
+import dayjs from "dayjs"
 
 interface Range {
   title: string
@@ -24,7 +24,7 @@ export const MonthRangeSelector: React.FC<Props> = props => {
       setSelectedRange(rangeOptions[index])
     }
 
-  const thisMonth = moment().format("YYYY-MM")
+  const thisMonth = dayjs().format("YYYY-MM")
   const nextMonth = getNthMonth(thisMonth, 1)
   const threeMonthsAgo = getNthMonth(nextMonth, -3)
   const sixMonthsAgo = getNthMonth(nextMonth, -6)

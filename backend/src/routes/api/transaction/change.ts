@@ -1,19 +1,9 @@
-import { Router } from "express"
 import { uuidv7 } from "uuidv7"
 import { PrismaClientValidationError } from "@prisma/client/runtime/library"
-import { isLoggedIn } from "../../../utils/auth"
 import { pc } from "../../../utils/prismaClient"
 import { ApiTypes } from "../../../types/api"
 import { cleanName } from "../../../utils/helpers/cleanName"
-import { confirmT, queryOpts } from "./utils"
-
-// const router = Router()
-
-// import { NextFunction, Request, Response } from "express-serve-static-core"
-// interface IReq extends Request {
-//   body: Partial<ApiTypes.Transaction.ChangeTransactionRequest>
-// }
-// type IRes = Response<ApiTypes.Transaction.Transaction>
+import { confirmT } from "./utils"
 
 type Req = Partial<ApiTypes.Transaction.ChangeRequest>
 type Res = ApiTypes.Transaction.ChangeResponse
@@ -53,10 +43,7 @@ const route: Handler = async (req, res, next) => {
         where: { id },
       })
 
-      // req.body = { categoryName: '' }
-      console.log("req.body", req.body)
       const cName = req.body.categoryName
-      console.log("categoryName boolean", Boolean(req.body.categoryName))
       if (categoryName) {
         console.log(
           "has categoryName",
@@ -113,10 +100,16 @@ const route: Handler = async (req, res, next) => {
         })
       }
       const updatedTransaction = await prisma.transaction.findUniqueOrThrow({
+        include: { tags: { include: { tags: { select: { name: true } } } } },
         where: { id },
       })
 
-      return updatedTransaction
+      const { tags, ...restOfTrans } = updatedTransaction
+      const formattedTransaction = {
+        ...restOfTrans,
+        tags: tags.map(tag => tag.tags.name),
+      }
+      return formattedTransaction
     })
     console.log("result of updating trans", result)
     res.status(200).send(result)

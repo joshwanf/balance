@@ -1,19 +1,21 @@
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import moment from "moment"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { useAppDispatch, useAppSelector } from "../../app/hooks"
 import { setCurMonth } from "../../features/sessionSlice"
 import { listTransactionsThunk } from "../../utils/thunks/transactions"
 import { DatePicker } from "./DatePicker"
+import dayjs from "dayjs"
+import { Popover } from "../../lib/ComponentLibrary/Popover/Popover"
 
 interface Props {}
-export const SelectMonth: React.FC<Props> = props => {
+export const MonthNavigator: React.FC<Props> = props => {
   const dispatch = useAppDispatch()
+  const dateRef = useRef<HTMLDivElement>(null)
   const [showDatePicker, setShowDatePicker] = useState(false)
   const curMonth = useAppSelector(state => state.session.settings.curMonth)
 
   const changeCurMonth = (by: number) => () => {
-    const newMonth = moment(curMonth, "YYYY-MM")
+    const newMonth = dayjs(curMonth, "YYYY-MM")
       .add(by, "month")
       .format("YYYY-MM")
     dispatch(setCurMonth(newMonth))
@@ -32,16 +34,23 @@ export const SelectMonth: React.FC<Props> = props => {
         onClick={() => setShowDatePicker(!showDatePicker)}
         className="relative hover:cursor-pointer"
       >
-        <div className="text-center w-24">
-          {moment(curMonth).format("MMMM")}
+        <div ref={dateRef} className="text-center w-24">
+          {dayjs(curMonth).format("MMMM")}
           <br />
-          {moment(curMonth).format("YYYY")}
+          {dayjs(curMonth).format("YYYY")}
         </div>
         {showDatePicker && (
-          <DatePicker
-            onChange={setNewMonth}
-            closeMenu={() => setShowDatePicker(false)}
-          />
+          <Popover
+            callerRef={dateRef}
+            closePopover={() => setShowDatePicker(false)}
+            selector="#authNode"
+            positionStyle="belowLeftAligned"
+          >
+            <DatePicker
+              onChange={setNewMonth}
+              closeMenu={() => setShowDatePicker(false)}
+            />
+          </Popover>
         )}
       </div>
       <button onClick={changeCurMonth(1)}>
