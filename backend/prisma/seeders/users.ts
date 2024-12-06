@@ -13,6 +13,14 @@ export const users: Prisma.UserCreateManyInput[] = [
   },
   {
     id: uuidv7(),
+    firstName: "Joshua",
+    lastName: "Wang",
+    username: "joshwanf",
+    email: "joshwanf@user.io",
+    hashedPassword: "password",
+  },
+  {
+    id: uuidv7(),
     firstName: "Jane",
     lastName: "Doe",
     username: "jane.doe",

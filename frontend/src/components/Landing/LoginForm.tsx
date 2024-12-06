@@ -81,6 +81,7 @@ export const LoginForm: React.FC<Props> = ({ closeModal }) => {
           {errors.password && <Errors errors={errors.password} />}
           <Ipt.TextInput
             text={form.password}
+            type="password"
             onChange={handleChangeForm("password")}
           />
           <PrimaryButton>Log In</PrimaryButton>

@@ -60,7 +60,12 @@ export const user1CategoryMonths: Prisma.CategoryMonthCreateManyInput[] = [
     amount: 800000,
   },
 ]
-export const user2CategoryMonths: Prisma.CategoryMonthCreateManyInput[] = [
+export const user2CategoryMonths = user1CategoryMonths.map(c => ({
+  ...c,
+  id: uuidv7(),
+  userId: userIds[1],
+}))
+export const user3CategoryMonths: Prisma.CategoryMonthCreateManyInput[] = [
   /** user 2 */
   {
     id: uuidv7(),
@@ -71,4 +76,8 @@ export const user2CategoryMonths: Prisma.CategoryMonthCreateManyInput[] = [
   },
 ]
 
-export const categoryMonths = [...user1CategoryMonths, ...user2CategoryMonths]
+export const categoryMonths = [
+  ...user1CategoryMonths,
+  ...user2CategoryMonths,
+  ...user3CategoryMonths,
+]

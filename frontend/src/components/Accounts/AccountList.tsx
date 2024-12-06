@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import { selectAccountIds } from "../../features/accountsSlice"
+import { selectAccounts } from "../../features/accountsSlice"
 import { useEffect } from "react"
 import { AccountCard } from "./AccountCard"
 import { CreateAccountCard } from "./CreateAccountCard"
@@ -8,7 +8,8 @@ import { listAccountsThunk } from "../../utils/thunks/account"
 interface Props {}
 export const AccountList: React.FC<Props> = props => {
   const dispatch = useAppDispatch()
-  const accountIds = useAppSelector(selectAccountIds)
+  // const accountIds = useAppSelector(selectAccountIds)
+  const accountIds = Object.keys(useAppSelector(selectAccounts))
   const curMonth = useAppSelector(state => state.session.settings.curMonth)
 
   useEffect(() => {

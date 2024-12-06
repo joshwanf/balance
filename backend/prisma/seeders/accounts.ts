@@ -31,15 +31,21 @@ export const user1Accounts: Prisma.AccountCreateManyInput[] = [
     userId: userIds[0],
   },
 ]
-export const user2Accounts: Prisma.AccountCreateManyInput[] = [
+export const user2Accounts = user1Accounts.map(a => ({
+  ...a,
+  id: uuidv7(),
+  userId: userIds[1],
+}))
+
+export const user3Accounts: Prisma.AccountCreateManyInput[] = [
   {
     id: uuidv7(),
     name: "Bank of America",
     cleanedName: cleanName("Bank of America"),
     accountType: "checking",
     // initialBalance: 40000,
-    userId: userIds[1],
+    userId: userIds[2],
   },
 ]
 
-export const accounts = [...user1Accounts, ...user2Accounts]
+export const accounts = [...user1Accounts, ...user2Accounts, ...user3Accounts]

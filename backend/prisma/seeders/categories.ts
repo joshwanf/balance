@@ -49,14 +49,19 @@ export const user1Cat: Prisma.CategoryCreateManyInput[] = [
     userId: userIds[0],
   },
 ]
-export const user2Cat: Prisma.CategoryCreateManyInput[] = [
+export const user2Cat = user1Cat.map(c => ({
+  ...c,
+  id: uuidv7(),
+  userId: userIds[1],
+}))
+export const user3Cat: Prisma.CategoryCreateManyInput[] = [
   /** user 2 */
   {
     id: uuidv7(),
     name: "Wedding",
     cleanedName: cleanName("Wedding"),
-    userId: userIds[1],
+    userId: userIds[2],
   },
 ]
 
-export const categories = [...user1Cat, ...user2Cat]
+export const categories = [...user1Cat, ...user2Cat, ...user3Cat]
