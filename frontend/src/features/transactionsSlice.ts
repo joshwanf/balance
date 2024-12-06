@@ -1,20 +1,22 @@
-import { PayloadAction, createAsyncThunk } from "@reduxjs/toolkit"
+import { PayloadAction } from "@reduxjs/toolkit"
 import { createAppSlice } from "../app/createAppSlice"
 import { ApiTypes } from "../types/api"
 import { createSelector } from "reselect"
 import type { RootState } from "../app/store"
-import moment from "moment"
 import { createTransaction } from "../utils/thunks/transactions"
 import { ApiError } from "../utils/classes/ApiError"
+import dayjs from "dayjs"
 
 type Transaction = ApiTypes.Transaction.TSerialized
 interface TransactionsSliceState {
   error: null | Record<string, string>
   transactions: Record<string, Transaction>
+  tags: string[]
 }
 const initialState: TransactionsSliceState = {
   error: null,
   transactions: {},
+  tags: [],
 }
 
 export const transactionsSlice = createAppSlice({
@@ -31,7 +33,7 @@ export const transactionsSlice = createAppSlice({
       state.transactions = {}
       const transactions = action.payload
       for (const t of transactions) {
-        const mDate = moment(t.date, "YYYY-MM-DD")
+        const mDate = dayjs(t.date, "YYYY-MM-DD")
         const fixedTDate = `${mDate.year()}-${mDate.month() + 1}-${mDate.format("DD")}`
         state.transactions[t.id] = { ...t, date: fixedTDate }
       }
@@ -39,6 +41,36 @@ export const transactionsSlice = createAppSlice({
     removeT: (state, action: PayloadAction<string>) => {
       state.error = null
       delete state.transactions[action.payload]
+    },
+    addTagsList: (state, action: PayloadAction<string[]>) => {
+      state.tags = action.payload
+    },
+    addTagsToT: (
+      state,
+      action: PayloadAction<{ id: string; tags: string[] }>,
+    ) => {
+      const { id, tags } = action.payload
+      if (state.transactions[id]) {
+        state.transactions[id].tags = [...state.transactions[id].tags, ...tags]
+      }
+      const oldTags = new Set(state.tags)
+      for (const tag of tags) {
+        oldTags.add(tag)
+      }
+      const newTags = [...oldTags]
+      state.tags = newTags
+    },
+    removeTagsFromT: (
+      state,
+      action: PayloadAction<{ id: string; tags: string[] }>,
+    ) => {
+      const { id, tags } = action.payload
+      if (state.transactions[id]) {
+        const oldTags = state.transactions[id].tags
+        state.transactions[id].tags = oldTags.filter(
+          oldTag => !tags.includes(oldTag),
+        )
+      }
     },
   },
   extraReducers: builder => {
@@ -57,6 +89,7 @@ export const transactionsSlice = createAppSlice({
   selectors: {
     selectTransactions: state => state.transactions,
     selectTArr: state => Object.values(state.transactions),
+    selectTags: state => state.tags,
   },
 })
 
@@ -64,10 +97,6 @@ export const memoizedSelectTArr = createSelector(
   [(state: RootState) => state.transactions],
   transactions => {
     const asArray = Object.values(transactions.transactions)
-    // .map(t => ({
-    //   ...t,
-    //   date: moment(t.date, "YYYY-MM-DD"),
-    // }))
     const sortedByDate = asArray.sort((a, b) => {
       if (a.date < b.date) {
         return 1
@@ -82,7 +111,15 @@ export const memoizedSelectTArr = createSelector(
 )
 
 // Action creators are generated for each case reducer function.
-export const { addOneT, addManyTs, removeT } = transactionsSlice.actions
+export const {
+  addOneT,
+  addManyTs,
+  removeT,
+  addTagsList,
+  addTagsToT,
+  removeTagsFromT,
+} = transactionsSlice.actions
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
-export const { selectTransactions, selectTArr } = transactionsSlice.selectors
+export const { selectTransactions, selectTArr, selectTags } =
+  transactionsSlice.selectors

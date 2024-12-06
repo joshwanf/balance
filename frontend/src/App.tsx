@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import { useAppSelector, useAppDispatch } from "./app/hooks"
-import { login, selectUser } from "./features/sessionSlice"
+import { selectUser } from "./features/sessionSlice"
 import { Landing } from "./components/Landing/Landing"
 import { TransactionsList } from "./components/Transactions/TransactionsList"
 import { Main } from "./components/Main/Main"
@@ -11,6 +11,7 @@ import { AccountList } from "./components/Accounts/AccountList"
 import { TrendsList } from "./components/Trends/TrendsList"
 import { Dashboard } from "./components/Main/Dashboard"
 import { Overview } from "./components/Trends/Overview/Overview"
+import { Compare } from "./components/Trends/Compare/Compare"
 
 const Layout = () => {
   return (
@@ -38,7 +39,7 @@ export const router = createBrowserRouter([
             children: [
               { path: "", element: <TrendsList /> },
               { path: "overview", element: <Overview /> },
-              { path: "compare", element: <h1>Compare</h1> },
+              { path: "compare", element: <Compare /> },
             ],
           },
         ],

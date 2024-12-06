@@ -1,8 +1,7 @@
 import type { Action, PayloadAction } from "@reduxjs/toolkit"
 import { createAppSlice } from "../app/createAppSlice"
 import { ApiTypes } from "../types/api"
-import { loginThunk } from "../utils/thunks/session"
-import moment from "moment"
+import dayjs from "dayjs"
 
 type SafeUser = ApiTypes.Session.SafeUser
 type LoginResponse = ApiTypes.Session.LoginResponse
@@ -18,7 +17,7 @@ const initialState: SessionSliceState = {
   user: null,
   status: "idle",
   error: null,
-  settings: { curMonth: moment().format("YYYY-MM") },
+  settings: { curMonth: dayjs().format("YYYY-MM") },
 }
 
 // const isLogInAction = (action: Action): action is PayloadAction<SafeUser> => {

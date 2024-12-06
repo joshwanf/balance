@@ -17,7 +17,7 @@ export declare namespace ApiTypes {
   type CustomRouteHandler<TReq, TRes> = (
     req: Request<ParamsDictionary, {}, TReq, ParsedQs>,
     res: Response<TRes>,
-    next: NextFunction,
+    next: NextFunction
   ) => Promise<void> | void
 
   namespace Session {
@@ -124,24 +124,11 @@ export declare namespace ApiTypes {
       date: string
       accountId: string
     }
-    // interface TransactionWithCat extends Transaction {
-    //   category: {
-    //     id: string
-    //     name: string
-    //     cleanedName: string
-    //     amount: string
-    //     usedAmount: string
-    //   } | null
-    //   account: {
-    //     id: string
-    //     name: string
-    //     cleanedName: string
-    //   }
-    // }
 
     /** serialization of prisma Decimal and Date types */
     interface TSerialized extends Transaction {
       date: string
+      tags: string[]
     }
     interface ListSearchParams {
       startMonth: string
@@ -157,6 +144,16 @@ export declare namespace ApiTypes {
         amount: number
         usedAmount: number
       }[]
+      tags: string[]
+    }
+    interface SearchRequest {
+      startDate: string
+      endDate: string
+      tags: string[]
+      generalSearch: string[]
+    }
+    interface SearchResponse {
+      transactions: TSerialized[]
     }
     interface CreateRequest {
       /** change type to 'outgoing' | 'incoming' ? */
@@ -322,6 +319,50 @@ export declare namespace ApiTypes {
         outgoing: Array<number>
         incoming: Array<number>
       }[]
+    }
+    type Slice = { name: string; spent: number }
+    type PieChart = {
+      month: string
+      summary: Slice[]
+    }
+    interface CompareRequest {
+      month1: string
+      month2: string
+    }
+    type CompareResponse = PieChart[]
+  }
+
+  /** Tag */
+  namespace Tag {
+    interface Tag {
+      id: string
+      name: string
+      // cleanedName: string
+    }
+    interface ListRequest {}
+    interface ListResponse {
+      tags: {
+        id: string
+        name: string
+        transactions: {
+          id: string
+          date: string
+          payee: string
+          amount: number
+        }[]
+      }[]
+    }
+    interface AddRequest {
+      tags: string[]
+    }
+    interface AddResponse {
+      tags: Tag[]
+    }
+    interface RemoveRequest {
+      tags: string[]
+    }
+    interface RemoveResponse {
+      tags: Tag[]
     }
   }
 }

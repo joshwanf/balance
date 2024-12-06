@@ -1,17 +1,7 @@
-import { Router } from "express"
-import { isLoggedIn } from "../../../utils/auth"
 import { pc } from "../../../utils/prismaClient"
 import { ApiTypes } from "../../../types/api"
-import { getCategoriesWithTransAgg, queryOpts } from "./utils"
+import { getCategoriesWithTransAgg } from "./utils"
 import moment from "moment"
-import { getNextMonth } from "../../../utils/helpers/date"
-import { categories } from "../../../../prisma/seeders/categories"
-
-// const router = Router()
-
-// import { NextFunction, Request, Response } from "express-serve-static-core"
-// interface IReq extends Request {}
-// type IRes = Response<ApiTypes.Transaction.ListTransactionsResponse>
 
 type Req = ApiTypes.Transaction.ListRequest
 type Res = ApiTypes.Transaction.ListResponse
@@ -38,6 +28,7 @@ const route: Handler = async (req, res, next) => {
 
     const result = await pc.$transaction(async prisma => {
       const trans = await prisma.transaction.findMany({
+        include: { tags: { include: { tags: { select: { name: true } } } } },
         where: {
           userId: user.id,
           AND: { date: { lt: nextMonth, gte: startMonth } },
@@ -45,13 +36,30 @@ const route: Handler = async (req, res, next) => {
         orderBy: [{ date: "desc" }, { id: "desc" }],
       })
 
+      const allTags = await prisma.tags.findMany({
+        where: { userId: user.id },
+      })
+
+      const formattedTransactions = trans.map(t => {
+        const { tags, ...restOfTrans } = t
+        return {
+          ...restOfTrans,
+          tags: tags.map(tag => tag.tags.name),
+        }
+      })
       const formattedCategories = await getCategoriesWithTransAgg(
         user.id,
         startMonth,
         prisma
       )
 
-      return { transactions: trans, categories: formattedCategories }
+      const formattedTags = allTags.map(t => t.name)
+
+      return {
+        transactions: formattedTransactions,
+        categories: formattedCategories,
+        tags: formattedTags,
+      }
     })
 
     // const transactions = await pc.transaction.findMany({
@@ -83,36 +91,5 @@ const route: Handler = async (req, res, next) => {
     console.log(e)
   }
 }
-
-// router.post(
-//   "/list",
-//   // isLoggedIn,
-//   async (req: IReq, res: IRes, next: NextFunction) => {
-//     console.log("list transactions")
-
-//     /** isLoggedIn should already check for req.user, call next() for TS */
-//     const user = req.user
-//     if (!user) {
-//       return next()
-//     }
-//     // res.status(200).send({ ping: "ended transaction" })
-//     // const transactions = await pc.transaction.findMany({
-//     //   where: { userId: user.id },
-//     //   orderBy: [{ date: "desc" }, { id: "asc" }],
-//     //   // include: {
-//     //   //   Item: { select: { name: true, cleanedName: true } },
-//     //   // },
-//     //   ...queryOpts,
-//     // })
-//     // /** Serialize transactions.amount to string */
-//     // const safeT = transactions.map(t => {
-//     //   return { ...t, amount: t.amount.toString(), date: t.date.toString() }
-//     // })
-//     // console.log("found t", safeT.length)
-//     // res.status(200).send({ transactions: transactions })
-//     // @ts-ignore
-//     res.send("ok")
-//   }
-// )
 
 export default route

@@ -1,13 +1,12 @@
-<svg width="1024" height="655" viewBox="0 0 1024 655" fill="none" xmlns="http://www.w3.org/2000/svg">
-<mask id="mask0_4_74" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="655">
-<rect width="1024" height="655" fill="#E0772C"/>
+<svg width="1024" height="592" viewBox="0 0 1024 592" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="mask0_4_74" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="592">
+<rect width="1024" height="592" fill="#E0772C"/>
 </mask>
 <g mask="url(#mask0_4_74)">
 <rect x="-0.32605" width="1024" height="434" fill="#EDECEC"/>
 <rect x="511.674" width="512" height="434" fill="url(#paint0_linear_4_74)"/>
-<rect x="-0.32605" y="434" width="1024" height="171" fill="url(#paint1_radial_4_74)"/>
-<rect x="-0.32605" y="605" width="1024" height="50" fill="#D9D9D9"/>
-<path d="M-16.3261 401L1045.67 158" stroke="#A4BBBB" stroke-width="10"/>
+<rect y="434" width="1024" height="158" fill="url(#paint1_radial_4_74)"/>
+<path d="M-25.5943 349.023L1054.94 209.977" stroke="#A4BBBB" stroke-width="10"/>
 <path d="M510.676 279L540.928 370.5H480.424L510.676 279Z" fill="#A4BBBB"/>
 </g>
 <defs>
@@ -15,9 +14,9 @@
 <stop offset="0.6" stop-color="#EDECEC"/>
 <stop offset="1" stop-color="#D9D9D9"/>
 </linearGradient>
-<radialGradient id="paint1_radial_4_74" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(-0.326109 322) rotate(30.3098) scale(1081.88 746.181)">
-<stop offset="0.149157" stop-color="#EDECEC"/>
-<stop offset="0.350734" stop-color="#D9D9D9"/>
+<radialGradient id="paint1_radial_4_74" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(-2.90144e-05 368) rotate(18.6257) scale(569.846 377.656)">
+<stop offset="0.297756" stop-color="#EDECEC"/>
+<stop offset="0.548244" stop-color="#D9D9D9"/>
 </radialGradient>
 </defs>
 </svg>

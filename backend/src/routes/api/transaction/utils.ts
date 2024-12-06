@@ -20,6 +20,7 @@ export const queryOpts = {
       },
     },
     account: { select: { id: true, name: true, cleanedName: true } },
+    tags: { include: { tags: { select: { name: true } } } },
   },
 }
 

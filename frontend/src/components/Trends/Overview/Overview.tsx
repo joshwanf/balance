@@ -2,13 +2,13 @@ import { useEffect, useState } from "react"
 import balance from "../../../utils/api"
 import { useAppSelector } from "../../../app/hooks"
 import { ApiError } from "../../../utils/classes/ApiError"
-import { ApiTypes } from "../../../types/api"
+import type { ApiTypes } from "../../../types/api"
 import { Money } from "../../../utils/classes/Money"
 import { OverviewChart } from "./OverviewChart"
-import moment from "moment"
 import { Link } from "react-router"
 import { MonthRangeSelector } from "./MonthRangeSelector"
 import { diffMonths } from "../../../utils/helpers/date"
+import dayjs from "dayjs"
 
 type OverviewResponse = ApiTypes.Trend.OverviewResponse
 interface Props {}
@@ -23,16 +23,14 @@ export const Overview: React.FC<Props> = props => {
 
   const [selectedRange, setSelectedRange] = useState({
     diff: 1,
-    startMonth: moment().format("YYYY-MM"),
-    endMonth: moment().add(1, "month").format("YYYY-MM"),
+    startMonth: dayjs().format("YYYY-MM"),
+    endMonth: dayjs().add(1, "month").format("YYYY-MM"),
   })
   const numMonths = diffMonths(selectedRange.startMonth, selectedRange.endMonth)
   const months: string[] = []
-  const starting = moment(selectedRange.startMonth, "YYYY-MM", true)
+  const starting = dayjs(selectedRange.startMonth, "YYYY-MM", true)
   for (let i = 0; i < numMonths; i++) {
-    /** Moment objects are mutable... */
-    months.push(starting.format("YYYY-MM"))
-    starting.add(1, "month").format("YYYY-MM")
+    months.push(starting.add(i, "month").format("YYYY-MM"))
   }
 
   useEffect(() => {

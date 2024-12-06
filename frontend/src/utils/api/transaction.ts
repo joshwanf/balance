@@ -1,7 +1,6 @@
-import { ApiTypes } from "../../types/api"
+import type { ApiTypes } from "../../types/api"
 import { ApiError } from "../classes/ApiError"
-import { opts, pfetch } from "."
-import moment from "moment"
+import { pfetch } from "."
 
 /**
  * List all transactions
@@ -86,5 +85,30 @@ const remove: Remove = async id => {
   }
   return await res.json()
 }
-const transaction = { list, create, retrieve, change, remove }
+type SearchParams = Partial<ApiTypes.Transaction.SearchRequest>
+type SearchResponse = ApiTypes.Transaction.SearchResponse
+interface Search {
+  (params: SearchParams): Promise<SearchResponse | ApiError>
+}
+
+const search: Search = async params => {
+  /** filter if fields have empty arrays */
+  const filteredParams = Object.fromEntries(
+    Object.entries(params).filter(([k, v]) => {
+      if (Array.isArray(v) && v.length === 0) {
+        return false
+      }
+      return true
+    }),
+  )
+
+  const url = "/api/transaction/search"
+  const res = await pfetch(url, filteredParams)
+  if (!res.ok) {
+    throw new ApiError(await res.json(), res.status)
+  }
+  return await res.json()
+}
+
+const transaction = { list, create, retrieve, change, remove, search }
 export default transaction

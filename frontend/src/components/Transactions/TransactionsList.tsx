@@ -8,6 +8,8 @@ import { CreateTransaction } from "./CreateTransaction"
 import { AnimatePresence } from "motion/react"
 import { SearchBar } from "./SearchBar"
 import { PrimaryButton } from "../../lib/Base/Button"
+import { SearchOptions } from "./SearchOptions"
+import { searchTextToParams } from "../../utils/searchHelpers"
 
 type Transaction = ApiTypes.Transaction.ListResponse
 
@@ -18,13 +20,13 @@ export const TransactionsList: React.FC = () => {
     user,
     settings: { curMonth },
   } = session
-  // const transactions = useAppSelector(state => memoizedSelectTArr(state))
-  // const transactions = useAppSelector(selectTransactions)
   const transactions = useAppSelector(memoizedSelectTArr)
   const allTransIds = transactions.map(t => t.id)
   const [selectedItem, setSelectedItem] = useState<string[]>([])
   const [showAddItem, setShowAddItem] = useState(false)
   const [checkAllItems, setCheckAllItems] = useState(false)
+  const searchTermText = useState("")
+  const searchParams = searchTextToParams(searchTermText[0])
 
   // const allTransIds = Object.values(transactions).map(t => t.id)
   const handleSelectItem =
@@ -62,7 +64,7 @@ export const TransactionsList: React.FC = () => {
   return (
     <div>
       <div
-        className="flex flex-col justify-between bg-grass-100
+        className="flex flex-col justify-between bg-grass-50
       px-4 py-4 rounded-2xl space-y-4"
       >
         <div className="flex flex-row justify-around items-center">
@@ -79,7 +81,17 @@ export const TransactionsList: React.FC = () => {
               Add Transaction
             </PrimaryButton>
           </div>
-          <SearchBar />
+          <div className="w-full space-y-2">
+            <SearchBar
+              // searchTermState={searchTermState}
+              searchTermText={searchTermText}
+            />
+            <SearchOptions
+              // searchTermState={searchTermState}
+              searchTermParams={searchParams}
+              searchTermText={searchTermText}
+            />
+          </div>
         </div>
         <AnimatePresence>
           {showAddItem && (

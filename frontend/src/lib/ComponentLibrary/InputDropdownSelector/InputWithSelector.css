@@ -1,5 +1,5 @@
 .tag-selector-input {
-  @apply outline-none border-0;
+  @apply outline-none border-0 w-full;
 }
 .input-with-selector {
   font-size: 48px;
@@ -8,7 +8,7 @@
 .text-input::after {
   content: "text here";
 }
-.backspace-pending-true .pill:nth-last-child(3) {
+.backspace-pending-true .pill:nth-last-child(2) {
   @apply bg-red-100 border-2 border-red-300;
   /* outline: 0.1em solid red; */
   /* background-color: red; */

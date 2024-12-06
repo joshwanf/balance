@@ -1,7 +1,4 @@
-import {
-  PrismaClientValidationError,
-  PrismaClientKnownRequestError,
-} from "@prisma/client/runtime/library"
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 import { pc } from "../../../utils/prismaClient"
 import { ApiTypes } from "../../../types/api"
 
@@ -10,8 +7,8 @@ type Res = ApiTypes.Account.RemoveResponse
 type Handler = ApiTypes.CustomRouteHandler<Req, Res>
 
 const route: Handler = async (req, res, next) => {
-  console.log("delete budget")
-
+  console.log("delete account")
+  console.log(req.body)
   /** isLoggedIn should already check for req.user, call next() for TS */
   const user = req.user
   if (!user) {

@@ -113,6 +113,207 @@ const user2CatIds = user2Cat.map(c => c.id)
 export const user1Transactions: Prisma.TransactionCreateManyInput[] = [
   {
     id: uuidv7(),
+    payee: "Netflix",
+    type: "outgoing",
+    amount: 1500,
+    date: "2024-10-03",
+    userId: userIds[0],
+    accountId: accountIds[1],
+    categoryId: user1CatIds[3], // Shopping
+  },
+  {
+    id: uuidv7(),
+    payee: "Peloton",
+    type: "outgoing",
+    amount: 3999,
+    date: "2024-10-07",
+    userId: userIds[0],
+    accountId: accountIds[2],
+    categoryId: user1CatIds[2], // Fitness
+  },
+  {
+    id: uuidv7(),
+    payee: "Target",
+    type: "outgoing",
+    amount: 7890,
+    date: "2024-10-12",
+    userId: userIds[0],
+    accountId: accountIds[1],
+    categoryId: user1CatIds[3], // Shopping
+  },
+  {
+    id: uuidv7(),
+    payee: "Trader Joe's",
+    type: "outgoing",
+    amount: 6543,
+    date: "2024-10-17",
+    userId: userIds[0],
+    accountId: accountIds[2],
+    categoryId: user1CatIds[4], // Groceries
+  },
+  {
+    id: uuidv7(),
+    payee: "Lyft",
+    type: "outgoing",
+    amount: 2345,
+    date: "2024-10-21",
+    userId: userIds[0],
+    accountId: accountIds[1],
+    categoryId: user1CatIds[5], // Transportation
+  },
+  {
+    id: uuidv7(),
+    payee: "Airbnb",
+    type: "outgoing",
+    amount: 30000,
+    date: "2024-10-23",
+    userId: userIds[0],
+    accountId: accountIds[2],
+    categoryId: user1CatIds[6], // Travel
+  },
+  {
+    id: uuidv7(),
+    payee: "Chipotle",
+    type: "outgoing",
+    amount: 1500,
+    date: "2024-10-26",
+    userId: userIds[0],
+    accountId: accountIds[1],
+    categoryId: user1CatIds[1], // Dining out
+  },
+  {
+    id: uuidv7(),
+    payee: "Amazon",
+    type: "outgoing",
+    amount: 1234,
+    date: "2024-10-29",
+    userId: userIds[0],
+    accountId: accountIds[2],
+    categoryId: user1CatIds[3], // Shopping
+  },
+  {
+    id: uuidv7(),
+    payee: "Gas Station",
+    type: "outgoing",
+    amount: 5000,
+    date: "2024-10-30",
+    userId: userIds[0],
+    accountId: accountIds[1],
+    categoryId: user1CatIds[5], // Transportation
+  },
+  {
+    id: uuidv7(),
+    payee: "Panera Bread",
+    type: "outgoing",
+    amount: 2000,
+    date: "2024-10-31",
+    userId: userIds[0],
+    accountId: accountIds[2],
+    categoryId: user1CatIds[1], // Dining out
+  },
+  {
+    id: uuidv7(),
+    payee: "Starbucks",
+    type: "outgoing",
+    amount: 525,
+    date: "2024-10-01",
+    userId: userIds[0],
+    accountId: accountIds[2],
+    categoryId: user1CatIds[1], // Dining out
+  },
+  {
+    id: uuidv7(),
+    payee: "Gym Membership",
+    type: "outgoing",
+    amount: 9999,
+    date: "2024-10-05",
+    userId: userIds[0],
+    accountId: accountIds[1],
+    categoryId: user1CatIds[2], // Fitness
+  },
+  {
+    id: uuidv7(),
+    payee: "Amazon",
+    type: "outgoing",
+    amount: 2345,
+    date: "2024-10-10",
+    userId: userIds[0],
+    accountId: accountIds[2],
+    categoryId: user1CatIds[3], // Shopping
+  },
+  {
+    id: uuidv7(),
+    payee: "Kroger",
+    type: "outgoing",
+    amount: 12345,
+    date: "2024-10-15",
+    userId: userIds[0],
+    accountId: accountIds[1],
+    categoryId: user1CatIds[4], // Groceries
+  },
+  {
+    id: uuidv7(),
+    payee: "Uber",
+    type: "outgoing",
+    amount: 2500,
+    date: "2024-10-20",
+    userId: userIds[0],
+    accountId: accountIds[2],
+    categoryId: user1CatIds[5], // Transportation
+  },
+  {
+    id: uuidv7(),
+    payee: "Delta Airlines",
+    type: "outgoing",
+    amount: 50000,
+    date: "2024-10-22",
+    userId: userIds[0],
+    accountId: accountIds[1],
+    categoryId: user1CatIds[6], // Travel
+  },
+  {
+    id: uuidv7(),
+    payee: "Spotify",
+    type: "outgoing",
+    amount: 999,
+    date: "2024-10-25",
+    userId: userIds[0],
+    accountId: accountIds[2],
+    categoryId: user1CatIds[3], // Shopping
+  },
+  {
+    id: uuidv7(),
+    payee: "Whole Foods",
+    type: "outgoing",
+    amount: 8765,
+    date: "2024-10-28",
+    userId: userIds[0],
+    accountId: accountIds[1],
+    categoryId: user1CatIds[4], // Groceries
+  },
+  {
+    id: uuidv7(),
+    payee: "Lyft",
+    type: "outgoing",
+    amount: 3456,
+    date: "2024-10-30",
+    userId: userIds[0],
+    accountId: accountIds[2],
+    categoryId: user1CatIds[5], // Transportation
+  },
+  {
+    id: uuidv7(),
+    payee: "McDonald's",
+    type: "outgoing",
+    amount: 1234,
+    date: "2024-10-31",
+    userId: userIds[0],
+    accountId: accountIds[1],
+    categoryId: user1CatIds[1], // Dining out
+  },
+
+  {
+    id: uuidv7(),
     payee: "Direct deposit",
     type: "incoming",
     amount: 351000,

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { useAppSelector } from "../../app/hooks"
 import { selectUser } from "../../features/sessionSlice"
 
@@ -7,18 +7,20 @@ import { LoginForm } from "./LoginForm"
 import { SignupForm } from "./SignupForm"
 import * as Btn from "../../lib/Base/Button"
 import { AnimatePresence } from "motion/react"
+import { Popover } from "../../lib/ComponentLibrary/Popover/Popover"
 
 interface Props {}
 export const TopBar: React.FC<Props> = () => {
   const user = useAppSelector(selectUser)
   const [display, setDisplay] = useState<string | null>(null)
+  const ref = useRef<HTMLDivElement>(null)
   const closeModal = () => setDisplay(null)
 
   return (
     <nav className="py-4 flex justify-end">
       <div>
         {!user && (
-          <div>
+          <div ref={ref}>
             <Btn.PrimaryButton onClick={() => setDisplay("signup")}>
               Sign Up
             </Btn.PrimaryButton>
@@ -30,11 +32,20 @@ export const TopBar: React.FC<Props> = () => {
       </div>
       <AnimatePresence>
         {display === "login" && (
-          <Modal
+          // <Modal
+          //   selector="#authNode"
+          //   closeModal={closeModal}
+          //   element={<LoginForm closeModal={closeModal} />}
+          // />
+          <Popover
             selector="#authNode"
-            closeModal={closeModal}
-            element={<LoginForm closeModal={closeModal} />}
-          />
+            callerRef={ref}
+            closePopover={closeModal}
+            // content={<LoginForm closeModal={closeModal} />}
+            overlayStyle="darken"
+          >
+            <LoginForm closeModal={closeModal} />
+          </Popover>
         )}
       </AnimatePresence>
       <AnimatePresence>

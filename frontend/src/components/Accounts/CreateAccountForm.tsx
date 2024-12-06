@@ -29,9 +29,17 @@ export const CreateAccountForm: React.FC<Props> = props => {
     const isPositiveBalance = isValidBalance
       ? Money.parse(acctBalance || "0").isPositive()
       : false
+    const isBalanceFittableInDb = isPositiveBalance
+      ? Money.parse(acctBalance || "0").lte(Money.parse("21000000"))
+      : false
+    console.log(isBalanceFittableInDb, Money.parse(acctBalance || "0"))
     const isValidName = acctName.length > 0
 
-    const isValidForm = isValidName && isValidBalance && isPositiveBalance
+    const isValidForm =
+      isValidName &&
+      isValidBalance &&
+      isPositiveBalance &&
+      isBalanceFittableInDb
 
     if (!isValidForm) {
       const accErrors: FormErrors = {}
@@ -40,6 +48,9 @@ export const CreateAccountForm: React.FC<Props> = props => {
       }
       if (isValidBalance && !isPositiveBalance) {
         accErrors.balance = "Balance must be positive and above $0.00"
+      }
+      if (isValidBalance && isPositiveBalance && !isBalanceFittableInDb) {
+        accErrors.balance = "Balance must be below $21,000,000"
       }
       if (!isValidName) {
         accErrors.name = "Must have a name"

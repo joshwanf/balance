@@ -3,7 +3,7 @@ import { Sidebar } from "./Sidebar"
 import { useEffect, useRef, useState } from "react"
 import { SquareChevronLeft, SquareChevronRight } from "lucide-react"
 import { SettingsButton } from "./SettingsButton"
-import { SelectMonth } from "./SelectMonth"
+import { MonthNavigator } from "./MonthNavigator"
 // import { useKeyPress } from "./useKeyPress"
 
 export const Main = () => {
@@ -90,7 +90,7 @@ export const Main = () => {
       </div>
       <div className="w-full pt-4 px-2 pb-6 h-screen overflow-y-auto">
         <div className="bg-white rounded-t-3xl rounded-b-3xl px-4 pb-6">
-          <SelectMonth />
+          <MonthNavigator />
           <Outlet />
         </div>
       </div>

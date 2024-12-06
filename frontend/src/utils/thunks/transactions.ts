@@ -1,5 +1,9 @@
 import { PayloadAction, createAsyncThunk } from "@reduxjs/toolkit"
-import { addManyTs, addOneT } from "../../features/transactionsSlice"
+import {
+  addManyTs,
+  addOneT,
+  addTagsList,
+} from "../../features/transactionsSlice"
 import {
   addCategoryFromTransaction,
   addManyCategories,
@@ -19,13 +23,14 @@ export const listTransactionsThunk = createAsyncThunk<TList, ListSearchParams>(
     if (res instanceof ApiError) {
       return thunkApi.rejectWithValue(res)
     }
-    const { transactions, categories } = res
+    const { transactions, categories, tags } = res
 
     /** Categories and Transactions payload */
     const tPayload = transactions
 
     /** Dispatch to reducers */
     thunkApi.dispatch(addManyTs(tPayload))
+    thunkApi.dispatch(addTagsList(tags))
     // if (categories.length > 0) {
     thunkApi.dispatch(addManyCategories(categories))
     // }

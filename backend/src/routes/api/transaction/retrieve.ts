@@ -1,16 +1,6 @@
-import { Router } from "express"
-import { isLoggedIn } from "../../../utils/auth"
 import { pc } from "../../../utils/prismaClient"
 import { queryOpts } from "./utils"
 import { ApiTypes } from "../../../types/api"
-
-// const router = Router()
-
-// import { NextFunction, Request, Response } from "express-serve-static-core"
-// interface IReq extends Request {
-//   body: Partial<ApiTypes.Transaction.TransactionWithItem>
-// }
-// type IRes = Response<ApiTypes.Transaction.RetrieveTransactionResponse>
 
 type Req = {}
 type Res = ApiTypes.Transaction.RetrieveTransactionResponse
@@ -53,11 +43,15 @@ const route: Handler = async (req, res, next) => {
       : null
 
     console.log("found transaction", foundTransaction)
+
+    const formattedTags = foundTransaction.tags.map(tag => tag.tags.name)
+
     const safeT = {
       ...foundTransaction,
       amount: foundTransaction.amount,
       date: foundTransaction.date,
       category: serializedCat,
+      tags: formattedTags,
     }
     return safeT
   })
