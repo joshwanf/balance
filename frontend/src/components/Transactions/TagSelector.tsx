@@ -38,7 +38,6 @@ export const TagSelector: React.FC<Props> = props => {
   }
 
   const handleChangeTag = async (newTags: string[]) => {
-    console.log({ selectedTags, newTags })
     setSelectedTags(newTags)
     if (newTags.length > selectedTags.length) {
       await addTagToTransaction(newTags)

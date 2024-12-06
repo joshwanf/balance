@@ -46,6 +46,24 @@ const route: Handler = async (req, res, next) => {
           where: { id, userId: user.id },
           data: { name, cleanedName },
         })
+        /** check if category money exists */
+        const categoryMonth = await prisma.categoryMonth.upsert({
+          where: {
+            userId_categoryId_month: {
+              userId: user.id,
+              categoryId: id,
+              month: startMonth,
+            },
+          },
+          update: {},
+          create: {
+            id: uuidv7(),
+            userId: user.id,
+            categoryId: id,
+            amount: 0,
+            month: startMonth,
+          },
+        })
       }
 
       if (amount) {
@@ -95,6 +113,7 @@ const route: Handler = async (req, res, next) => {
       const cat = await prisma.categoryMonth.findFirstOrThrow({
         where: { userId: user.id, categoryId: id, month: startMonth },
         select: { amount: true, month: true, category: true },
+        orderBy: { id: "desc" },
       })
 
       const formatedUsedAmount =

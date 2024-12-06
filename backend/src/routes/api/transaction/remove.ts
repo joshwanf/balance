@@ -23,23 +23,28 @@ const route: Handler = async (req, res, next) => {
   const { id } = req.params
 
   /** Confirm transaction exists */
-  try {
-    const isValidT = await confirmT(id, user.id)
-    if (!isValidT) {
-      throw "not a valid transaction"
-    }
-  } catch (e) {
-    return next(e)
-  }
-
+  // try {
+  //   const isValidT = await confirmT(id, user.id)
+  //   if (!isValidT) {
+  //     throw "not a valid transaction"
+  //   }
+  // } catch (e) {
+  //   return next(e)
+  // }
+  console.log(id, user.id)
+  const confirm = await pc.transaction.findMany({
+    where: { id, userId: user.id },
+  })
+  console.log(confirm)
   try {
     const transaction = await pc.transaction.delete({
-      where: { id, AND: [{ id: id }, { userId: user.id }] },
+      where: { id, userId: user.id },
     })
     console.log("deleted transaction", transaction)
     res.status(200).send({ type: "success", message: "Deleted transaction" })
   } catch (e) {
     // res.code(404)
+    console.log(e)
     throw {
       title: "Delete transaction",
       message: "couldn't delete transaction",

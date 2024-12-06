@@ -101,6 +101,7 @@ export const getCategoriesWithTransAgg: GetCategoriesWitHTransAgg = async (
         where: { AND: { month: { lt: nextMonth, gte: curMonth } } },
       },
     },
+    orderBy: { id: "desc" },
   })
   // unpack cats and only keep id, name, CategoryMonth[0].month, CategoryMonth[0].amount
   const unpackedCats = cats.map(cat => {

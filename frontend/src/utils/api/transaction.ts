@@ -79,7 +79,7 @@ interface Remove {
 const remove: Remove = async id => {
   const url = `/api/transaction/remove/${id}`
   const res = await pfetch(url)
-  console.log(res)
+
   if (!res.ok) {
     throw new ApiError(await res.json(), res.status)
   }

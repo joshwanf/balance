@@ -46,7 +46,7 @@ export const CategoryList = () => {
   }
 
   const handleDeleteCats = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    console.log("deleting categories", selectedCat)
+    // console.log("deleting categories", selectedCat)
     try {
       const res = await dispatch(
         removeCategoriesThunk({ categoryIds: selectedCat }),
