@@ -9,6 +9,7 @@ import { ApiError } from "../../../utils/classes/ApiError"
 import { validateDate } from "../../../utils/helpers/date"
 import { Errors } from "../../../lib/ComponentLibrary/Errors"
 import { CompareChart } from "./CompareChart"
+import { Link } from "react-router"
 
 type PieChart = ApiTypes.Trend.PieChart
 type CompareErrors = { year1?: string; year2?: string; api?: string }
@@ -53,7 +54,9 @@ export const Compare: React.FC<Props> = props => {
 
   return (
     <div>
-      Compare
+      <div>
+        <Link to="../">Trends</Link> &gt; <Link to="">Compare</Link>
+      </div>
       <div className="self-center">
         <PrimaryButton onClick={handleCompareMonths}>Compare</PrimaryButton>
       </div>
@@ -85,7 +88,6 @@ export const Compare: React.FC<Props> = props => {
           )}
         </div>
       </div>
-      <div>Compare chart</div>
     </div>
   )
 }

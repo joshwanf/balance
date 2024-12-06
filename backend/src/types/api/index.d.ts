@@ -146,6 +146,15 @@ export declare namespace ApiTypes {
       }[]
       tags: string[]
     }
+    interface SearchRequest {
+      startDate: string
+      endDate: string
+      tags: string[]
+      generalSearch: string[]
+    }
+    interface SearchResponse {
+      transactions: TSerialized[]
+    }
     interface CreateRequest {
       /** change type to 'outgoing' | 'incoming' ? */
       type: string

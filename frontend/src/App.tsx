@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import { useAppSelector, useAppDispatch } from "./app/hooks"
-import { login, selectUser } from "./features/sessionSlice"
+import { selectUser } from "./features/sessionSlice"
 import { Landing } from "./components/Landing/Landing"
 import { TransactionsList } from "./components/Transactions/TransactionsList"
 import { Main } from "./components/Main/Main"

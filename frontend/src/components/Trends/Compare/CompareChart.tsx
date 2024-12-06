@@ -12,15 +12,7 @@ import { Pie } from "react-chartjs-2"
 import { ApiTypes } from "../../../types/api"
 import { Money } from "../../../utils/classes/Money"
 
-ChartJS.register(
-  CategoryScale,
-  ArcElement,
-  PieController,
-  Title,
-  Tooltip,
-  Legend,
-  Colors,
-)
+ChartJS.register(ArcElement, PieController)
 
 interface Props {
   data: ApiTypes.Trend.PieChart
@@ -33,7 +25,10 @@ export const CompareChart: React.FC<Props> = props => {
     datasets: [
       {
         label: data.month,
-        data: data.summary.map(s => Money.fromCents(s.spent.toString())),
+        data: data.summary.map(
+          s => Money.fromCents(s.spent.toString()).dollars,
+        ),
+        hoverOffset: 20,
       },
     ],
   }

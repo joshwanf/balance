@@ -6,11 +6,11 @@ class MoneyPredicates {
   _isPositive(value: number): boolean {
     return !this.#negate ? value > 0 : !(value > 0)
   }
-  isNegative(negSign: string) {
-    return negSign.length > 0
+  _isNegative(value: number): boolean {
+    return !this.#negate ? value < 0 : !(value < 0)
   }
-  isZero(dollars: number, cents: number) {
-    return dollars === 0 && cents === 0
+  _isZero(value: number) {
+    return value === 0
   }
 
   get not() {
@@ -104,61 +104,6 @@ export class Money extends MoneyPredicates {
     const moneyResult = new Money({ negSign, curSymbol, dollars: 0, cents })
     return moneyResult
   }
-  /**
-   * Clean incoming decimal-like values to simple string representation of the value
-   * Should treat:
-   * - `"100"` === `"100.00"`
-   * - `"100.5"` === `"100.50"`
-   */
-  // #cleanIncoming(input: string | number) {
-  //   /**
-  //    * Valid money string should have:
-  //    * - optional currency symbol first, otherwise only numbers. Cannot send first char `.`
-  //    * -
-  //    */
-
-  //   // monkey patch after changing db money types from string to integer
-  //   const strInput = typeof input === "number" ? input.toString() : input
-
-  //   const validMoneyString = strInput.match(
-  //     /^[\d\$\-][0-9]*[0-9\.]{0,1}[0-9]*$/g,
-  //   )
-  //   if (!validMoneyString) {
-  //     // remove all but first `.`?
-  //     return "not a number"
-  //   }
-  //   /** check if first char is negative sign */
-  //   const startsWithNegSym = strInput.startsWith("-")
-  //   if (startsWithNegSym) {
-  //     this.#meta.isNegative = true
-  //   } else {
-  //     this.#meta.isNegative = false
-  //   }
-  //   const withNoNeg = startsWithNegSym ? strInput.slice(1) : strInput
-
-  //   /** check if next char is symbol */
-  //   // const startsWithCurSym = withNoNeg.match(/^[^0-9][0-9\.]*$/g)
-  //   const startsWithCurSym = isNaN(Number(withNoNeg[0]))
-  //   if (startsWithCurSym) {
-  //     this.currencySymbol = withNoNeg[0]
-  //   } else {
-  //     this.currencySymbol = "$"
-  //   }
-  //   const withNoNegCur = startsWithCurSym ? withNoNeg.slice(1) : withNoNeg
-
-  //   const decimalIndex = withNoNegCur.indexOf(".")
-  //   const decimalPlacesFromEnd = withNoNegCur.length - 1 - decimalIndex
-  //   const negSignPrefix = this.#meta.isNegative ? "-" : ""
-  //   if (decimalIndex < 0) {
-  //     // no decimal, so no cents
-  //     this.value = `${negSignPrefix}${withNoNegCur}.00`
-  //   } else if (decimalPlacesFromEnd >= 2) {
-  //     this.value = Number(`${negSignPrefix}${withNoNegCur}`).toFixed(2)
-  //   } else {
-  //     this.value = `${negSignPrefix}${withNoNegCur}0`
-  //   }
-  //   this.#meta.cents = Number(this.value) * 100
-  // }
 
   /** Returns formatted string for display */
   format(options: FormatOptions = {}) {
@@ -191,17 +136,30 @@ export class Money extends MoneyPredicates {
     const sum = this.cents - val.cents
     return Money.fromCents(sum.toString())
   }
-  // addMany(...vals: Money[]): Money {
-  //   const sum = vals.reduce(
-  //     (sum: Money, val: Money): Money => sum.add(val),
-  //     this,
-  //   )
-  //   return sum
-  // }
+  addMany(...vals: Money[]): Money {
+    const sum = vals.reduce(
+      (sum: Money, val: Money): Money => sum.add(val),
+      this,
+    )
+    return sum
+  }
+  subtractMany(...vals: Money[]): Money {
+    const sum = vals.reduce(
+      (sum: Money, val: Money): Money => sum.subtract(val),
+      this,
+    )
+    return sum
+  }
 
   /** comparison operators */
   isPositive() {
     return this._isPositive(this.cents)
+  }
+  isNegative() {
+    return this._isNegative(this.cents)
+  }
+  isZero() {
+    return this._isZero(this.cents)
   }
 
   /** Check if Money value is greater than operand value */

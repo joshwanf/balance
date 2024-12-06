@@ -53,6 +53,12 @@ export const transactionsSlice = createAppSlice({
       if (state.transactions[id]) {
         state.transactions[id].tags = [...state.transactions[id].tags, ...tags]
       }
+      const oldTags = new Set(state.tags)
+      for (const tag of tags) {
+        oldTags.add(tag)
+      }
+      const newTags = [...oldTags]
+      state.tags = newTags
     },
     removeTagsFromT: (
       state,

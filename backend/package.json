@@ -7,17 +7,18 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy-prisma": "yarn prisma migrate deploy",
     "build": "tsc -p tsconfig.json",
     "start": "node build/src/app.js",
     "dev": "nodemon --watch src src/app.ts",
     "_drop-schema": "echo \"DROP SCHEMA $DATABASE_SCHEMA CASCADE;\" | psql $DATABASE_LINK",
     "drop": "dotenv -- yarn run _drop-schema",
     "clear-migrations": "rm -rf prisma/migrations",
-    "migrate": "npx prisma migrate dev",
-    "gen": "npx prisma generate",
-    "push": "npx prisma db push",
-    "seed": "npx prisma db seed",
-    "reseed": "npm run drop && npm run push && npm run seed"
+    "migrate": "yarn prisma migrate dev",
+    "gen": "yarn prisma generate",
+    "push": "yarn prisma db push",
+    "seed": "yarn prisma db seed",
+    "reseed": "yarn drop && yarn push && yarn seed"
   },
   "author": "",
   "license": "ISC",
