@@ -614,4 +614,9 @@ export const user1Transactions: Prisma.TransactionCreateManyInput[] = [
   },
 ]
 
-export const transactions = [...user1Transactions]
+export const user2Transactions = user1Transactions.map(c => ({
+  ...c,
+  id: uuidv7(),
+  userId: userIds[1],
+}))
+export const transactions = [...user1Transactions, ...user2Transactions]
