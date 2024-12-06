@@ -51,7 +51,7 @@ export class Money extends MoneyPredicates {
       curSymbol: "$",
       dollars: 0,
       cents: 0,
-    },
+    }
   ) {
     super()
     const { negSign, curSymbol, dollars, cents } = input
@@ -139,14 +139,14 @@ export class Money extends MoneyPredicates {
   addMany(...vals: Money[]): Money {
     const sum = vals.reduce(
       (sum: Money, val: Money): Money => sum.add(val),
-      this,
+      this
     )
     return sum
   }
   subtractMany(...vals: Money[]): Money {
     const sum = vals.reduce(
       (sum: Money, val: Money): Money => sum.subtract(val),
-      this,
+      this
     )
     return sum
   }
@@ -170,7 +170,6 @@ export class Money extends MoneyPredicates {
     return this.cents >= operand.cents
   }
   lt(operand: Money) {
-    console.log(this.cents, operand.cents, this.cents < operand.cents)
     return this.cents < operand.cents
   }
   lte(operand: Money) {

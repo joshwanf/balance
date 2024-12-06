@@ -107,10 +107,10 @@ model Tags {
 
 model TransactionsOnTags {
   transactionId String      @db.Uuid
-  transactions  Transaction @relation(fields: [transactionId], references: [id])
+  transactions  Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
 
   tagId String @db.Uuid
-  tags  Tags   @relation(fields: [tagId], references: [id])
+  tags  Tags   @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([transactionId, tagId])
 }
