@@ -8,3 +8,4 @@ dist/
 prisma-test.ts
 LanguageTags.tsx
 stats.html
+.vercel

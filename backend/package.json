@@ -9,6 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "deploy-prisma": "yarn prisma migrate deploy",
     "build": "tsc -p tsconfig.json",
+    "postinstall": "prisma generate",
     "start": "node build/src/app.js",
     "dev": "nodemon --watch src src/app.ts",
     "_drop-schema": "echo \"DROP SCHEMA $DATABASE_SCHEMA CASCADE;\" | psql $DATABASE_LINK",
@@ -32,6 +33,7 @@
     "@types/helmet": "^0.0.48",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/morgan": "^1.9.9",
+    "@vercel/node": "^5.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "csurf": "^1.10.0",
@@ -48,10 +50,10 @@
     "nodemon": "^3.1.7",
     "prisma": "^6.0.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.2",
     "uuidv7": "^1.0.2"
   },
   "devDependencies": {
-    "@types/node": "^22.9.3"
+    "@types/node": "^22.9.3",
+    "typescript": "^5.7.2"
   }
 }
