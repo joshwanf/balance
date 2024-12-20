@@ -1,0 +1,29 @@
+{
+  "installCommand": "yarn --cwd backend install && yarn --cwd frontend install",
+  "buildCommand": "yarn --cwd backend build && yarn --cwd frontend build",
+  "version": 2,
+  "builds": [
+    {
+      "src": "frontend/dist/**/*",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "backend/src/app.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "backend/src/app.ts"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "frontend/dist/assets/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "frontend/dist/index.html"
+    }
+  ]
+}

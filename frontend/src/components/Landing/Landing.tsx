@@ -28,7 +28,7 @@ export const Landing: React.FC<Props> = props => {
       {/* <div className="relative w-full h-screen bg-beige"> */}
       <div className="w-full bg-beige">
         <img
-          src="images/hero.svg"
+          src="/assets/images/hero.svg"
           alt="Hero Image"
           className="inset-0 w-full object-cover"
         />
@@ -88,7 +88,7 @@ export const Landing: React.FC<Props> = props => {
         </div>
         <div className="w-1/2 py-10 drop-shadow-2xl">
           <img
-            src="images/money-class.png"
+            src="/assets/images/money-class.png"
             alt="Money class"
             className="rounded-xl"
           />
