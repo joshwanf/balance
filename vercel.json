@@ -1,6 +1,6 @@
 {
-  "installCommand": "yarn --cwd backend install && yarn --cwd frontend install",
-  "buildCommand": "yarn --cwd backend build && yarn --cwd frontend build",
+  "installCommand": "yarn install",
+  "buildCommand": "yarn build",
   "version": 2,
   "builds": [
     {

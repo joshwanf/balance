@@ -1,0 +1,14 @@
+{
+  "name": "balance",
+  "author": "Joshua Wang",
+  "license": "MIT",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "install-backend": "yarn --cwd backend install",
+    "install-frontend": "yarn --cwd frontend install",
+    "install": "yarn install-backend && yarn install-frontend",
+    "build": "yarn --cwd frontend build"
+  }
+}
