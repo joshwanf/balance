@@ -33,8 +33,7 @@ export const transactionsSlice = createAppSlice({
       state.transactions = {}
       const transactions = action.payload
       for (const t of transactions) {
-        const mDate = dayjs(t.date, "YYYY-MM-DD")
-        const fixedTDate = `${mDate.year()}-${mDate.month() + 1}-${mDate.format("DD")}`
+        const fixedTDate = dayjs(t.date, "YYYY-MM-DD").format("YYYY-MM-DD")
         state.transactions[t.id] = { ...t, date: fixedTDate }
       }
     },
