@@ -20,44 +20,57 @@ Balance is a personal budgeting app. You record transactions across your account
 
 | Layer      | Technologies |
 | ---------- | ------------ |
-| Frontend   | React 18, TypeScript, Vite, Redux Toolkit, React Router 7, Tailwind CSS, Chart.js (`react-chartjs-2`), Motion, Lucide icons |
-| Backend    | Node.js, Express 4, TypeScript, express-validator, Helmet, JSON Web Tokens |
+| App        | Next.js 16 (App Router), React 19, TypeScript, Redux Toolkit, Tailwind CSS, Chart.js (`react-chartjs-2`), Motion, Lucide icons |
+| API        | Next.js Route Handlers with REST endpoints under `/api`, zod validation, bcrypt password hashing, JSON Web Tokens |
 | Database   | PostgreSQL via Prisma ORM |
-| Testing    | Vitest, React Testing Library |
-| Deployment | Vercel: the frontend is served as static files and the Express API runs as a serverless function under `/api` |
+| Deployment | Vercel, with the project's Root Directory set to `apps/web` |
 
-Money is stored as integer cents. A shared `Money` class handles parsing, arithmetic and formatting on both the frontend and the backend, so no floating-point rounding errors creep in.
+Money is stored as integer cents. A `Money` class handles parsing, arithmetic and formatting, so no floating-point rounding errors creep in.
 
 ## Project structure
 
+The repo is a yarn workspace with the app and a shared types package.
+
 ```
 balance/
-├── backend/            Express API
-│   ├── prisma/         Prisma schema, migrations and seed data
+├── apps/web/                 Next.js app
+│   ├── prisma/               Prisma schema, migrations and seed data
 │   └── src/
-│       ├── routes/api/ account, category, session, tag, transaction, trend routes
-│       └── utils/      auth, validation, Money class, helpers
-├── frontend/           React app (Vite)
-│   └── src/
-│       ├── components/ Accounts, Budgets, Transactions, Trends, Landing, Main
-│       ├── features/   Redux slices
-│       ├── lib/        Shared UI component library
-│       └── utils/      API client, thunks, helpers
-├── package.json        Root scripts for installing and building both apps
-└── vercel.json         Vercel build and routing config
+│       ├── app/              Pages (/, /my-balance/...) and API routes (app/api)
+│       ├── server/           Auth, Prisma client, error handling, queries
+│       ├── components/       Accounts, Budgets, Transactions, Trends, Landing, Main
+│       ├── features/         Redux slices
+│       ├── store/            Redux store, created per client in Providers
+│       ├── lib/              Shared UI component library
+│       └── utils/            API client, thunks, helpers
+├── packages/api-types/       Request and response types shared by the API and the client
+└── package.json              Workspace root and scripts
 ```
+
+## API
+
+All endpoints are under `/api` and need a logged-in session except `GET`/`POST`/`DELETE /api/session`, `POST /api/users` and `GET /api/health`.
+
+| Resource     | Endpoints |
+| ------------ | --------- |
+| Session      | `GET /session` (restore), `POST /session` (log in), `DELETE /session` (log out), `POST /users` (sign up) |
+| Accounts     | `GET /accounts?startMonth=`, `POST /accounts`, `PATCH /accounts/:id`, `DELETE /accounts/:id` |
+| Categories   | `GET /categories?startMonth=`, `POST /categories?startMonth=`, `GET`/`PATCH`/`DELETE /categories/:id`, `DELETE /categories?ids=a,b` |
+| Transactions | `GET /transactions?startMonth=&endMonth=`, search with `?q=&startDate=&endDate=&tags=`, `POST /transactions`, `GET`/`PATCH`/`DELETE /transactions/:id` |
+| Tags         | `GET /tags`, `POST /transactions/:id/tags`, `DELETE /transactions/:id/tags?names=a,b` |
+| Trends       | `GET /trends/overview?startMonth=&endMonth=`, `GET /trends/compare?month1=&month2=` |
 
 ## Getting started
 
 ### Prerequisites
 
-- Node.js
-- Yarn
+- Node.js 20.9 or later
+- Yarn 1
 - A PostgreSQL database
 
 ### Setup
 
-1. Install dependencies for both apps:
+1. Install dependencies from the repo root:
 
    ```sh
    yarn install
@@ -66,38 +79,38 @@ balance/
 2. Configure the environment:
 
    ```sh
-   cp backend/.env.example backend/.env
-   cp frontend/.env.example frontend/.env
+   cp apps/web/.env.example apps/web/.env
    ```
 
-   Fill in the database credentials, `JWT_SECRET` and `PORT` in `backend/.env`. The Prisma schema reads its connection string from `DATABASE_URL_SCHEMA`, so set that variable too. In `frontend/.env`, set `VITE_API_URL` to the backend's address.
+   Set `DATABASE_URL_SCHEMA` to your Postgres connection string and `JWT_SECRET` to a long random string. The app does not start without `JWT_SECRET`.
 
-3. Create the database schema and seed it:
+3. Apply the migrations and seed the demo data:
 
    ```sh
-   cd backend
-   yarn push
+   yarn workspace @balance/web deploy-prisma
    yarn seed
    ```
 
-4. Start the backend and the frontend in separate terminals:
+   The demo user logs in with `admin` / `password`.
+
+4. Start the dev server:
 
    ```sh
-   cd backend && yarn dev
-   cd frontend && yarn dev
+   yarn dev
    ```
 
 ### Scripts
 
-| Location  | Command          | Description |
-| --------- | ---------------- | ----------- |
-| root      | `yarn build`     | Build the backend and the frontend |
-| backend   | `yarn dev`       | Run the API with hot reload (nodemon) |
-| backend   | `yarn migrate`   | Create and apply a Prisma migration |
-| backend   | `yarn reseed`    | Drop the schema, push it again and reseed |
-| frontend  | `yarn dev`       | Start the Vite dev server |
-| frontend  | `yarn test`      | Run the tests with Vitest |
-| frontend  | `yarn lint`      | Lint with ESLint |
+Run these from the repo root.
+
+| Command           | Description |
+| ----------------- | ----------- |
+| `yarn dev`        | Start the Next.js dev server |
+| `yarn build`      | Generate the Prisma client and build the app |
+| `yarn start`      | Serve the production build |
+| `yarn type-check` | Type-check the app |
+| `yarn migrate`    | Create and apply a Prisma migration |
+| `yarn seed`       | Seed the demo user and data |
 
 ## License
 
