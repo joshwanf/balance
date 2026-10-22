@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_SCHEMA")
+}
+
+model User {
+  id             String @id @db.Uuid
+  email          String @unique
+  username       String @unique
+  firstName      String
+  lastName       String
+  hashedPassword String
+
+  accounts      Account[]
+  transactions  Transaction[]
+  categories    Category[]
+  CategoryMonth CategoryMonth[]
+  Tags          Tags[]
+
+  @@index(fields: [email])
+  @@index(fields: [username])
+}
+
+model Account {
+  id          String @id @db.Uuid
+  name        String
+  cleanedName String
+  accountType String // checking, credit
+
+  userId String @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  transactions Transaction[]
+
+  @@index(fields: [userId, cleanedName])
+}
+
+model Transaction {
+  id     String @id @db.Uuid
+  type   String // outgoing or incoming
+  payee  String
+  amount Int    @db.Integer
+  date   String
+
+  userId String @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  accountId String  @db.Uuid
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  categoryId String?              @db.Uuid
+  category   Category?            @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  tags       TransactionsOnTags[]
+}
+
+model Category {
+  id          String @unique @db.Uuid
+  name        String
+  cleanedName String
+
+  userId        String          @db.Uuid
+  user          User            @relation(fields: [userId], references: [id])
+  transactions  Transaction[]
+  CategoryMonth CategoryMonth[]
+
+  @@id(fields: [userId, cleanedName])
+  @@index(fields: [userId, cleanedName])
+}
+
+model CategoryMonth {
+  id     String @unique @db.Uuid
+  month  String
+  amount Int    @db.Integer
+
+  userId String @db.Uuid
+  user   User   @relation(fields: [userId], references: [id])
+
+  categoryId String   @db.Uuid
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id(fields: [userId, categoryId, month])
+  @@index(fields: [userId, categoryId, month])
+}
+
+model Tags {
+  id          String @id @db.Uuid
+  name        String
+  cleanedName String
+
+  userId String @db.Uuid
+  user   User   @relation(fields: [userId], references: [id])
+
+  transactions TransactionsOnTags[]
+
+  @@unique(fields: [userId, cleanedName])
+  // @@id(fields: [userId, cleanedName])
+  @@index(fields: [userId, cleanedName])
+}
+
+model TransactionsOnTags {
+  transactionId String      @db.Uuid
+  transactions  Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+
+  tagId String @db.Uuid
+  tags  Tags   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([transactionId, tagId])
+}
