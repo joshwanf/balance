@@ -8,15 +8,23 @@ import {
 import Link from "next/link"
 
 interface Props {}
-export const Dashboard: React.FC<Props> = props => {
+export const Dashboard = ({}: Props) => {
   const tiles = [
-    { title: "Budget", to: "/my-balance/budgets", element: <Scale size={64} /> },
+    {
+      title: "Budget",
+      to: "/my-balance/budgets",
+      element: <Scale size={64} />,
+    },
     {
       title: "Transactions",
       to: "/my-balance/transactions",
       element: <ArrowRightLeft size={64} />,
     },
-    { title: "Accounts", to: "/my-balance/accounts", element: <WalletCards size={64} /> },
+    {
+      title: "Accounts",
+      to: "/my-balance/accounts",
+      element: <WalletCards size={64} />,
+    },
     {
       title: "Trends",
       to: "/my-balance/trends",

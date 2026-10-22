@@ -14,7 +14,7 @@ import dayjs from "dayjs"
 type OverviewResponse = ApiTypes.Trend.OverviewResponse
 interface Props {}
 
-export const Overview: React.FC<Props> = props => {
+export const Overview = ({}: Props) => {
   const [data, setData] = useState<OverviewResponse | null>(null)
   const [outgoing, setOutgoing] = useState<
     OverviewResponse["categories"] | null
@@ -88,7 +88,8 @@ export const Overview: React.FC<Props> = props => {
   return (
     <div>
       <div>
-        <Link href="/my-balance/trends">Trends</Link> &gt; <Link href="/my-balance/trends/overview">Overview</Link>
+        <Link href="/my-balance/trends">Trends</Link> &gt;{" "}
+        <Link href="/my-balance/trends/overview">Overview</Link>
       </div>
 
       <MonthRangeSelector setSelectedRange={setSelectedRange} />

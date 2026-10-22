@@ -15,8 +15,7 @@ interface FormErrors {
 interface Props {
   closeForm?: () => void
 }
-export const CreateAccountForm: React.FC<Props> = props => {
-  const { closeForm, ...rest } = props
+export const CreateAccountForm = ({ closeForm, ...rest }: Props) => {
   const dispatch = useAppDispatch()
   const [form, setForm] = useState({ name: "", type: "", initialBalance: "" })
   const [acctName, setAcctName] = useState("")

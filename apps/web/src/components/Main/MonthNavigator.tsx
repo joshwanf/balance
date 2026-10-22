@@ -9,7 +9,7 @@ import dayjs from "dayjs"
 import { Popover } from "../../lib/ComponentLibrary/Popover/Popover"
 
 interface Props {}
-export const MonthNavigator: React.FC<Props> = props => {
+export const MonthNavigator = ({}: Props) => {
   const dispatch = useAppDispatch()
   const dateRef = useRef<HTMLDivElement>(null)
   const [showDatePicker, setShowDatePicker] = useState(false)

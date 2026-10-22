@@ -11,7 +11,7 @@ import { AnimatePresence } from "motion/react"
 import { Popover } from "../../lib/ComponentLibrary/Popover/Popover"
 
 interface Props {}
-export const TopBar: React.FC<Props> = () => {
+export const TopBar = () => {
   const user = useAppSelector(selectUser)
   const [display, setDisplay] = useState<string | null>(null)
   const ref = useRef<HTMLDivElement>(null)

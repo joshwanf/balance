@@ -6,9 +6,7 @@ interface Props {
   onChange: (input: string) => void
   [key: string]: any
 }
-const TextInput = (props: Props) => {
-  // const { textValue, onChange, onKeyDown, ...rest } = props
-  const { text, onChange, ...rest } = props
+const TextInput = ({ text, onChange, ...rest }: Props) => {
   return (
     <input
       // className="text-input"

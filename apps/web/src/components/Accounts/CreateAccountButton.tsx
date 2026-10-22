@@ -5,8 +5,7 @@ import { m, LazyMotion, domAnimation } from "motion/react"
 interface Props {
   onClick: () => void
 }
-export const CreateAccountButton: React.FC<Props> = props => {
-  const { onClick } = props
+export const CreateAccountButton = ({ onClick }: Props) => {
   return (
     <LazyMotion features={domAnimation}>
       <m.div

@@ -7,8 +7,12 @@ interface Props {
   addToSelected: (item: string) => void
   [key: string]: any
 }
-export const ListSelector = (props: Props) => {
-  const { inputValue, list, addToSelected, ...rest } = props
+export const ListSelector = ({
+  inputValue,
+  list,
+  addToSelected,
+  ...rest
+}: Props) => {
   return list.map(item => (
     <div
       className={`list-selector ${

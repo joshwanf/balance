@@ -9,8 +9,7 @@ interface Props {
   yearOpts: [string, (year: string) => void]
 }
 
-export const DateOptions: React.FC<Props> = props => {
-  const { monthOpts, yearOpts, ...rest } = props
+export const DateOptions = ({ monthOpts, yearOpts, ...rest }: Props) => {
   const [month, setMonth] = monthOpts
   const [year, setYear] = yearOpts
 

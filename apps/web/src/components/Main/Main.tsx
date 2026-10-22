@@ -10,7 +10,7 @@ interface Props {
   children?: React.ReactNode
 }
 
-export const Main: React.FC<Props> = ({ children }) => {
+export const Main = ({ children }: Props) => {
   const sidebarMenuRef = useRef<HTMLDivElement>(null)
   // Assume a large viewport during SSR; corrected on mount
   const [isLgViewport, setIsLgViewport] = useState(true)

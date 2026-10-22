@@ -21,8 +21,7 @@ type CreateErrors = {
 interface Props {
   onAfterSubmitForm?: () => void
 }
-export const CreateTransaction: React.FC<Props> = props => {
-  const { onAfterSubmitForm, ...rest } = props
+export const CreateTransaction = ({ onAfterSubmitForm, ...rest }: Props) => {
   const emptyForm = { date: "", payee: "", amount: "" }
   const dispatch = useAppDispatch()
   const [form, setForm] = useState(emptyForm)

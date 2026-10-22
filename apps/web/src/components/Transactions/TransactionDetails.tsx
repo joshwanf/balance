@@ -30,9 +30,8 @@ interface Props {
   t: ApiTypes.Transaction.TSerialized
   closeModal: (e: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) => void
 }
-export const TransactionDetails: React.FC<Props> = props => {
+export const TransactionDetails = ({ t, closeModal, ...rest }: Props) => {
   const dispatch = useAppDispatch()
-  const { t, closeModal, ...rest } = props
   const categories = useAppSelector(selectCategories)
   const accounts = useAppSelector(selectAccounts)
 

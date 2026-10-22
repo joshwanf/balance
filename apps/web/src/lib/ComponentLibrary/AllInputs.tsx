@@ -3,7 +3,7 @@ import { useState } from "react"
 import * as Ipt from "../Base/Input"
 
 interface Props {}
-export const AllInputs: React.FC<Props> = ({}) => {
+export const AllInputs = () => {
   const [textareaContent, setTextareaContent] = useState("")
   const [textInputContent, setTextInputContent] = useState("")
   const [checkboxIsChecked, setCheckboxIsChecked] = useState<boolean>(false)

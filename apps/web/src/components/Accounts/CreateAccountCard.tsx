@@ -6,8 +6,7 @@ import { CreateAccountForm } from "./CreateAccountForm"
 interface Props {
   onAfterSubmitForm: () => void
 }
-export const CreateAccountCard: React.FC<Props> = props => {
-  const { onAfterSubmitForm, ...rest } = props
+export const CreateAccountCard = ({ onAfterSubmitForm, ...rest }: Props) => {
   const [isEditing, setIsEditing] = useState(false)
   const [form, setForm] = useState({ name: "", type: "", initialBalance: "" })
 

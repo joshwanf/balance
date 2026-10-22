@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation"
 import { Search } from "lucide-react"
 
 interface Props {}
-export const Landing: React.FC<Props> = props => {
+export const Landing = ({}: Props) => {
   const router = useRouter()
   const session = useAppSelector(state => state.session.user)
   const [display, setDisplay] = useState("")

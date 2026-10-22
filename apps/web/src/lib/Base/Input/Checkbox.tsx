@@ -8,8 +8,14 @@ interface Props {
   additionalClasses?: string[]
   [key: string]: any
 }
-export const Checkbox: React.FC<Props> = props => {
-  const { text, id, checked, onChange, additionalClasses, ...rest } = props
+export const Checkbox = ({
+  text,
+  id,
+  checked,
+  onChange,
+  additionalClasses,
+  ...rest
+}: Props) => {
   return (
     <div>
       <input

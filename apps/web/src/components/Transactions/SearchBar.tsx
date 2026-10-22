@@ -12,9 +12,9 @@ interface Props {
   searchTermText: [string, (term: string) => void]
 }
 
-export const SearchBar: React.FC<Props> = props => {
+export const SearchBar = ({ searchTermText }: Props) => {
   const dispatch = useAppDispatch()
-  const [searchText, setSearchText] = props.searchTermText
+  const [searchText, setSearchText] = searchTermText
   const [text, setText] = useState(searchText)
   const [errors, setErrors] = useState("")
 

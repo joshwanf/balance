@@ -5,8 +5,12 @@ interface Props {
   additionalClasses?: string[]
   [key: string]: any
 }
-export const TextArea: React.FC<Props> = props => {
-  const { text, onChange, additionalClasses, ...rest } = props
+export const TextArea = ({
+  text,
+  onChange,
+  additionalClasses,
+  ...rest
+}: Props) => {
   const defaultClasses = [
     // default style
     "px-3",

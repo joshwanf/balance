@@ -14,8 +14,13 @@ interface Props {
   additionalClasses?: string[]
   [key: string]: any
 }
-export const ManyCheckboxes: React.FC<Props> = props => {
-  const { options, selected, onChange, additionalClasses, ...rest } = props
+export const ManyCheckboxes = ({
+  options,
+  selected,
+  onChange,
+  additionalClasses,
+  ...rest
+}: Props) => {
   const isDisabled = options.map(option => option.isDisabled ?? false)
   const handleChangeCheckbox = (i: number) => (checked: boolean) => {
     const before = selected.slice(0, i)

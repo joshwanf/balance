@@ -20,8 +20,7 @@ interface FormErrors {
 interface Props {
   closeModal: () => void
 }
-export const SignupForm: React.FC<Props> = props => {
-  const { closeModal, ...rest } = props
+export const SignupForm = ({ closeModal, ...rest }: Props) => {
   const dispatch = useAppDispatch()
   const router = useRouter()
 

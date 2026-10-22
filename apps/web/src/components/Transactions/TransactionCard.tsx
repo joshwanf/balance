@@ -16,8 +16,7 @@ interface Props {
   checked: boolean
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
-export const TransactionCard: React.FC<Props> = props => {
-  const { t, checked, onChange, ...rest } = props
+export const TransactionCard = ({ t, checked, onChange, ...rest }: Props) => {
   const categories = useAppSelector(selectCategories)
   const accounts = useAppSelector(selectAccounts)
   const [form, setForm] = useState(t)

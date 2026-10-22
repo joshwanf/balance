@@ -9,8 +9,13 @@ interface Props {
   closeMenu: (input: boolean) => void
   [key: string]: any
 }
-export const ListSelectorForwardRef: React.FC<Props> = props => {
-  const { inputValue, list, addToSelected, closeMenu, ...rest } = props as Props
+export const ListSelectorForwardRef = ({
+  inputValue,
+  list,
+  addToSelected,
+  closeMenu,
+  ...rest
+}: Props) => {
   const listRef = useRef<HTMLDivElement>(null)
   const handleClick = (item: string) => (e: React.MouseEvent) => {
     e.stopPropagation()

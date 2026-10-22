@@ -6,8 +6,14 @@ interface Props {
   value: string
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
-export const FormField: React.FC<Props> = props => {
-  const { field, displayText, placeholder, value, onChange, ...rest } = props
+export const FormField = ({
+  field,
+  displayText,
+  placeholder,
+  value,
+  onChange,
+  ...rest
+}: Props) => {
   return (
     <label htmlFor={field} className="grid grid-cols-[30%_70%]">
       <div className="mr-2 justify-self-end">{displayText}</div>

@@ -10,18 +10,16 @@ interface Props {
   onChange: (id: any) => void
   labelId?: string
 }
-export const DropdownSelector: React.FC<Props> = props => {
-  const {
-    field,
-    options,
-    displayText,
-    disableBlankSelection,
-    selected,
-    onChange,
-    labelId,
-    ...rest
-  } = props
-
+export const DropdownSelector = ({
+  field,
+  options,
+  displayText,
+  disableBlankSelection,
+  selected,
+  onChange,
+  labelId,
+  ...rest
+}: Props) => {
   const [showOpts, setShowOpts] = useState(false)
   const divRef = useRef(null)
 

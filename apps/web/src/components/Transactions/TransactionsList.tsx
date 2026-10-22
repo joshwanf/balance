@@ -14,7 +14,7 @@ import { searchTextToParams } from "../../utils/searchHelpers"
 
 type Transaction = ApiTypes.Transaction.ListResponse
 
-export const TransactionsList: React.FC = () => {
+export const TransactionsList = () => {
   const dispatch = useAppDispatch()
   const session = useAppSelector(state => state.session)
   const {
