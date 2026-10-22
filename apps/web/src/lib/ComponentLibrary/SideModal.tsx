@@ -13,7 +13,7 @@ export const SideModal: React.FC<Props> = props => {
   useEffect(() => {
     setPortalNode(document.querySelector(selector))
   }, [selector])
-  if (!portalNode) return <div></div>
+  if (!portalNode) return null
 
   return (
     <>
