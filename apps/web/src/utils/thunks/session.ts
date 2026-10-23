@@ -55,23 +55,3 @@ export const loginDemoThunk = createAsyncThunk<
   thunkApi.dispatch(addPartialAccounts(accounts))
   return safeUser
 })
-
-export const restoreSession = createAsyncThunk<
-  SafeUser,
-  void,
-  { rejectValue: ApiError }
->("restoreSession", async (_, thunkApi) => {
-  const res = await balance.session.restore()
-  if (res instanceof ApiError) {
-    return thunkApi.rejectWithValue(res)
-  }
-  const {
-    success: {
-      user: { accounts, categories, ...safeUser },
-    },
-  } = res
-  thunkApi.dispatch(login(safeUser))
-  thunkApi.dispatch(addManyPartialCategories(categories))
-  thunkApi.dispatch(addPartialAccounts(accounts))
-  return safeUser
-})

@@ -1,22 +1,32 @@
 "use client"
-import { useEffect, useRef } from "react"
+import { useRef } from "react"
 import { Provider } from "react-redux"
+import type { ApiTypes } from "@balance/api-types"
 import { makeStore, type AppStore } from "../store/store"
-import { restoreSession } from "../utils/thunks/session"
+import { login } from "../features/sessionSlice"
+import { addManyPartialCategories } from "../features/categoriesSlice"
+import { addPartialAccounts } from "../features/accountsSlice"
+
+type SessionUser = ApiTypes.Session.LoginResponse["success"]["user"]
 
 interface Props {
+  /** The logged-in user, read from the cookie by the root layout */
+  user: SessionUser | null
   children: React.ReactNode
 }
 
-export const Providers = ({ children }: Props) => {
+export const Providers = ({ user, children }: Props) => {
   const storeRef = useRef<AppStore | null>(null)
   if (!storeRef.current) {
-    storeRef.current = makeStore()
+    const store = makeStore()
+    if (user) {
+      const { accounts, categories, ...safeUser } = user
+      store.dispatch(login(safeUser))
+      store.dispatch(addManyPartialCategories(categories))
+      store.dispatch(addPartialAccounts(accounts))
+    }
+    storeRef.current = store
   }
-
-  useEffect(() => {
-    storeRef.current?.dispatch(restoreSession())
-  }, [])
 
   return <Provider store={storeRef.current}>{children}</Provider>
 }
