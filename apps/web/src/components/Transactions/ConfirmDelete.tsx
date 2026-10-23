@@ -4,8 +4,7 @@ interface Props {
   closeModal: () => void
   deleteT: (e: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) => void
 }
-export const ConfirmDelete: React.FC<Props> = props => {
-  const { closeModal, deleteT, ...rest } = props
+export const ConfirmDelete = ({ closeModal, deleteT, ...rest }: Props) => {
   return (
     <div className="bg-white p-6 space-y-2 rounded-md">
       <div>Are you sure you want to delete the transaction?</div>

@@ -7,7 +7,7 @@ import { SettingsMenu } from "../Main/SettingsMenu"
 
 interface Props {}
 
-export const TrendsList: React.FC<Props> = props => {
+export const TrendsList = ({}: Props) => {
   const [showPopover, setShowPopover] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const trends = [

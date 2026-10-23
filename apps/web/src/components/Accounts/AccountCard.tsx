@@ -13,8 +13,7 @@ import { removeAccountThunk } from "../../utils/thunks/account"
 interface Props {
   accountId: string
 }
-export const AccountCard: React.FC<Props> = props => {
-  const { accountId, ...rest } = props
+export const AccountCard = ({ accountId, ...rest }: Props) => {
   const dispatch = useAppDispatch()
   const account = useAppSelector(state => selectAccountById(state, accountId))
   const [showMenu, setShowMenu] = useState(false)

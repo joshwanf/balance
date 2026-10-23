@@ -7,12 +7,10 @@ interface Props {
   children: ReactNode
   to: string
 }
-export const SidebarLink: React.FC<Props> = props => {
-  const { children, to, ...rest } = props
+export const SidebarLink = ({ children, to, ...rest }: Props) => {
   const pathname = usePathname()
   // Mirrors react-router NavLink's default (non-`end`) matching
-  const isActive =
-    pathname === to || (pathname?.startsWith(to + "/") ?? false)
+  const isActive = pathname === to || (pathname?.startsWith(to + "/") ?? false)
   return (
     <Link
       href={to}

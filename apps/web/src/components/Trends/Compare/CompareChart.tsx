@@ -19,8 +19,7 @@ interface Props {
   data: ApiTypes.Trend.PieChart
 }
 
-export const CompareChart: React.FC<Props> = props => {
-  const { data, ...rest } = props
+export const CompareChart = ({ data, ...rest }: Props) => {
   const chartData = {
     labels: data.summary.map(s => s.name),
     datasets: [

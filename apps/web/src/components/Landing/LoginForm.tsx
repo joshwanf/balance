@@ -17,7 +17,7 @@ interface FormErrors {
 interface Props {
   closeModal?: () => void
 }
-export const LoginForm: React.FC<Props> = ({ closeModal }) => {
+export const LoginForm = ({ closeModal }: Props) => {
   const dispatch = useAppDispatch()
   const router = useRouter()
   const [form, setForm] = useState({ credential: "", password: "" })

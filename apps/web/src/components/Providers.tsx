@@ -8,7 +8,7 @@ interface Props {
   children: React.ReactNode
 }
 
-export const Providers: React.FC<Props> = ({ children }) => {
+export const Providers = ({ children }: Props) => {
   const storeRef = useRef<AppStore | null>(null)
   if (!storeRef.current) {
     storeRef.current = makeStore()

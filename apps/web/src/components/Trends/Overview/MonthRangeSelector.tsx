@@ -13,9 +13,7 @@ interface Props {
   //   range: number
   setSelectedRange: (range: Range) => void
 }
-export const MonthRangeSelector: React.FC<Props> = props => {
-  const { setSelectedRange, ...rest } = props
-
+export const MonthRangeSelector = ({ setSelectedRange, ...rest }: Props) => {
   const [range, setRange] = useState(0)
 
   const handleChangeRange =

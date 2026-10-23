@@ -14,8 +14,11 @@ interface Props {
   transactionId: string
   transactionTags: string[]
 }
-export const TagSelector: React.FC<Props> = props => {
-  const { transactionId, transactionTags, ...rest } = props
+export const TagSelector = ({
+  transactionId,
+  transactionTags,
+  ...rest
+}: Props) => {
   const dispatch = useAppDispatch()
   const [selectedTags, setSelectedTags] = useState<string[]>(transactionTags)
   const tags = useAppSelector(selectTags)

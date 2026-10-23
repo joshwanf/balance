@@ -22,9 +22,7 @@ interface Props {
   checked: boolean
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
-export const CategoryCard: React.FC<Props> = props => {
-  const { id, c, checked, onChange, ...rest } = props
-
+export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
   const dispatch = useAppDispatch()
   const curMonth = useAppSelector(state => state.session.settings.curMonth)
 

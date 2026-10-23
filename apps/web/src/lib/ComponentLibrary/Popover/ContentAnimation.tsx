@@ -6,8 +6,8 @@ interface Props {
   children: React.ReactNode
 }
 
-export const ContentAnimation: React.FC<Props> = props => {
-  if (props.overlayStyle === "darken") {
+export const ContentAnimation = ({ children, overlayStyle }: Props) => {
+  if (overlayStyle === "darken") {
     return (
       <LazyMotion features={domAnimation}>
         <m.div
@@ -16,10 +16,10 @@ export const ContentAnimation: React.FC<Props> = props => {
           exit={{ scale: 0, opacity: 0 }}
           transition={{ delay: 0.2, duration: 0.2, ease: "linear" }}
         >
-          {props.children}
+          {children}
         </m.div>
       </LazyMotion>
     )
   }
-  return <div>{props.children}</div>
+  return <div>{children}</div>
 }

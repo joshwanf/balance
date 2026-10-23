@@ -33,8 +33,7 @@ interface Props {
   labels: string[]
 }
 
-export const OverviewChart: React.FC<Props> = props => {
-  const { categories, labels, ...rest } = props
+export const OverviewChart = ({ categories, labels, ...rest }: Props) => {
   const datasets =
     categories?.map(c => ({
       label: c.name,

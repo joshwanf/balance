@@ -8,8 +8,12 @@ interface Props {
   overlayStyle?: "none" | "darken" | "blur"
 }
 
-export const Overlay: React.FC<Props> = props => {
-  const { children, closePopover, overlayStyle, ...rest } = props
+export const Overlay = ({
+  children,
+  closePopover,
+  overlayStyle,
+  ...rest
+}: Props) => {
   const bgStyle = {
     none: {},
     darken: { backgroundColor: "rgba(0, 0, 0, 0.5)" },

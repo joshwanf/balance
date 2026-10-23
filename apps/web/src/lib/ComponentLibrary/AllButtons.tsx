@@ -1,7 +1,7 @@
 "use client"
 import * as Btn from "../Base/Button"
 interface Props {}
-export const AllButtons: React.FC<Props> = ({}) => {
+export const AllButtons = () => {
   return (
     <div>
       <div>

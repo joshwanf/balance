@@ -12,10 +12,12 @@ interface Props {
   searchTermText: [string, (text: string) => void]
 }
 
-export const SearchOptions: React.FC<Props> = props => {
+export const SearchOptions = ({
+  searchTermParams,
+  searchTermText: searchTermTextState,
+}: Props) => {
   const dispatch = useAppDispatch()
-  const searchTermParams = props.searchTermParams
-  const [searchTermText, setSearchTermText] = props.searchTermText
+  const [searchTermText, setSearchTermText] = searchTermTextState
   const hasSearchParams = Object.keys(searchTermParams).length > 0
   const [errors, setErrors] = useState("") // blackhole for transaction thunk :dead:
 

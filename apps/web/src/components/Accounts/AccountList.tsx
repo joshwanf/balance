@@ -7,7 +7,7 @@ import { CreateAccountCard } from "./CreateAccountCard"
 import { listAccountsThunk } from "../../utils/thunks/account"
 
 interface Props {}
-export const AccountList: React.FC<Props> = props => {
+export const AccountList = ({}: Props) => {
   const dispatch = useAppDispatch()
   // const accountIds = useAppSelector(selectAccountIds)
   const accountIds = Object.keys(useAppSelector(selectAccounts))

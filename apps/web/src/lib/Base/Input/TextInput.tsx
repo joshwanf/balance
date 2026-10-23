@@ -6,8 +6,13 @@ interface Props {
   additionalClasses?: string[]
   [key: string]: any
 }
-export const TextInput = (props: Props) => {
-  const { text, onChange, type, additionalClasses, ...rest } = props
+export const TextInput = ({
+  text,
+  onChange,
+  type,
+  additionalClasses,
+  ...rest
+}: Props) => {
   const defaultClasses = [
     // default style
     "px-3",

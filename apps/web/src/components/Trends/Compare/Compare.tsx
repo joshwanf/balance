@@ -16,7 +16,7 @@ type PieChart = ApiTypes.Trend.PieChart
 type CompareErrors = { year1?: string; year2?: string; api?: string }
 interface Props {}
 
-export const Compare: React.FC<Props> = props => {
+export const Compare = ({}: Props) => {
   const curMonth = dayjs().format("MM")
   const curYear = dayjs().format("YYYY")
   const [month1, setMonth1] = useState(curMonth)
@@ -56,7 +56,8 @@ export const Compare: React.FC<Props> = props => {
   return (
     <div>
       <div>
-        <Link href="/my-balance/trends">Trends</Link> &gt; <Link href="/my-balance/trends/compare">Compare</Link>
+        <Link href="/my-balance/trends">Trends</Link> &gt;{" "}
+        <Link href="/my-balance/trends/compare">Compare</Link>
       </div>
       <div className="self-center">
         <PrimaryButton onClick={handleCompareMonths}>Compare</PrimaryButton>

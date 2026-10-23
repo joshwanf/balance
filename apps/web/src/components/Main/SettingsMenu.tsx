@@ -10,7 +10,7 @@ import dayjs from "dayjs"
 interface Props {
   // closeMenu: (input: boolean) => void
 }
-export const SettingsMenu: React.FC<Props> = props => {
+export const SettingsMenu = ({}: Props) => {
   const dispatch = useAppDispatch()
 
   const handleLogout = async (e: React.FocusEvent<HTMLButtonElement>) => {

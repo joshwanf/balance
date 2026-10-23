@@ -14,8 +14,7 @@ type CreateErrors = { name?: string; amount?: string }
 interface Props {
   onAfterSubmitForm?: () => void
 }
-export const CreateCategory: React.FC<Props> = props => {
-  const { onAfterSubmitForm, ...rest } = props
+export const CreateCategory = ({ onAfterSubmitForm, ...rest }: Props) => {
   const emptyForm = { name: "", amount: "" }
 
   const dispatch = useAppDispatch()

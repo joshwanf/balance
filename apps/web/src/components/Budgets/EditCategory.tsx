@@ -3,8 +3,7 @@ interface Props {
   id: string | null
   submitEdit: () => void
 }
-export const EditCategory: React.FC<Props> = props => {
-  const { id, submitEdit, ...rest } = props
+export const EditCategory = ({ id, submitEdit, ...rest }: Props) => {
   if (!id) {
     return (
       <div>

@@ -11,8 +11,12 @@ interface Props {
   selected: string[]
   setSelected: (selected: string[]) => void
 }
-export const InputWithSelector = (props: Props) => {
-  const { list, selected, setSelected, ...rest } = props
+export const InputWithSelector = ({
+  list,
+  selected,
+  setSelected,
+  ...rest
+}: Props) => {
   const tagRef = useRef<HTMLDivElement>(null)
   const [text, setText] = useState("")
   const [showDropdown, setShowDropdown] = useState(false)
