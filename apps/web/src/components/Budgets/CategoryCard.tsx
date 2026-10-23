@@ -1,4 +1,5 @@
 "use client"
+import { useRouter } from "next/navigation"
 import { useCurMonth } from "../../hooks/useUrlState"
 import { useState } from "react"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
@@ -25,6 +26,7 @@ interface Props {
 }
 export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
   const dispatch = useAppDispatch()
+  const router = useRouter()
   const curMonth = useCurMonth()
 
   const [formErrors, setFormErrors] = useState<FormErrors>({})
@@ -61,6 +63,7 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
     const res = await dispatch(
       changeCategoryThunk(formWithUpdatedData),
     ).unwrap()
+    router.refresh()
   }
 
   return (

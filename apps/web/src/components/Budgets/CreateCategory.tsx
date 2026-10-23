@@ -1,4 +1,5 @@
 "use client"
+import { useRouter } from "next/navigation"
 import { useCurMonth } from "../../hooks/useUrlState"
 import { useState } from "react"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
@@ -19,6 +20,7 @@ export const CreateCategory = ({ onAfterSubmitForm, ...rest }: Props) => {
   const emptyForm = { name: "", amount: "" }
 
   const dispatch = useAppDispatch()
+  const router = useRouter()
   const curMonth = useCurMonth()
   const [form, setForm] = useState(emptyForm)
   const [createErrors, setCreateErrors] = useState<CreateErrors>({})
@@ -46,6 +48,7 @@ export const CreateCategory = ({ onAfterSubmitForm, ...rest }: Props) => {
       }
       try {
         const res = await dispatch(createCategoriesThunk(preparedForm)).unwrap()
+        router.refresh()
         setForm(emptyForm)
         if (onAfterSubmitForm) {
           onAfterSubmitForm()

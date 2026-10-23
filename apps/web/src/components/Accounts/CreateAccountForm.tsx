@@ -1,4 +1,5 @@
 "use client"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { TextInput } from "../../lib/Base/Input"
 import { X } from "lucide-react"
@@ -17,6 +18,7 @@ interface Props {
 }
 export const CreateAccountForm = ({ closeForm, ...rest }: Props) => {
   const dispatch = useAppDispatch()
+  const router = useRouter()
   const [form, setForm] = useState({ name: "", type: "", initialBalance: "" })
   const [acctName, setAcctName] = useState("")
   const [acctType, setAcctType] = useState("checking")
@@ -66,6 +68,7 @@ export const CreateAccountForm = ({ closeForm, ...rest }: Props) => {
         initialBalance: pBalance.toInt(),
       }
       await dispatch(createAccountThunk(pForm))
+      router.refresh()
       if (closeForm) {
         closeForm()
       }
