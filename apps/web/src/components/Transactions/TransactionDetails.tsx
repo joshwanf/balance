@@ -1,5 +1,6 @@
 "use client"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
 import type { ApiTypes } from "@balance/api-types"
 import { EditableText } from "../../lib/ComponentLibrary/EditableText"
@@ -28,10 +29,12 @@ interface FormErrors {
 }
 interface Props {
   t: ApiTypes.Transaction.TSerialized
+  allTags: string[]
   closeModal: (e: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) => void
 }
-export const TransactionDetails = ({ t, closeModal, ...rest }: Props) => {
+export const TransactionDetails = ({ t, allTags, closeModal }: Props) => {
   const dispatch = useAppDispatch()
+  const router = useRouter()
   const categories = useAppSelector(selectCategories)
   const accounts = useAppSelector(selectAccounts)
 
@@ -104,6 +107,7 @@ export const TransactionDetails = ({ t, closeModal, ...rest }: Props) => {
       const res = await dispatch(
         changeTransactionThunk(formWithUpdatedData),
       ).unwrap()
+      router.refresh()
     }
   }
   const handleShowConfirmModal = () => {
@@ -122,6 +126,7 @@ export const TransactionDetails = ({ t, closeModal, ...rest }: Props) => {
       if (!(response instanceof ApiError)) {
         dispatch(removeT(t.id))
         setConfirmDelete(false)
+        router.refresh()
       }
     } else {
       setShowConfirmDelete(true)
@@ -235,7 +240,11 @@ export const TransactionDetails = ({ t, closeModal, ...rest }: Props) => {
               selected={selectedTags}
               setSelected={setSelectedTags}
             /> */}
-            <TagSelector transactionId={t.id} transactionTags={t.tags} />
+            <TagSelector
+              transactionId={t.id}
+              transactionTags={t.tags}
+              allTags={allTags}
+            />
             {/* </div> */}
           </div>
           <div>
