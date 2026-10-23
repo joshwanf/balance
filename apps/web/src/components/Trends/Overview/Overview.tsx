@@ -1,12 +1,13 @@
 "use client"
 import { useEffect, useState } from "react"
 import balance from "../../../utils/api"
-import { useAppSelector } from "../../../store/hooks"
 import { ApiError } from "../../../utils/classes/ApiError"
 import type { ApiTypes } from "@balance/api-types"
 import { Money } from "../../../utils/classes/Money"
 import { OverviewChart } from "./OverviewChart"
 import Link from "next/link"
+import { useCurMonth } from "../../../hooks/useUrlState"
+import { withMonth } from "../../../utils/month"
 import { MonthRangeSelector } from "./MonthRangeSelector"
 import { diffMonths } from "../../../utils/helpers/date"
 import dayjs from "dayjs"
@@ -15,12 +16,12 @@ type OverviewResponse = ApiTypes.Trend.OverviewResponse
 interface Props {}
 
 export const Overview = ({}: Props) => {
+  const curMonth = useCurMonth()
   const [data, setData] = useState<OverviewResponse | null>(null)
   const [outgoing, setOutgoing] = useState<
     OverviewResponse["categories"] | null
   >(null)
   const [errors, setErrors] = useState({})
-  const curMonth = useAppSelector(state => state.session.settings.curMonth)
 
   const [selectedRange, setSelectedRange] = useState({
     diff: 1,
@@ -88,8 +89,11 @@ export const Overview = ({}: Props) => {
   return (
     <div>
       <div>
-        <Link href="/my-balance/trends">Trends</Link> &gt;{" "}
-        <Link href="/my-balance/trends/overview">Overview</Link>
+        <Link href={withMonth("/my-balance/trends", curMonth)}>Trends</Link>{" "}
+        &gt;{" "}
+        <Link href={withMonth("/my-balance/trends/overview", curMonth)}>
+          Overview
+        </Link>
       </div>
 
       <MonthRangeSelector setSelectedRange={setSelectedRange} />

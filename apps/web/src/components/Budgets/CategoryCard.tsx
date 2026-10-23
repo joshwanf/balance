@@ -1,4 +1,5 @@
 "use client"
+import { useCurMonth } from "../../hooks/useUrlState"
 import { useState } from "react"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
 import { EditableText } from "../../lib/ComponentLibrary/EditableText"
@@ -24,7 +25,7 @@ interface Props {
 }
 export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
   const dispatch = useAppDispatch()
-  const curMonth = useAppSelector(state => state.session.settings.curMonth)
+  const curMonth = useCurMonth()
 
   const [formErrors, setFormErrors] = useState<FormErrors>({})
 

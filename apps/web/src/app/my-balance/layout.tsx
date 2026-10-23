@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { Main } from "@/components/Main/Main"
 
 export default function MyBalanceLayout({
@@ -5,5 +6,11 @@ export default function MyBalanceLayout({
 }: {
   children: React.ReactNode
 }) {
-  return <Main>{children}</Main>
+  // The month and search live in the URL (useSearchParams), which needs a
+  // Suspense boundary so the rest of the page can still prerender.
+  return (
+    <Suspense>
+      <Main>{children}</Main>
+    </Suspense>
+  )
 }

@@ -38,6 +38,19 @@ export const listTransactionsThunk = createAsyncThunk<TList, ListSearchParams>(
   },
 )
 
+type SearchParams = Partial<ApiTypes.Transaction.SearchRequest>
+export const searchTransactionsThunk = createAsyncThunk<TList, SearchParams>(
+  "searchTransactions",
+  async (searchParams, thunkApi) => {
+    const res = await balance.transaction.search(searchParams)
+    if (res instanceof ApiError) {
+      return thunkApi.rejectWithValue(res)
+    }
+    thunkApi.dispatch(addManyTs(res.transactions))
+    return res.transactions
+  },
+)
+
 type CreateRequest = ApiTypes.Transaction.CreateRequest
 type CreateThunkReturn = ApiTypes.Transaction.CreateResponse
 export const createTransaction = createAsyncThunk<

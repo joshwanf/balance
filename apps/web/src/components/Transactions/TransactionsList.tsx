@@ -11,23 +11,22 @@ import { SearchBar } from "./SearchBar"
 import { PrimaryButton } from "../../lib/Base/Button"
 import { SearchOptions } from "./SearchOptions"
 import { searchTextToParams } from "../../utils/searchHelpers"
+import { useCurMonth, useSearchText } from "../../hooks/useUrlState"
+import { searchTransactionsThunk } from "../../utils/thunks/transactions"
 
 type Transaction = ApiTypes.Transaction.ListResponse
 
 export const TransactionsList = () => {
   const dispatch = useAppDispatch()
-  const session = useAppSelector(state => state.session)
-  const {
-    user,
-    settings: { curMonth },
-  } = session
+  const user = useAppSelector(state => state.session.user)
+  const curMonth = useCurMonth()
+  const searchText = useSearchText()
   const transactions = useAppSelector(memoizedSelectTArr)
   const allTransIds = transactions.map(t => t.id)
   const [selectedItem, setSelectedItem] = useState<string[]>([])
   const [showAddItem, setShowAddItem] = useState(false)
   const [checkAllItems, setCheckAllItems] = useState(false)
-  const searchTermText = useState("")
-  const searchParams = searchTextToParams(searchTermText[0])
+  const searchParams = searchTextToParams(searchText)
 
   // const allTransIds = Object.values(transactions).map(t => t.id)
   const handleSelectItem =
@@ -51,9 +50,14 @@ export const TransactionsList = () => {
       setCheckAllItems(false)
     }
   }
+  // ?q= searches across months; otherwise list the selected month
   useEffect(() => {
-    dispatch(listTransactionsThunk({ startMonth: curMonth }))
-  }, [dispatch, listTransactionsThunk])
+    if (searchText) {
+      dispatch(searchTransactionsThunk(searchTextToParams(searchText)))
+    } else {
+      dispatch(listTransactionsThunk({ startMonth: curMonth }))
+    }
+  }, [dispatch, curMonth, searchText])
 
   if (!user) {
     return <h1>Must be logged in!</h1>
@@ -83,15 +87,8 @@ export const TransactionsList = () => {
             </PrimaryButton>
           </div>
           <div className="w-full space-y-2">
-            <SearchBar
-              // searchTermState={searchTermState}
-              searchTermText={searchTermText}
-            />
-            <SearchOptions
-              // searchTermState={searchTermState}
-              searchTermParams={searchParams}
-              searchTermText={searchTermText}
-            />
+            <SearchBar searchText={searchText} />
+            <SearchOptions searchTermParams={searchParams} />
           </div>
         </div>
         <AnimatePresence>

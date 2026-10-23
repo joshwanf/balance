@@ -11,12 +11,15 @@ import { validateDate } from "../../../utils/helpers/date"
 import { Errors } from "../../../lib/ComponentLibrary/Errors"
 import { CompareChart } from "./CompareChart"
 import Link from "next/link"
+import { useCurMonth } from "../../../hooks/useUrlState"
+import { withMonth } from "../../../utils/month"
 
 type PieChart = ApiTypes.Trend.PieChart
 type CompareErrors = { year1?: string; year2?: string; api?: string }
 interface Props {}
 
 export const Compare = ({}: Props) => {
+  const selectedMonth = useCurMonth()
   const curMonth = dayjs().format("MM")
   const curYear = dayjs().format("YYYY")
   const [month1, setMonth1] = useState(curMonth)
@@ -56,8 +59,13 @@ export const Compare = ({}: Props) => {
   return (
     <div>
       <div>
-        <Link href="/my-balance/trends">Trends</Link> &gt;{" "}
-        <Link href="/my-balance/trends/compare">Compare</Link>
+        <Link href={withMonth("/my-balance/trends", selectedMonth)}>
+          Trends
+        </Link>{" "}
+        &gt;{" "}
+        <Link href={withMonth("/my-balance/trends/compare", selectedMonth)}>
+          Compare
+        </Link>
       </div>
       <div className="self-center">
         <PrimaryButton onClick={handleCompareMonths}>Compare</PrimaryButton>

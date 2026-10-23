@@ -1,31 +1,25 @@
 "use client"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useRef, useState } from "react"
-import { useAppDispatch, useAppSelector } from "../../store/hooks"
-import { setCurMonth } from "../../features/sessionSlice"
-import { listTransactionsThunk } from "../../utils/thunks/transactions"
+import { useCurMonth, useSetMonth } from "../../hooks/useUrlState"
 import { DatePicker } from "./DatePicker"
 import dayjs from "dayjs"
 import { Popover } from "../../lib/ComponentLibrary/Popover/Popover"
 
 interface Props {}
 export const MonthNavigator = ({}: Props) => {
-  const dispatch = useAppDispatch()
   const dateRef = useRef<HTMLDivElement>(null)
   const [showDatePicker, setShowDatePicker] = useState(false)
-  const curMonth = useAppSelector(state => state.session.settings.curMonth)
+  const curMonth = useCurMonth()
+  const setMonth = useSetMonth()
 
   const changeCurMonth = (by: number) => () => {
     const newMonth = dayjs(curMonth, "YYYY-MM")
       .add(by, "month")
       .format("YYYY-MM")
-    dispatch(setCurMonth(newMonth))
-    dispatch(listTransactionsThunk({ startMonth: newMonth }))
+    setMonth(newMonth)
   }
-  const setNewMonth = (toMonth: string) => {
-    dispatch(setCurMonth(toMonth))
-    dispatch(listTransactionsThunk({ startMonth: toMonth }))
-  }
+  const setNewMonth = (toMonth: string) => setMonth(toMonth)
   return (
     <div className="py-4 flex space-x-1">
       <button onClick={changeCurMonth(-1)}>
