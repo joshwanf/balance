@@ -1,55 +1,9 @@
-import { PayloadAction, createAsyncThunk } from "@reduxjs/toolkit"
-import {
-  addManyTs,
-  addOneT,
-  addTagsList,
-} from "../../features/transactionsSlice"
-import {
-  addCategoryFromTransaction,
-  addManyCategories,
-  addManyCategoriesFromTransaction,
-  addManyPartialCategories,
-} from "../../features/categoriesSlice"
+import { createAsyncThunk } from "@reduxjs/toolkit"
+import { addOneT } from "../../features/transactionsSlice"
+import { addCategoryFromTransaction } from "../../features/categoriesSlice"
 import type { ApiTypes } from "@balance/api-types"
 import { ApiError } from "../classes/ApiError"
 import balance from "../api"
-
-type TList = ApiTypes.Transaction.ListResponse["transactions"]
-type ListSearchParams = ApiTypes.Transaction.ListSearchParams
-export const listTransactionsThunk = createAsyncThunk<TList, ListSearchParams>(
-  "getTransactions",
-  async (listOptions, thunkApi) => {
-    const res = await balance.transaction.list(listOptions)
-    if (res instanceof ApiError) {
-      return thunkApi.rejectWithValue(res)
-    }
-    const { transactions, categories, tags } = res
-
-    /** Categories and Transactions payload */
-    const tPayload = transactions
-
-    /** Dispatch to reducers */
-    thunkApi.dispatch(addManyTs(tPayload))
-    thunkApi.dispatch(addTagsList(tags))
-    // if (categories.length > 0) {
-    thunkApi.dispatch(addManyCategories(categories))
-    // }
-    return tPayload
-  },
-)
-
-type SearchParams = Partial<ApiTypes.Transaction.SearchRequest>
-export const searchTransactionsThunk = createAsyncThunk<TList, SearchParams>(
-  "searchTransactions",
-  async (searchParams, thunkApi) => {
-    const res = await balance.transaction.search(searchParams)
-    if (res instanceof ApiError) {
-      return thunkApi.rejectWithValue(res)
-    }
-    thunkApi.dispatch(addManyTs(res.transactions))
-    return res.transactions
-  },
-)
 
 type CreateRequest = ApiTypes.Transaction.CreateRequest
 type CreateThunkReturn = ApiTypes.Transaction.CreateResponse
