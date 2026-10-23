@@ -2,41 +2,25 @@
 import { Search } from "lucide-react"
 import { useEffect, useState } from "react"
 import { PrimaryButton } from "../../lib/Base/Button"
-import { searchTextToParams } from "../../utils/searchHelpers"
-import balance from "../../utils/api"
-import { ApiError } from "../../utils/classes/ApiError"
-import { useAppDispatch } from "../../store/hooks"
-import { addManyTs } from "../../features/transactionsSlice"
+import { useSetSearchText } from "../../hooks/useUrlState"
 
 interface Props {
-  searchTermText: [string, (term: string) => void]
+  searchText: string
 }
 
-export const SearchBar = ({ searchTermText }: Props) => {
-  const dispatch = useAppDispatch()
-  const [searchText, setSearchText] = searchTermText
+/** Search box; submitting writes the text to ?q= and the list reloads. */
+export const SearchBar = ({ searchText }: Props) => {
+  const setSearchText = useSetSearchText()
   const [text, setText] = useState(searchText)
-  const [errors, setErrors] = useState("")
 
   useEffect(() => {
     setText(searchText)
   }, [searchText])
 
-  const handleSearch = async () => {
-    setSearchText(text)
-    const searchParams = searchTextToParams(text)
-
-    const res = await balance.transaction.search(searchParams)
-    if (res instanceof ApiError) {
-      return setErrors(res.err.error)
-    }
-    const transactions = res.transactions
-    dispatch(addManyTs(transactions))
-  }
+  const handleSearch = () => setSearchText(text.trim())
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      // const searchParams = searchTextToParams(searchText)
       handleSearch()
     }
   }

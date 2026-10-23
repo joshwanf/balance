@@ -1,63 +1,41 @@
 "use client"
-import { useState } from "react"
-import { useAppDispatch } from "../../store/hooks"
 import { Pill } from "../../lib/Base/Pill/Pill"
-import balance from "../../utils/api"
-import { ApiError } from "../../utils/classes/ApiError"
 import { QueryParams, searchParamsToText } from "../../utils/searchHelpers"
-import { addManyTs } from "../../features/transactionsSlice"
+import { useSetSearchText } from "../../hooks/useUrlState"
 
 interface Props {
   searchTermParams: Partial<QueryParams>
-  searchTermText: [string, (text: string) => void]
 }
 
-export const SearchOptions = ({
-  searchTermParams,
-  searchTermText: searchTermTextState,
-}: Props) => {
-  const dispatch = useAppDispatch()
-  const [searchTermText, setSearchTermText] = searchTermTextState
+/** Pills for the active search; removing one rewrites ?q= without it. */
+export const SearchOptions = ({ searchTermParams }: Props) => {
+  const setSearchText = useSetSearchText()
   const hasSearchParams = Object.keys(searchTermParams).length > 0
-  const [errors, setErrors] = useState("") // blackhole for transaction thunk :dead:
 
   const { generalSearch, tags, ...restOfSearch } = searchTermParams
   const displayText =
     generalSearch && generalSearch.length > 0 ? "Searching for " : "Searching "
 
-  const triggerSearch = async (params: Partial<QueryParams>) => {
-    const res = await balance.transaction.search(params)
-    if (res instanceof ApiError) {
-      return setErrors(res.err.error)
-    }
-    const transactions = res.transactions
-    dispatch(addManyTs(transactions))
-  }
-  const handleRemoveGeneralSearch = async (term: string) => {
+  const search = (params: Partial<QueryParams>) =>
+    setSearchText(searchParamsToText(params))
+
+  const handleRemoveGeneralSearch = (term: string) => {
     const newTerms = generalSearch?.filter(t => t !== term) || []
-    const newParams = { ...searchTermParams, generalSearch: newTerms }
-    const newText = searchParamsToText(newParams)
-    setSearchTermText(newText)
-    triggerSearch(newParams)
+    search({ ...searchTermParams, generalSearch: newTerms })
   }
 
-  const handleRemoveTag = async (tag: string) => {
+  const handleRemoveTag = (tag: string) => {
     if (tags) {
-      const newTags = tags.filter(t => t !== tag)
-      const newParams = { ...searchTermParams, tags: newTags }
-      const newText = searchParamsToText(newParams)
-      setSearchTermText(newText)
-      triggerSearch(newParams)
+      search({ ...searchTermParams, tags: tags.filter(t => t !== tag) })
     }
   }
 
-  const handleRemoveTerm = async (field: keyof QueryParams) => {
-    const newParams = Object.fromEntries(
-      Object.entries(searchTermParams).filter(([key]) => key !== field),
+  const handleRemoveTerm = (field: keyof QueryParams) => {
+    search(
+      Object.fromEntries(
+        Object.entries(searchTermParams).filter(([key]) => key !== field),
+      ),
     )
-    const newText = searchParamsToText(newParams)
-    setSearchTermText(newText)
-    triggerSearch(newParams)
   }
 
   if (!hasSearchParams) return null

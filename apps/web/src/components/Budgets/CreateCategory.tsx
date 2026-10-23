@@ -1,4 +1,5 @@
 "use client"
+import { useCurMonth } from "../../hooks/useUrlState"
 import { useState } from "react"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
 import { m, LazyMotion, domAnimation } from "motion/react"
@@ -18,7 +19,7 @@ export const CreateCategory = ({ onAfterSubmitForm, ...rest }: Props) => {
   const emptyForm = { name: "", amount: "" }
 
   const dispatch = useAppDispatch()
-  const curMonth = useAppSelector(state => state.session.settings.curMonth)
+  const curMonth = useCurMonth()
   const [form, setForm] = useState(emptyForm)
   const [createErrors, setCreateErrors] = useState<CreateErrors>({})
 

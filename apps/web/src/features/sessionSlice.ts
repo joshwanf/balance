@@ -1,7 +1,6 @@
 import type { Action, PayloadAction } from "@reduxjs/toolkit"
 import { createAppSlice } from "../store/createAppSlice"
 import type { ApiTypes } from "@balance/api-types"
-import dayjs from "dayjs"
 
 type SafeUser = ApiTypes.Session.SafeUser
 type LoginResponse = ApiTypes.Session.LoginResponse
@@ -10,14 +9,12 @@ export interface SessionSliceState {
   user: SafeUser | null
   status: "idle" | "loading" | "failed" | "logged out" | "logged in"
   error: Record<string, any> | null
-  settings: { curMonth: string }
 }
 
 const initialState: SessionSliceState = {
   user: null,
   status: "idle",
   error: null,
-  settings: { curMonth: dayjs().format("YYYY-MM") },
 }
 
 // const isLogInAction = (action: Action): action is PayloadAction<SafeUser> => {
@@ -37,9 +34,6 @@ export const sessionSlice = createAppSlice({
     logout: state => {
       state.user = null
     },
-    setCurMonth: (state, action: PayloadAction<string>) => {
-      state.settings.curMonth = action.payload
-    },
   },
   // extraReducers: builder => {
   //   builder.addMatcher(isLogInAction, (state, action) => {
@@ -53,6 +47,6 @@ export const sessionSlice = createAppSlice({
   },
 })
 
-export const { login, logout, setCurMonth } = sessionSlice.actions
+export const { login, logout } = sessionSlice.actions
 
 export const { selectSession, selectUser } = sessionSlice.selectors

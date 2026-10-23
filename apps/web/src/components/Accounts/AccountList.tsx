@@ -1,4 +1,5 @@
 "use client"
+import { useCurMonth } from "../../hooks/useUrlState"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
 import { selectAccounts } from "../../features/accountsSlice"
 import { useEffect } from "react"
@@ -11,11 +12,11 @@ export const AccountList = ({}: Props) => {
   const dispatch = useAppDispatch()
   // const accountIds = useAppSelector(selectAccountIds)
   const accountIds = Object.keys(useAppSelector(selectAccounts))
-  const curMonth = useAppSelector(state => state.session.settings.curMonth)
+  const curMonth = useCurMonth()
 
   useEffect(() => {
-    const res = dispatch(listAccountsThunk({ startMonth: curMonth })).unwrap()
-  }, [])
+    dispatch(listAccountsThunk({ startMonth: curMonth }))
+  }, [dispatch, curMonth])
 
   return (
     <div className="grid grid-cols-3 gap-5">

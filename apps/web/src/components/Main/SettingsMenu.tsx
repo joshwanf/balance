@@ -4,8 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { SecondaryButton } from "../../lib/Base/Button"
 import { useAppDispatch } from "../../store/hooks"
 import balance from "../../utils/api"
-import { logout, setCurMonth } from "../../features/sessionSlice"
-import dayjs from "dayjs"
+import { logout } from "../../features/sessionSlice"
 
 interface Props {
   // closeMenu: (input: boolean) => void
@@ -16,7 +15,6 @@ export const SettingsMenu = ({}: Props) => {
   const handleLogout = async (e: React.FocusEvent<HTMLButtonElement>) => {
     e.preventDefault()
     const response = await balance.session.logout()
-    dispatch(setCurMonth(dayjs().format("YYYY-MM")))
     dispatch(logout())
     // router.push("/")
     window.location.href = "/"

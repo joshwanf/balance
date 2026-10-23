@@ -1,4 +1,5 @@
 "use client"
+import { useCurMonth } from "../../hooks/useUrlState"
 import { useEffect, useState } from "react"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
 import {
@@ -13,7 +14,7 @@ import { PrimaryButton } from "../../lib/Base/Button"
 
 export const CategoryList = () => {
   const dispatch = useAppDispatch()
-  const curMonth = useAppSelector(state => state.session.settings.curMonth)
+  const curMonth = useCurMonth()
   const [isLoaded, setIsLoaded] = useState(false)
   const [selectedCat, setSelectedCat] = useState<string[]>([])
   const [checkAllItems, setCheckAllItems] = useState(false)
@@ -58,11 +59,9 @@ export const CategoryList = () => {
   }
 
   useEffect(() => {
-    if (!isLoaded) {
-      dispatch(listCategoriesThunk({ startMonth: curMonth }))
-      setIsLoaded(true)
-    }
-  }, [dispatch, setIsLoaded, listCategoriesThunk])
+    dispatch(listCategoriesThunk({ startMonth: curMonth }))
+    setIsLoaded(true)
+  }, [dispatch, curMonth])
 
   if (!isLoaded) {
     return <div>Loading categories</div>
