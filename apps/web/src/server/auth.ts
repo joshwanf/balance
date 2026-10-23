@@ -1,4 +1,5 @@
 import "server-only"
+import { cache } from "react"
 import { cookies } from "next/headers"
 import jwt from "jsonwebtoken"
 import type { ApiTypes } from "@balance/api-types"
@@ -36,8 +37,11 @@ export const clearTokenCookie = async () => {
   store.delete(TOKEN)
 }
 
-/** Reads and verifies the token cookie, then loads the user (old restoreUser). */
-export const getSessionUser = async (): Promise<SessionUser | null> => {
+/**
+ * Reads and verifies the token cookie, then loads the user (old restoreUser).
+ * Cached per request, so a layout and its page share one lookup.
+ */
+export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
   const store = await cookies()
   const token = store.get(TOKEN)?.value
   if (!token) return null
@@ -58,4 +62,4 @@ export const getSessionUser = async (): Promise<SessionUser | null> => {
   } catch {
     return null
   }
-}
+})
