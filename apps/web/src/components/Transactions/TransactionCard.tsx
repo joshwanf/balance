@@ -6,24 +6,15 @@ import { TransactionDetails } from "./TransactionDetails"
 import { Money } from "../../utils/classes/Money"
 import { AnimatePresence } from "motion/react"
 
-type Transaction = ApiTypes.Transaction.TSerialized
+type Transaction = ApiTypes.Transaction.TRow
 
 interface Props {
   t: Transaction
-  accountName?: string
-  categoryName?: string
   allTags: string[]
   checked: boolean
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
-export const TransactionCard = ({
-  t,
-  accountName,
-  categoryName,
-  allTags,
-  checked,
-  onChange,
-}: Props) => {
+export const TransactionCard = ({ t, allTags, checked, onChange }: Props) => {
   const [form, setForm] = useState(t)
   const [showModal, setShowModal] = useState(false)
   const tAmount = Money.fromCents(`${t.amount}`)
@@ -55,9 +46,9 @@ export const TransactionCard = ({
       </td>
       <td className="py-2 text-left">{t.date}</td>
       <td>{t.payee}</td>
-      <td>{accountName}</td>
+      <td>{t.accountName}</td>
       <td className="py-2 text-left">{tAmount.format()}</td>
-      <td>{t.categoryId ? categoryName : "(unassigned)"}</td>
+      <td>{t.categoryName ?? "(unassigned)"}</td>
       <AnimatePresence>
         {showModal && (
           <SideModal

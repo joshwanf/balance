@@ -3,25 +3,16 @@ import { useState } from "react"
 import type { ApiTypes } from "@balance/api-types"
 import { TransactionCard } from "./TransactionCard"
 
-type Transaction = ApiTypes.Transaction.TSerialized
+type Transaction = ApiTypes.Transaction.TRow
 
 interface Props {
   transactions: Transaction[]
-  /** account id → name */
-  accountNames: Record<string, string>
-  /** category id → name */
-  categoryNames: Record<string, string>
   /** every tag the user has, for the tag picker */
   allTags: string[]
 }
 
 /** Server-fetched rows; the table only owns row selection. */
-export const TransactionsTable = ({
-  transactions,
-  accountNames,
-  categoryNames,
-  allTags,
-}: Props) => {
+export const TransactionsTable = ({ transactions, allTags }: Props) => {
   const [selectedItem, setSelectedItem] = useState<string[]>([])
   const allTransIds = transactions.map(t => t.id)
   const checkAllItems =
@@ -67,10 +58,6 @@ export const TransactionsTable = ({
           <TransactionCard
             key={t.id}
             t={t}
-            accountName={accountNames[t.accountId]}
-            categoryName={
-              t.categoryId ? categoryNames[t.categoryId] : undefined
-            }
             allTags={allTags}
             checked={selectedItem.includes(t.id)}
             onChange={handleSelectItem(t.id)}
