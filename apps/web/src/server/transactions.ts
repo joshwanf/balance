@@ -24,7 +24,7 @@ export const changeSchema = createSchema.partial()
 export const parseBody = <T extends z.ZodTypeAny>(
   schema: T,
   body: unknown,
-  title: string
+  title: string,
 ): z.infer<T> => {
   const result = schema.safeParse(body)
   if (!result.success) {
@@ -36,7 +36,7 @@ export const parseBody = <T extends z.ZodTypeAny>(
 export const assertAccountOwned = async (
   accountId: string,
   userId: string,
-  prisma: TxClient | typeof pc = pc
+  prisma: TxClient | typeof pc = pc,
 ) => {
   const account = await prisma.account.findFirst({
     where: { id: accountId, userId },
@@ -50,7 +50,7 @@ export const assertAccountOwned = async (
 export const upsertCategoryId = async (
   name: string,
   userId: string,
-  prisma: TxClient
+  prisma: TxClient,
 ) => {
   const cleanedName = cleanName(name)
   const category = await prisma.category.upsert({
@@ -72,9 +72,32 @@ export const formatTransaction = <T extends object>({
   ...rest
 }: WithTags<T>) => ({ ...rest, tags: tags.map(t => t.tags.name) })
 
+/** tags plus the account and category names a list row shows */
+export const rowInclude = {
+  ...tagsInclude,
+  account: { select: { name: true } },
+  category: { select: { name: true } },
+} as const
+
+type WithNames<T> = WithTags<T> & {
+  account: { name: string }
+  category: { name: string } | null
+}
+
+/** A list row: tag names, plus account and category names in place of the relations */
+export const formatRow = <T extends object>({
+  account,
+  category,
+  ...rest
+}: WithNames<T>) => ({
+  ...formatTransaction(rest as WithTags<T>),
+  accountName: account.name,
+  categoryName: category?.name ?? null,
+})
+
 export const getFormattedTransaction = async (
   id: string,
-  prisma: TxClient | typeof pc = pc
+  prisma: TxClient | typeof pc = pc,
 ): Promise<ApiTypes.Transaction.TSerialized> => {
   const t = await prisma.transaction.findUniqueOrThrow({
     where: { id },
