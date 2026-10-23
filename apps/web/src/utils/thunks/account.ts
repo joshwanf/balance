@@ -8,23 +8,6 @@ import {
   removeManyAccounts,
 } from "../../features/accountsSlice"
 
-type ListRes = ApiTypes.Account.ListRequest
-type ListSearchParams = ApiTypes.Account.ListSearchParams
-export const listAccountsThunk = createAsyncThunk<ListRes, ListSearchParams>(
-  "getAccounts",
-  async (listOptions, thunkApi) => {
-    const res = await balance.account.list(listOptions)
-    if (res instanceof ApiError) {
-      return thunkApi.rejectWithValue(res)
-    }
-    const { accounts } = res
-
-    /** Dispatch to reducers */
-    thunkApi.dispatch(addManyAccounts(accounts))
-    return accounts
-  },
-)
-
 type CreateRequest = ApiTypes.Account.CreateRequest
 type CreateThunkReturn = ApiTypes.Account.CreateResponse
 export const createAccountThunk = createAsyncThunk<

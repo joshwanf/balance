@@ -7,27 +7,6 @@ import type { ApiTypes } from "@balance/api-types"
 import { ApiError } from "../classes/ApiError"
 import balance from "../api"
 
-type ListSearchParams = ApiTypes.Category.ListSearchParams
-type ListRes = ApiTypes.Category.ListResponse["categories"]
-
-export const listCategoriesThunk = createAsyncThunk<
-  ListRes,
-  ListSearchParams,
-  { rejectValue: ApiError }
->("getCategories", async (listOptions, thunkApi) => {
-  const res = await balance.category.list(listOptions)
-  if (res instanceof ApiError) {
-    return thunkApi.rejectWithValue(res)
-  }
-  const { categories } = res
-  /** Categories payload */
-  const cPayload = categories
-
-  /** Dispatch to reducers */
-  thunkApi.dispatch(addManyCategories(cPayload))
-  return cPayload
-})
-
 type CreateReq = {
   name: string
   amount: number

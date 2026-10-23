@@ -1,21 +1,20 @@
 "use client"
 import { EllipsisVertical, FileX } from "lucide-react"
-import { useAppDispatch, useAppSelector } from "../../store/hooks"
-import { selectAccountById } from "../../features/accountsSlice"
+import { useAppDispatch } from "../../store/hooks"
 import { useEffect, useRef, useState } from "react"
+import { useRouter } from "next/navigation"
+import type { ApiTypes } from "@balance/api-types"
 import { Modal } from "../../lib/ComponentLibrary/Modal"
 import { ConfirmDelete } from "./ConfirmDelete"
 import { AnimatePresence } from "motion/react"
-import balance from "../../utils/api"
-import { ApiError } from "../../utils/classes/ApiError"
 import { removeAccountThunk } from "../../utils/thunks/account"
 
 interface Props {
-  accountId: string
+  account: ApiTypes.Account.TSerialized
 }
-export const AccountCard = ({ accountId, ...rest }: Props) => {
+export const AccountCard = ({ account }: Props) => {
   const dispatch = useAppDispatch()
-  const account = useAppSelector(state => selectAccountById(state, accountId))
+  const router = useRouter()
   const [showMenu, setShowMenu] = useState(false)
   const [showConfirmDelete, setShowConfirmDelete] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
@@ -44,10 +43,12 @@ export const AccountCard = ({ accountId, ...rest }: Props) => {
     e: React.MouseEvent<HTMLButtonElement | HTMLDivElement>,
   ) => {
     if (confirmDelete) {
-      const response = await balance.account.remove([accountId])
-      if (!(response instanceof ApiError)) {
-        dispatch(removeAccountThunk({ accountIds: [accountId] }))
+      const res = await dispatch(
+        removeAccountThunk({ accountIds: [account.id] }),
+      )
+      if (removeAccountThunk.fulfilled.match(res)) {
         setConfirmDelete(false)
+        router.refresh()
       }
     } else {
       setShowConfirmDelete(true)

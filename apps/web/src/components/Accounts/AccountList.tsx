@@ -1,27 +1,24 @@
-"use client"
-import { useCurMonth } from "../../hooks/useUrlState"
-import { useAppDispatch, useAppSelector } from "../../store/hooks"
-import { selectAccounts } from "../../features/accountsSlice"
-import { useEffect } from "react"
+import { getSessionUser } from "@/server/auth"
+import { listAccounts } from "@/server/data"
 import { AccountCard } from "./AccountCard"
 import { CreateAccountCard } from "./CreateAccountCard"
-import { listAccountsThunk } from "../../utils/thunks/account"
 
-interface Props {}
-export const AccountList = ({}: Props) => {
-  const dispatch = useAppDispatch()
-  // const accountIds = useAppSelector(selectAccountIds)
-  const accountIds = Object.keys(useAppSelector(selectAccounts))
-  const curMonth = useCurMonth()
+interface Props {
+  month: string
+}
 
-  useEffect(() => {
-    dispatch(listAccountsThunk({ startMonth: curMonth }))
-  }, [dispatch, curMonth])
+/** Fetches the user's accounts on the server and renders the grid. */
+export const AccountList = async ({ month }: Props) => {
+  const user = await getSessionUser()
+  if (!user) return null
+  const accounts = await listAccounts(user.id, month)
 
   return (
     <div className="grid grid-cols-3 gap-5">
-      {accountIds && accountIds.map(c => <AccountCard key={c} accountId={c} />)}
-      <CreateAccountCard onAfterSubmitForm={() => {}} />
+      {accounts.map(a => (
+        <AccountCard key={a.id} account={a} />
+      ))}
+      <CreateAccountCard />
     </div>
   )
 }

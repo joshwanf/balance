@@ -14,3 +14,12 @@ export const monthFromSearchParams = (value: string | null | undefined) =>
 /** Adds ?month= to an app path so the selected month survives navigation. */
 export const withMonth = (path: string, month: string) =>
   month === currentMonth() ? path : `${path}?${MONTH_PARAM}=${month}`
+
+/** A page's awaited searchParams, as Next passes them */
+export type PageSearchParams = Record<string, string | string[] | undefined>
+
+/** One query value from a page's searchParams (the first, if repeated). */
+export const pageParam = (params: PageSearchParams, key: string) => {
+  const value = params[key]
+  return Array.isArray(value) ? value[0] : value
+}
