@@ -2,8 +2,6 @@
 import {
   Chart as ChartJS,
   Colors,
-  CategoryScale,
-  Title,
   Tooltip,
   Legend,
   ArcElement,
@@ -13,7 +11,7 @@ import { Pie } from "react-chartjs-2"
 import type { ApiTypes } from "@balance/api-types"
 import { Money } from "../../../utils/classes/Money"
 
-ChartJS.register(ArcElement, PieController)
+ChartJS.register(ArcElement, PieController, Colors, Legend, Tooltip)
 
 interface Props {
   data: ApiTypes.Trend.PieChart

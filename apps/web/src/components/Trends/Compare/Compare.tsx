@@ -1,102 +1,32 @@
-"use client"
-import { useState } from "react"
-import { DatePicker } from "../../Main/DatePicker"
-import dayjs from "dayjs"
-import { DateOptions } from "../../Main/DateOptions"
-import { PrimaryButton } from "../../../lib/Base/Button"
-import type { ApiTypes } from "@balance/api-types"
-import balance from "../../../utils/api"
-import { ApiError } from "../../../utils/classes/ApiError"
-import { validateDate } from "../../../utils/helpers/date"
-import { Errors } from "../../../lib/ComponentLibrary/Errors"
+import { getSessionUser } from "@/server/auth"
+import { trendCompare } from "@/server/data"
 import { CompareChart } from "./CompareChart"
-import Link from "next/link"
-import { useCurMonth } from "../../../hooks/useUrlState"
-import { withMonth } from "../../../utils/month"
+import dayjs from "dayjs"
 
-type PieChart = ApiTypes.Trend.PieChart
-type CompareErrors = { year1?: string; year2?: string; api?: string }
-interface Props {}
+interface Props {
+  month1: string
+  month2: string
+}
 
-export const Compare = ({}: Props) => {
-  const selectedMonth = useCurMonth()
-  const curMonth = dayjs().format("MM")
-  const curYear = dayjs().format("YYYY")
-  const [month1, setMonth1] = useState(curMonth)
-  const [year1, setYear1] = useState(curYear)
-  const [month2, setMonth2] = useState(curMonth)
-  const [year2, setYear2] = useState(curYear)
-  const [data, setData] = useState<PieChart[]>([])
-  const [errors, setErrors] = useState<CompareErrors>({})
+export const Compare = async ({ month1, month2 }: Props) => {
+  const user = await getSessionUser()
+  if (!user) return null
 
-  const isDataLoaded = data.length === 2
-
-  const handleCompareMonths = async () => {
-    const isYear1Valid = validateDate({ date: year1, format: "YYYY" })
-    const isYear2Valid = validateDate({ date: year2, format: "YYYY" })
-    const invalidYearErrorMsg = "Please enter a valid year (YYYY)"
-    const accErrors: CompareErrors = {}
-    if (!isYear1Valid) {
-      accErrors.year1 = invalidYearErrorMsg
-    }
-    if (!isYear2Valid) {
-      accErrors.year2 = invalidYearErrorMsg
-    }
-    setErrors(accErrors)
-
-    if (isYear1Valid && isYear2Valid) {
-      const res = await balance.trend.compare({
-        month1: `${year1}-${month1}`,
-        month2: `${year2}-${month2}`,
-      })
-      if (res instanceof ApiError) {
-        setErrors({ api: res.err.message })
-      }
-      setData(res)
-    }
-  }
+  const data = await trendCompare(user.id, month1, month2)
 
   return (
-    <div>
-      <div>
-        <Link href={withMonth("/my-balance/trends", selectedMonth)}>
-          Trends
-        </Link>{" "}
-        &gt;{" "}
-        <Link href={withMonth("/my-balance/trends/compare", selectedMonth)}>
-          Compare
-        </Link>
-      </div>
-      <div className="self-center">
-        <PrimaryButton onClick={handleCompareMonths}>Compare</PrimaryButton>
-      </div>
-      <div className="flex">
-        <div className="w-1/2 p-4">
-          <div className="text-center font-bold">Month 1</div>
-          <DateOptions
-            monthOpts={[month1, setMonth1]}
-            yearOpts={[year1, setYear1]}
-          />
-          {errors.year1 && <Errors errors={errors.year1} />}
-          {isDataLoaded && (
-            <div className="w-full">
-              <CompareChart data={data[0]} />
-            </div>
-          )}
+    <div className="flex gap-8 w-full">
+      <div className="w-full">
+        <div className="text-center font-bold">
+          {dayjs(month1).format("MMMM YYYY")}
         </div>
-        <div className="w-1/2 p-4">
-          <div className="text-center font-bold">Month 1</div>
-          <DateOptions
-            monthOpts={[month2, setMonth2]}
-            yearOpts={[year2, setYear2]}
-          />
-          {errors.year2 && <Errors errors={errors.year2} />}
-          {isDataLoaded && (
-            <div className="w-full">
-              <CompareChart data={data[1]} />
-            </div>
-          )}
+        <CompareChart data={data[0]} />
+      </div>
+      <div className="w-full">
+        <div className="text-center font-bold">
+          {dayjs(month2).format("MMMM YYYY")}
         </div>
+        <CompareChart data={data[1]} />
       </div>
     </div>
   )

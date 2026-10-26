@@ -8,10 +8,8 @@ import {
   Title,
   Tooltip,
   Legend,
-  scales,
 } from "chart.js"
 import { Bar } from "react-chartjs-2"
-import { useRef, useState } from "react"
 
 ChartJS.register(
   CategoryScale,
