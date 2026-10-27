@@ -1,4 +1,3 @@
-"use client"
 import {
   ArrowRightLeft,
   ChartNoAxesCombined,
@@ -6,12 +5,13 @@ import {
   WalletCards,
 } from "lucide-react"
 import Link from "next/link"
-import { useCurMonth } from "../../hooks/useUrlState"
-import { withMonth } from "../../utils/month"
+import { withMonth } from "@/utils/month"
 
-interface Props {}
-export const Dashboard = ({}: Props) => {
-  const curMonth = useCurMonth()
+interface Props {
+  month: string
+}
+
+export const Dashboard = ({ month }: Props) => {
   const tiles = [
     {
       title: "Budget",
@@ -40,7 +40,7 @@ export const Dashboard = ({}: Props) => {
         {tiles.map(t => (
           <Link
             key={t.title}
-            href={withMonth(t.to, curMonth)}
+            href={withMonth(t.to, month)}
             className="border-[0.2em] border-grass-200 rounded-[0.7em] p-8 w-full h-full
           text-4xl text-grass-700 hover:text-grass-900
       hover:border-grass-400 hover:cursor-pointer hover:shadow-lg hover:shadow-grass-500

@@ -13,7 +13,7 @@ export const Modal = ({ selector, element, closeModal, ...rest }: Props) => {
   useEffect(() => {
     setPortalNode(document.querySelector(selector))
   }, [selector])
-  if (!authNode) return <div></div>
+  if (!authNode) return null
 
   return (
     <>
