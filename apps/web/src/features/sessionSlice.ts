@@ -17,13 +17,6 @@ const initialState: SessionSliceState = {
   error: null,
 }
 
-// const isLogInAction = (action: Action): action is PayloadAction<SafeUser> => {
-//   const [slice, actionName, status] = action.type.split("/")
-//   return (
-//     ["loginThunk", "loginAsync"].includes(actionName) && status === "fulfilled"
-//   )
-// }
-
 export const sessionSlice = createAppSlice({
   name: "session",
   initialState,

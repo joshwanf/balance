@@ -5,11 +5,54 @@ import jwt from "jsonwebtoken"
 import type { ApiTypes } from "@balance/api-types"
 import config from "./config"
 import { pc } from "./prisma"
+import { hashPassword, isHashed, verifyPassword } from "@/server/password"
 
 const { secret, expiresIn } = config.jwtConfig
 const TOKEN = "token"
 
 export type SessionUser = ApiTypes.Session.SafeUser
+
+export const login = async ({
+  credential,
+  password,
+}: {
+  credential: string
+  password: string
+}): Promise<SessionUser | null> => {
+  await clearTokenCookie()
+
+  const found = await pc.user.findFirst({
+    where: { OR: [{ username: credential }, { email: credential }] },
+  })
+  const isValid =
+    found && (await verifyPassword(password, found.hashedPassword))
+  if (!found || !isValid) {
+    return null
+  }
+
+  // Upgrade legacy plaintext passwords on a successful login.
+  if (!isHashed(found.hashedPassword)) {
+    await pc.user.update({
+      where: { id: found.id },
+      data: { hashedPassword: await hashPassword(password) },
+    })
+  }
+
+  const safeUser = {
+    id: found.id,
+    firstName: found.firstName,
+    lastName: found.lastName,
+    email: found.email,
+    username: found.username,
+  }
+  await setTokenCookie(safeUser)
+
+  return safeUser
+}
+
+export const logout = async () => {
+  await clearTokenCookie()
+}
 
 export const setTokenCookie = async (user: SessionUser) => {
   const safeUser = {

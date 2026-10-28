@@ -1,9 +1,9 @@
 "use client"
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
 import { Provider } from "react-redux"
 import type { ApiTypes } from "@balance/api-types"
 import { makeStore, type AppStore } from "../store/store"
-import { login } from "../features/sessionSlice"
+import { login, logout } from "../features/sessionSlice"
 import { addManyPartialCategories } from "../features/categoriesSlice"
 import { addPartialAccounts } from "../features/accountsSlice"
 
@@ -28,7 +28,24 @@ export const Providers = ({ user, children }: Props) => {
     storeRef.current = store
   }
 
-  return <Provider store={storeRef.current}>{children}</Provider>
+  useEffect(() => {
+    if (user && storeRef.current) {
+      const { accounts, categories, ...safeUser } = user
+      storeRef.current.dispatch(login(safeUser))
+      storeRef.current.dispatch(addManyPartialCategories(categories))
+      storeRef.current.dispatch(addPartialAccounts(accounts))
+    }
+
+    if (!user && storeRef.current) {
+      storeRef.current.dispatch(logout())
+    }
+  }, [user?.id])
+
+  return (
+    <Provider key={user?.id ?? "guest"} store={storeRef.current}>
+      {children}
+    </Provider>
+  )
 }
 
 export default Providers
