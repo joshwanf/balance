@@ -1,6 +1,5 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { AnimatePresence } from "motion/react"
 import * as Btn from "@/lib/Base/Button"
@@ -11,8 +10,6 @@ interface Props {
   className?: string
 }
 export const StartBalancingButton = ({ className }: Props) => {
-  const router = useRouter()
-
   const [open, setOpen] = useState(false)
 
   const startBalancing = () => {
@@ -29,7 +26,7 @@ export const StartBalancingButton = ({ className }: Props) => {
           <Modal
             selector="#authNode"
             closeModal={() => setOpen(false)}
-            element={<SignupForm closeModal={() => setOpen(false)} />}
+            element={<SignupForm />}
           />
         )}
       </AnimatePresence>

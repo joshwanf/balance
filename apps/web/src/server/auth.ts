@@ -6,6 +6,7 @@ import type { ApiTypes } from "@balance/api-types"
 import config from "./config"
 import { pc } from "./prisma"
 import { hashPassword, isHashed, verifyPassword } from "@/server/password"
+import { uuidv7 } from "uuidv7"
 
 const { secret, expiresIn } = config.jwtConfig
 const TOKEN = "token"
@@ -52,6 +53,42 @@ export const login = async ({
 
 export const logout = async () => {
   await clearTokenCookie()
+}
+
+export const createAccount = async ({
+  firstName,
+  lastName,
+  username,
+  email,
+  password,
+}: {
+  firstName: string
+  lastName: string
+  username: string
+  email: string
+  password: string
+}): Promise<SessionUser | null> => {
+  const existingUser = await pc.user.findFirst({
+    where: { OR: [{ username }, { email }] },
+  })
+  if (existingUser) {
+    return null
+  }
+
+  const { hashedPassword, ...safeUser } = await pc.user.create({
+    data: {
+      id: uuidv7(),
+      firstName,
+      lastName,
+      email,
+      username,
+      hashedPassword: await hashPassword(password),
+    },
+  })
+
+  await setTokenCookie(safeUser)
+
+  return safeUser
 }
 
 export const setTokenCookie = async (user: SessionUser) => {

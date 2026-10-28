@@ -1,5 +1,6 @@
 "use server"
-import { login, logout } from "@/server/auth"
+import { createAccount, login, logout } from "@/server/auth"
+import { validateEmail } from "@/utils/email"
 import { getFormData } from "@/server/utils/formData"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
@@ -12,6 +13,27 @@ export type LoginState =
       error: {
         credential?: string
         password?: string
+        invalid?: string
+      }
+    }
+
+export type CreateAccountState =
+  | { status: "idle" }
+  | {
+      status: "error"
+      form: {
+        firstName: string
+        lastName: string
+        username: string
+        email: string
+      }
+      error: {
+        firstName?: string
+        lastName?: string
+        username?: string
+        email?: string
+        password?: string
+        confirmPassword?: string
         invalid?: string
       }
     }
@@ -65,4 +87,72 @@ export const logoutAction = async () => {
   await logout()
   revalidatePath("/", "layout")
   redirect("/")
+}
+
+export const createAccountAction = async (
+  _prev: CreateAccountState,
+  formData: FormData,
+): Promise<CreateAccountState> => {
+  const firstName = getFormData(formData, "firstName").trim()
+  const lastName = getFormData(formData, "lastName").trim()
+  const username = getFormData(formData, "username").trim()
+  const email = getFormData(formData, "email").trim()
+  const password = getFormData(formData, "password")
+  const confirmPassword = getFormData(formData, "confirmPassword")
+
+  const isValidFirstName = firstName.length > 0
+  const isValidLastName = lastName.length > 0
+  const isValidUsername = username.length >= 4
+  const isValidEmail = validateEmail(email)
+  const isValidPassword = password.length >= 6
+  const isMatchingPassword = password === confirmPassword
+  const isValidForm =
+    isValidFirstName &&
+    isValidLastName &&
+    isValidUsername &&
+    isValidEmail &&
+    isValidPassword &&
+    isMatchingPassword
+
+  if (!isValidForm) {
+    return {
+      status: "error",
+      form: { firstName, lastName, username, email },
+      error: {
+        firstName: isValidFirstName ? undefined : "Please enter a first name.",
+        lastName: isValidLastName ? undefined : "Please enter a last name.",
+        username: isValidUsername
+          ? undefined
+          : "Please enter a username with at least 4 characters.",
+        email: isValidEmail ? undefined : "Please enter a valid email.",
+        password: isValidPassword
+          ? undefined
+          : "Please enter a password with at least 6 characters.",
+        confirmPassword: isMatchingPassword
+          ? undefined
+          : "Please make sure the passwords match.",
+      },
+    }
+  }
+
+  const user = await createAccount({
+    firstName,
+    lastName,
+    username,
+    email,
+    password,
+  })
+
+  if (user) {
+    revalidatePath("/", "layout")
+    redirect("/my-balance")
+  } else {
+    return {
+      status: "error",
+      form: { firstName, lastName, username, email },
+      error: {
+        invalid: "A user already exists with the username or email.",
+      },
+    }
+  }
 }

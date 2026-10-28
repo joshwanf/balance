@@ -20,7 +20,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Providers user={user}>
+        <Providers key={user?.id ?? "guest"} user={user}>
           <div>{children}</div>
         </Providers>
         <div id="authNode" className=""></div>

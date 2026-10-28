@@ -1,11 +1,8 @@
 import { NextResponse } from "next/server"
-import { uuidv7 } from "uuidv7"
 import type { ApiTypes } from "@balance/api-types"
-import { pc } from "@/server/prisma"
 import { apiError } from "@/server/errors"
 import { readJson, withErrors } from "@/server/handler"
-import { setTokenCookie } from "@/server/auth"
-import { hashPassword } from "@/server/password"
+import { createAccount } from "@/server/auth"
 
 export const runtime = "nodejs"
 
@@ -26,28 +23,22 @@ export const POST = withErrors(async request => {
     throw apiError(
       400,
       "Create user",
-      "Include a first name, last name, username, email, and password"
+      "Include a first name, last name, username, email, and password",
     )
   }
 
-  const existingUser = await pc.user.findFirst({
-    where: { OR: [{ username }, { email }] },
+  const user = await createAccount({
+    firstName,
+    lastName,
+    username,
+    email,
+    password,
   })
-  if (existingUser) {
-    throw apiError(400, "Create user", "Username/email already exist")
+
+  if (!user) {
+    throw apiError(400, "Create user", "Username/email already exists.")
   }
 
-  const { hashedPassword, ...safeUser } = await pc.user.create({
-    data: {
-      id: uuidv7(),
-      firstName,
-      lastName,
-      email,
-      username,
-      hashedPassword: await hashPassword(password),
-    },
-  })
-  await setTokenCookie(safeUser)
-  const res: ApiTypes.Session.CreateResponse = safeUser
+  const res: ApiTypes.Session.CreateResponse = user
   return NextResponse.json(res, { status: 201 })
 })

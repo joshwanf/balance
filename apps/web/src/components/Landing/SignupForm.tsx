@@ -1,132 +1,119 @@
 "use client"
-import { useState } from "react"
-import { useAppDispatch } from "../../store/hooks"
-import { login } from "../../features/sessionSlice"
-import * as Ipt from "../../lib/Base/Input"
+import { useActionState } from "react"
 import * as Btn from "../../lib/Base/Button"
 import { Errors } from "../../lib/ComponentLibrary/Errors"
-import balance from "../../utils/api"
-import { ApiError } from "../../utils/classes/ApiError"
-import { useRouter } from "next/navigation"
+import { createAccountAction, CreateAccountState } from "@/server/actions/auth"
+import { LoadingSpinner } from "@/components/Skeletons/LoadingSpinner"
 
-interface FormErrors {
-  firstName?: string
-  lastName?: string
-  username?: string
-  email?: string
-  password?: string
-  confirmPassword?: string
-}
-interface Props {
-  closeModal: () => void
-}
-export const SignupForm = ({ closeModal, ...rest }: Props) => {
-  const dispatch = useAppDispatch()
-  const router = useRouter()
+export const SignupForm = () => {
+  const [state, action, isPending] = useActionState<
+    CreateAccountState,
+    FormData
+  >(createAccountAction, {
+    status: "idle",
+  })
 
   const initialForm = {
-    firstName: "",
-    lastName: "",
-    username: "",
-    email: "",
+    firstName: state.status === "error" ? state.form.firstName : "",
+    lastName: state.status === "error" ? state.form.lastName : "",
+    username: state.status === "error" ? state.form.username : "",
+    email: state.status === "error" ? state.form.email : "",
     password: "",
-  }
-  const [form, setForm] = useState(initialForm)
-  const [confirmPass, setConfirmPass] = useState("")
-  const [errors, setErrors] = useState({})
-
-  const handleChangeForm = (field: string) => (input: string) => {
-    setForm({ ...form, [field]: input })
-  }
-
-  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
-    const isValidFirstname = form.firstName.length > 0
-    const isValidLastname = form.lastName.length > 0
-    const isValidUsername = form.username.length >= 4
-    const isValidPassword = form.password.length >= 6
-    const isMatchingPassword = form.password === confirmPass
-    const isValidForm = isValidUsername && isValidPassword && isMatchingPassword
-
-    if (!isValidForm) {
-      const accErrors: FormErrors = {}
-      if (!isValidFirstname) {
-        accErrors.firstName = "Please enter a first name"
-      }
-      if (!isValidLastname) {
-        accErrors.lastName = "Please enter a last name"
-      }
-      if (!isValidUsername) {
-        accErrors.username = "Username must be at least 4 characters long"
-      }
-      if (!isValidPassword) {
-        accErrors.password = "Password must be at least 6 characters long"
-      }
-      if (!isMatchingPassword) {
-        accErrors.confirmPassword = "Passwords must match"
-      }
-
-      return setErrors(accErrors)
-    }
-
-    try {
-      const response = await balance.session.create(form)
-      if (!(response instanceof ApiError)) {
-        dispatch(login(response))
-        closeModal()
-        router.push("/my-balance")
-      }
-    } catch (e) {
-      if (e instanceof ApiError) {
-        // console.log(e)
-        setErrors(e.err.error)
-      }
-    }
   }
 
   return (
     <div className="border-2 bg-white rounded-md p-4 m-6">
-      {errors && <Errors errors={errors} />}
-      <form onSubmit={handleSignUp} className="space-y-2">
-        <div>
-          <div>
-            <p>First name</p>
-            <Ipt.TextInput
-              text={form.firstName}
-              onChange={handleChangeForm("firstName")}
-            />
-          </div>
-          <div>
-            <p>Last name</p>
-            <Ipt.TextInput
-              text={form.lastName}
-              onChange={handleChangeForm("lastName")}
-            />
-          </div>
-        </div>
-        <div>
-          <p>Username</p>
-          <Ipt.TextInput
-            text={form.username}
-            onChange={handleChangeForm("username")}
+      {state.status === "error" && state.error.invalid && (
+        <Errors errors={state.error.invalid} />
+      )}
+      <form action={action} className="space-y-2">
+        <label htmlFor="firstName">
+          {state.status === "error" && state.error.firstName && (
+            <Errors errors={state.error.firstName} />
+          )}
+          <p>First name</p>
+          <input
+            className="px-3 py-1 border border-slate-400 rounded-lg w-full hover:border-slate-600"
+            defaultValue={initialForm.firstName}
+            type="text"
+            name="firstName"
+            id="firstName"
           />
-        </div>
-        <p>Email</p>
-        <Ipt.TextInput text={form.email} onChange={handleChangeForm("email")} />
-        <p>Password</p>
-        <Ipt.TextInput
-          text={form.password}
-          type="password"
-          onChange={handleChangeForm("password")}
-        />
-        <p>Confirm Password</p>
-        <Ipt.TextInput
-          text={confirmPass}
-          type="password"
-          onChange={setConfirmPass}
-        />
-        <Btn.PrimaryButton>Sign Up</Btn.PrimaryButton>
+        </label>
+
+        <label htmlFor="lastName">
+          {state.status === "error" && state.error.lastName && (
+            <Errors errors={state.error.lastName} />
+          )}
+          <p>Last name</p>
+          <input
+            className="px-3 py-1 border border-slate-400 rounded-lg w-full hover:border-slate-600"
+            defaultValue={initialForm.lastName}
+            type="text"
+            name="lastName"
+            id="lastName"
+          />
+        </label>
+
+        <label htmlFor="username">
+          {state.status === "error" && state.error.username && (
+            <Errors errors={state.error.username} />
+          )}
+          <p>Username</p>
+          <input
+            className="px-3 py-1 border border-slate-400 rounded-lg w-full hover:border-slate-600"
+            defaultValue={initialForm.username}
+            type="text"
+            name="username"
+            id="username"
+          />
+        </label>
+
+        <label htmlFor="email">
+          {state.status === "error" && state.error.email && (
+            <Errors errors={state.error.email} />
+          )}
+          <p>Email</p>
+          <input
+            className="px-3 py-1 border border-slate-400 rounded-lg w-full hover:border-slate-600"
+            defaultValue={initialForm.email}
+            type="email"
+            name="email"
+            id="email"
+          />
+        </label>
+
+        <label htmlFor="password">
+          {state.status === "error" && state.error.password && (
+            <Errors errors={state.error.password} />
+          )}
+          <p>Password</p>
+          <input
+            className="px-3 py-1 border border-slate-400 rounded-lg w-full hover:border-slate-600"
+            type="password"
+            name="password"
+            id="password"
+          />
+        </label>
+
+        <label htmlFor="confirmPassword">
+          {state.status === "error" && state.error.confirmPassword && (
+            <Errors errors={state.error.confirmPassword} />
+          )}
+          <p>Confirm password</p>
+          <input
+            className="px-3 py-1 border border-slate-400 rounded-lg w-full hover:border-slate-600"
+            type="password"
+            name="confirmPassword"
+            id="confirmPassword"
+          />
+        </label>
+
+        <Btn.PrimaryButton disabled={isPending}>
+          <div className="flex gap-2 items-center justify-center">
+            {isPending && <LoadingSpinner />}Sign Up
+          </div>
+        </Btn.PrimaryButton>
       </form>
     </div>
   )
