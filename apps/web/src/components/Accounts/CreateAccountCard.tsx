@@ -5,7 +5,6 @@ import { CreateAccountForm } from "./CreateAccountForm"
 
 export const CreateAccountCard = () => {
   const [isEditing, setIsEditing] = useState(false)
-  const [form, setForm] = useState({ name: "", type: "", initialBalance: "" })
 
   return (
     <div>

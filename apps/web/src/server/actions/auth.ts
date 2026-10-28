@@ -1,5 +1,5 @@
 "use server"
-import { createAccount, login, logout } from "@/server/auth"
+import { createUser, login, logout } from "@/server/auth"
 import { validateEmail } from "@/utils/email"
 import { getFormData } from "@/server/utils/formData"
 import { revalidatePath } from "next/cache"
@@ -17,7 +17,7 @@ export type LoginState =
       }
     }
 
-export type CreateAccountState =
+export type CreateUserState =
   | { status: "idle" }
   | {
       status: "error"
@@ -89,10 +89,10 @@ export const logoutAction = async () => {
   redirect("/")
 }
 
-export const createAccountAction = async (
-  _prev: CreateAccountState,
+export const createUserAction = async (
+  _prev: CreateUserState,
   formData: FormData,
-): Promise<CreateAccountState> => {
+): Promise<CreateUserState> => {
   const firstName = getFormData(formData, "firstName").trim()
   const lastName = getFormData(formData, "lastName").trim()
   const username = getFormData(formData, "username").trim()
@@ -135,7 +135,7 @@ export const createAccountAction = async (
     }
   }
 
-  const user = await createAccount({
+  const user = await createUser({
     firstName,
     lastName,
     username,

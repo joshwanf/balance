@@ -4,7 +4,6 @@ import { Provider } from "react-redux"
 import type { ApiTypes } from "@balance/api-types"
 import { makeStore, type AppStore } from "../store/store"
 import { addManyPartialCategories } from "../features/categoriesSlice"
-import { addPartialAccounts } from "../features/accountsSlice"
 
 type SessionUser = ApiTypes.Session.LoginResponse["success"]["user"]
 
@@ -21,7 +20,6 @@ export const Providers = ({ user, children }: Props) => {
     if (user) {
       const { accounts, categories, ...safeUser } = user
       store.dispatch(addManyPartialCategories(categories))
-      store.dispatch(addPartialAccounts(accounts))
     }
     storeRef.current = store
   }
@@ -30,7 +28,6 @@ export const Providers = ({ user, children }: Props) => {
     if (user && storeRef.current) {
       const { accounts, categories, ...safeUser } = user
       storeRef.current.dispatch(addManyPartialCategories(categories))
-      storeRef.current.dispatch(addPartialAccounts(accounts))
     }
   }, [user?.id])
 

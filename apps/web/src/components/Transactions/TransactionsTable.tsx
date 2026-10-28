@@ -6,13 +6,18 @@ import { TransactionCard } from "./TransactionCard"
 type Transaction = ApiTypes.Transaction.TRow
 
 interface Props {
+  accounts: { id: string; name: string }[]
   transactions: Transaction[]
   /** every tag the user has, for the tag picker */
   allTags: string[]
 }
 
 /** Server-fetched rows; the table only owns row selection. */
-export const TransactionsTable = ({ transactions, allTags }: Props) => {
+export const TransactionsTable = ({
+  accounts,
+  transactions,
+  allTags,
+}: Props) => {
   const [selectedItem, setSelectedItem] = useState<string[]>([])
   const allTransIds = transactions.map(t => t.id)
   const checkAllItems =
@@ -56,6 +61,7 @@ export const TransactionsTable = ({ transactions, allTags }: Props) => {
       <tbody className="space-y-40">
         {transactions.map(t => (
           <TransactionCard
+            accounts={accounts}
             key={t.id}
             t={t}
             allTags={allTags}

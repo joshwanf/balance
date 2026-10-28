@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import type { ApiTypes } from "@balance/api-types"
 import { apiError } from "@/server/errors"
 import { readJson, withErrors } from "@/server/handler"
-import { createAccount } from "@/server/auth"
+import { createUser } from "@/server/auth"
 
 export const runtime = "nodejs"
 
@@ -27,7 +27,7 @@ export const POST = withErrors(async request => {
     )
   }
 
-  const user = await createAccount({
+  const user = await createUser({
     firstName,
     lastName,
     username,

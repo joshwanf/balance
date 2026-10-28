@@ -1,23 +1,18 @@
 "use client"
 import { EllipsisVertical, FileX } from "lucide-react"
-import { useAppDispatch } from "../../store/hooks"
 import { useEffect, useRef, useState } from "react"
-import { useRouter } from "next/navigation"
 import type { ApiTypes } from "@balance/api-types"
 import { Modal } from "../../lib/ComponentLibrary/Modal"
 import { ConfirmDelete } from "./ConfirmDelete"
 import { AnimatePresence } from "motion/react"
-import { removeAccountThunk } from "../../utils/thunks/account"
 
 interface Props {
   account: ApiTypes.Account.TSerialized
 }
 export const AccountCard = ({ account }: Props) => {
-  const dispatch = useAppDispatch()
-  const router = useRouter()
   const [showMenu, setShowMenu] = useState(false)
   const [showConfirmDelete, setShowConfirmDelete] = useState(false)
-  const [confirmDelete, setConfirmDelete] = useState(false)
+
   const menuRef = useRef<HTMLDivElement>(null)
 
   const handleClickMenu = (e: MouseEvent) => {
@@ -28,31 +23,6 @@ export const AccountCard = ({ account }: Props) => {
       !menuRef.current.contains(e.target as Node)
     ) {
       setShowMenu(false)
-    }
-  }
-
-  const handleShowConfirmModal = () => {
-    setConfirmDelete(true)
-    setShowConfirmDelete(true)
-  }
-  const handleCloseConfirmModal = () => {
-    setConfirmDelete(false)
-    setShowConfirmDelete(false)
-  }
-  const handleClickDelete = async (
-    e: React.MouseEvent<HTMLButtonElement | HTMLDivElement>,
-  ) => {
-    if (confirmDelete) {
-      const res = await dispatch(
-        removeAccountThunk({ accountIds: [account.id] }),
-      )
-      if (removeAccountThunk.fulfilled.match(res)) {
-        setConfirmDelete(false)
-        router.refresh()
-      }
-    } else {
-      setShowConfirmDelete(true)
-      setConfirmDelete(true)
     }
   }
 
@@ -75,7 +45,7 @@ export const AccountCard = ({ account }: Props) => {
         </div>
         {showMenu && (
           <div
-            onClick={handleShowConfirmModal}
+            onClick={() => setShowConfirmDelete(true)}
             className="absolute top-10 right-1 px-2 py-2 rounded-lg
             flex 
           bg-white border-2 border-grass-300 hover:cursor-pointer hover:bg-grass-300"
@@ -101,11 +71,11 @@ export const AccountCard = ({ account }: Props) => {
         {showConfirmDelete && (
           <Modal
             selector="#authNode"
-            closeModal={handleCloseConfirmModal}
+            closeModal={() => setShowConfirmDelete(false)}
             element={
               <ConfirmDelete
-                closeModal={handleCloseConfirmModal}
-                onDelete={handleClickDelete}
+                accountId={account.id}
+                closeModal={() => setShowConfirmDelete(false)}
               />
             }
           />

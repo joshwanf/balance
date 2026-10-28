@@ -4,6 +4,7 @@ import { pc } from "@/server/prisma"
 import { apiError } from "@/server/errors"
 import { noContent, readJson, withAuth } from "@/server/handler"
 import { cleanName } from "@/server/utils/cleanName"
+import { deleteAccount } from "@/server/account"
 
 export const runtime = "nodejs"
 
@@ -35,9 +36,7 @@ export const PATCH = withAuth<Params>(async (request, { params, user }) => {
 
 /** Delete one account (old POST /account/remove). */
 export const DELETE = withAuth<Params>(async (_request, { params, user }) => {
-  const { count } = await pc.account.deleteMany({
-    where: { id: params.id, userId: user.id },
-  })
+  const count = await deleteAccount(user.id, params.id)
   if (!count) throw notFound()
   return noContent()
 })

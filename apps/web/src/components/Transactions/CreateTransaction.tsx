@@ -5,7 +5,6 @@ import { FormField } from "../../lib/ComponentLibrary/FormField"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
 import { selectCategories } from "../../features/categoriesSlice"
 import { DropdownSelector } from "../../lib/ComponentLibrary/DropdownSelector"
-import { memoizedSelectAArr } from "../../features/accountsSlice"
 import { createTransaction } from "../../utils/thunks/transactions"
 import { m, LazyMotion, domAnimation } from "motion/react"
 import { Money } from "../../utils/classes/Money"
@@ -20,15 +19,19 @@ type CreateErrors = {
   amount?: string
 }
 interface Props {
+  accounts: { id: string; name: string }[]
   onAfterSubmitForm?: () => void
 }
-export const CreateTransaction = ({ onAfterSubmitForm, ...rest }: Props) => {
+export const CreateTransaction = ({
+  accounts,
+  onAfterSubmitForm,
+  ...rest
+}: Props) => {
   const emptyForm = { date: "", payee: "", amount: "" }
   const dispatch = useAppDispatch()
   const [form, setForm] = useState(emptyForm)
   const router = useRouter()
   const categories = useAppSelector(selectCategories)
-  const accounts = useAppSelector(state => memoizedSelectAArr(state))
   const [selectedCat, setSelectedCat] = useState<string>("")
   const [selectedAcct, setSelectedAcct] = useState<string>(
     accounts[0]?.id || "",

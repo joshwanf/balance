@@ -2,16 +2,16 @@
 import { useActionState } from "react"
 import * as Btn from "../../lib/Base/Button"
 import { Errors } from "../../lib/ComponentLibrary/Errors"
-import { createAccountAction, CreateAccountState } from "@/server/actions/auth"
+import { createUserAction, CreateUserState } from "@/server/actions/auth"
 import { LoadingSpinner } from "@/components/Skeletons/LoadingSpinner"
 
 export const SignupForm = () => {
-  const [state, action, isPending] = useActionState<
-    CreateAccountState,
-    FormData
-  >(createAccountAction, {
-    status: "idle",
-  })
+  const [state, action, isPending] = useActionState<CreateUserState, FormData>(
+    createUserAction,
+    {
+      status: "idle",
+    },
+  )
 
   const initialForm = {
     firstName: state.status === "error" ? state.form.firstName : "",

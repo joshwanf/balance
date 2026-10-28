@@ -263,7 +263,7 @@ export declare namespace ApiTypes {
       initialBalance: number
     }
     interface CreateResponse {
-      accounts: TSerialized[]
+      account: TSerialized
     }
     interface ChangeRequest {
       name: string

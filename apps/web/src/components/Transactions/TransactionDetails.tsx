@@ -13,7 +13,6 @@ import { ConfirmDelete } from "./ConfirmDelete"
 import { changeTransactionThunk } from "../../utils/thunks/transactions"
 import { selectCategories } from "../../features/categoriesSlice"
 import { DropdownSelector } from "../../lib/ComponentLibrary/DropdownSelector"
-import { selectAccounts } from "../../features/accountsSlice"
 import { Money } from "../../utils/classes/Money"
 import { X } from "lucide-react"
 import { validateDate } from "../../utils/helpers/date"
@@ -28,15 +27,20 @@ interface FormErrors {
   amount?: string
 }
 interface Props {
+  accounts: { id: string; name: string }[]
   t: ApiTypes.Transaction.TSerialized
   allTags: string[]
   closeModal: (e: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) => void
 }
-export const TransactionDetails = ({ t, allTags, closeModal }: Props) => {
+export const TransactionDetails = ({
+  accounts,
+  t,
+  allTags,
+  closeModal,
+}: Props) => {
   const dispatch = useAppDispatch()
   const router = useRouter()
   const categories = useAppSelector(selectCategories)
-  const accounts = useAppSelector(selectAccounts)
 
   const tAmount = Money.fromCents(t.amount.toString())
   const [form, setForm] = useState({ ...t, amount: tAmount.format() })
@@ -186,7 +190,7 @@ export const TransactionDetails = ({ t, allTags, closeModal }: Props) => {
             {/* <div className="w-fit"> */}
             <DropdownSelector
               field="account"
-              options={Object.values(accounts)}
+              options={accounts}
               disableBlankSelection={true}
               selected={form.accountId ? form.accountId : ""}
               onChange={handleChangeForm("account")}

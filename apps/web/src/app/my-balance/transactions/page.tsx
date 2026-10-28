@@ -9,6 +9,8 @@ import {
   pageParam,
   type PageSearchParams,
 } from "@/utils/month"
+import { getSessionUser } from "@/server/auth"
+import { listAccounts } from "@/server/data"
 
 export default async function Page({
   searchParams,
@@ -19,12 +21,24 @@ export default async function Page({
   const month = monthFromSearchParams(pageParam(params, MONTH_PARAM))
   const searchText = pageParam(params, SEARCH_PARAM) ?? ""
 
+  const user = await getSessionUser()
+  if (!user) return null
+
+  const accounts = (await listAccounts(user.id, month)).map(a => ({
+    id: a.id,
+    name: a.name,
+  }))
+
   return (
     <div>
-      <TransactionsToolbar />
+      <TransactionsToolbar accounts={accounts} />
       {/* A new key shows the shimmer again when the month or search changes */}
       <Suspense key={`${month}|${searchText}`} fallback={<TableSkeleton />}>
-        <TransactionsList month={month} searchText={searchText} />
+        <TransactionsList
+          accounts={accounts}
+          month={month}
+          searchText={searchText}
+        />
       </Suspense>
     </div>
   )

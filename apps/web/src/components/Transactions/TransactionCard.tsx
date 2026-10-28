@@ -9,12 +9,19 @@ import { AnimatePresence } from "motion/react"
 type Transaction = ApiTypes.Transaction.TRow
 
 interface Props {
+  accounts: { id: string; name: string }[]
   t: Transaction
   allTags: string[]
   checked: boolean
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
-export const TransactionCard = ({ t, allTags, checked, onChange }: Props) => {
+export const TransactionCard = ({
+  accounts,
+  t,
+  allTags,
+  checked,
+  onChange,
+}: Props) => {
   const [form, setForm] = useState(t)
   const [showModal, setShowModal] = useState(false)
   const tAmount = Money.fromCents(`${t.amount}`)
@@ -56,6 +63,7 @@ export const TransactionCard = ({ t, allTags, checked, onChange }: Props) => {
             closeModal={closeModal}
             element={
               <TransactionDetails
+                accounts={accounts}
                 closeModal={closeModal}
                 t={t}
                 allTags={allTags}

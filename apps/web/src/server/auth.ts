@@ -7,6 +7,7 @@ import config from "./config"
 import { pc } from "./prisma"
 import { hashPassword, isHashed, verifyPassword } from "@/server/password"
 import { uuidv7 } from "uuidv7"
+import { redirect } from "next/navigation"
 
 const { secret, expiresIn } = config.jwtConfig
 const TOKEN = "token"
@@ -55,7 +56,7 @@ export const logout = async () => {
   await clearTokenCookie()
 }
 
-export const createAccount = async ({
+export const createUser = async ({
   firstName,
   lastName,
   username,
@@ -143,3 +144,9 @@ export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
     return null
   }
 })
+
+export const requireUser = async () => {
+  const user = await getSessionUser()
+  if (!user) redirect("/")
+  return user
+}
