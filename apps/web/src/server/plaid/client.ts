@@ -17,7 +17,11 @@ export const plaidClient = (environment: PlaidEnvironment): PlaidApi => {
   if (cached) return cached
 
   const plaid = config.plaid
-  if (!plaid) throw new Error("Plaid is not configured")
+  if (!plaid) {
+    throw new Error(
+      "Plaid is not configured: set PLAID_CLIENT_ID, PLAID_SECRET_SANDBOX and PLAID_TOKEN_KEY",
+    )
+  }
   const secret = plaid.secrets[environment]
   if (!secret) throw new Error(`No Plaid secret set for ${environment}`)
 
