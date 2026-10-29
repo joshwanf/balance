@@ -12,18 +12,20 @@ datasource db {
 }
 
 model User {
-  id             String @id @db.Uuid
-  email          String @unique
-  username       String @unique
+  id             String  @id @db.Uuid
+  email          String  @unique
+  username       String  @unique
   firstName      String
   lastName       String
   hashedPassword String
+  isDemo         Boolean @default(false)
 
   accounts      Account[]
   transactions  Transaction[]
   categories    Category[]
   CategoryMonth CategoryMonth[]
   Tags          Tags[]
+  plaidItems    PlaidItem[]
 
   @@index(fields: [email])
   @@index(fields: [username])
@@ -39,6 +41,12 @@ model Account {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   transactions Transaction[]
+
+  // Set for accounts linked through Plaid; null for manual accounts
+  plaidItemId    String?    @db.Uuid
+  plaidItem      PlaidItem? @relation(fields: [plaidItemId], references: [id], onDelete: SetNull)
+  plaidAccountId String?    @unique
+  mask           String? // last 4 digits of the bank account number
 
   @@index(fields: [userId, cleanedName])
 }
@@ -59,6 +67,17 @@ model Transaction {
   categoryId String?              @db.Uuid
   category   Category?            @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   tags       TransactionsOnTags[]
+
+  // Who created the row: "manual" or "plaid". A Plaid merge never changes it
+  source             String  @default("manual")
+  plaidTransactionId String? @unique
+  pending            Boolean @default(false)
+  merchantName       String?
+
+  // Set by sync when this imported row may duplicate a manual one
+  possibleDuplicateOfId String?       @db.Uuid
+  possibleDuplicateOf   Transaction?  @relation("PossibleDuplicate", fields: [possibleDuplicateOfId], references: [id], onDelete: SetNull)
+  possibleDuplicates    Transaction[] @relation("PossibleDuplicate")
 }
 
 model Category {
@@ -113,4 +132,25 @@ model TransactionsOnTags {
   tags  Tags   @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([transactionId, tagId])
+}
+
+/// One bank connection made through Plaid Link (or the sandbox, for the demo user)
+model PlaidItem {
+  id              String    @id @db.Uuid
+  plaidItemId     String    @unique // Plaid's item_id; webhooks are routed by it
+  accessToken     String // AES-256-GCM ciphertext, see server/plaid/crypto.ts
+  environment     String // "sandbox" | "production"
+  institutionId   String?
+  institutionName String?
+  cursor          String? // last next_cursor from /transactions/sync
+  status          String    @default("active") // active | login_required | error | revoked
+  lastSyncedAt    DateTime?
+  createdAt       DateTime  @default(now())
+
+  userId String @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  accounts Account[]
+
+  @@index(fields: [userId])
 }

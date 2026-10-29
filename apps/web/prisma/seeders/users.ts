@@ -9,5 +9,6 @@ export const makeUser = (): Prisma.UserCreateManyInput => ({
   lastName: "In",
   username: "admin",
   email: "demo@user.io",
+  isDemo: true,
   hashedPassword: bcrypt.hashSync("password", 12),
 })
