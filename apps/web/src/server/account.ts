@@ -3,6 +3,13 @@ import { uuidv7 } from "uuidv7"
 import { pc } from "@/server/prisma"
 import { cleanName } from "@/server/utils/cleanName"
 
+export const listAccountNames = async (userId: string) =>
+  pc.account.findMany({
+    where: { userId },
+    select: { id: true, name: true },
+    orderBy: { name: "asc" },
+  })
+
 export const createAccount = async (
   userId: string,
   {

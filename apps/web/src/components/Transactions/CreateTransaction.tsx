@@ -10,17 +10,14 @@ import { m, LazyMotion, domAnimation } from "motion/react"
 import { Errors } from "../../lib/ComponentLibrary/Errors"
 import { PrimaryButton } from "../../lib/Base/Button"
 import { LoadingSpinner } from "@/components/Skeletons/LoadingSpinner"
+import { useLookups } from "@/components/Lookups/LookupsProvider"
 
 interface Props {
-  accounts: { id: string; name: string }[]
-  categories: { id: string; name: string }[]
   onAfterSubmitForm?: () => void
 }
-export const CreateTransaction = ({
-  accounts,
-  categories,
-  onAfterSubmitForm,
-}: Props) => {
+export const CreateTransaction = ({ onAfterSubmitForm }: Props) => {
+  const { accounts, categories } = useLookups()
+
   const [state, action, isPending] = useActionState<
     CreateTransactionState,
     FormData

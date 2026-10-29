@@ -8,20 +8,13 @@ import { searchTextToParams } from "../../utils/searchHelpers"
 import { TransactionsTable } from "./TransactionsTable"
 
 interface Props {
-  accounts: { id: string; name: string }[]
-  categories: { id: string; name: string }[]
   month: string
   /** raw search text from ?q=; when set, search across all months */
   searchText: string
 }
 
 /** Fetches the month (or the search) on the server and renders the table. */
-export const TransactionsList = async ({
-  accounts,
-  categories,
-  month,
-  searchText,
-}: Props) => {
+export const TransactionsList = async ({ month, searchText }: Props) => {
   const user = await getSessionUser()
   if (!user) return null
 
@@ -32,14 +25,7 @@ export const TransactionsList = async ({
     listTagNames(user.id),
   ])
 
-  return (
-    <TransactionsTable
-      accounts={accounts}
-      categories={categories}
-      transactions={rows}
-      allTags={allTags}
-    />
-  )
+  return <TransactionsTable transactions={rows} allTags={allTags} />
 }
 
 const search = async (userId: string, searchText: string) => {

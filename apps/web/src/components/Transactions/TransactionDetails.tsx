@@ -16,6 +16,7 @@ import { validateDate } from "../../utils/helpers/date"
 import { Errors } from "../../lib/ComponentLibrary/Errors"
 import { PrimaryButton } from "../../lib/Base/Button"
 import { TagSelector } from "./TagSelector"
+import { useLookups } from "@/components/Lookups/LookupsProvider"
 
 interface FormErrors {
   date?: string
@@ -24,19 +25,12 @@ interface FormErrors {
   invalid?: string
 }
 interface Props {
-  accounts: { id: string; name: string }[]
-  categories: { id: string; name: string }[]
   t: ApiTypes.Transaction.TSerialized
   allTags: string[]
   closeModal: (e: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) => void
 }
-export const TransactionDetails = ({
-  accounts,
-  categories,
-  t,
-  allTags,
-  closeModal,
-}: Props) => {
+export const TransactionDetails = ({ t, allTags, closeModal }: Props) => {
+  const { accounts, categories } = useLookups()
   const tAmount = Money.fromCents(t.amount.toString())
   const [form, setForm] = useState({ ...t, amount: tAmount.format() })
   const [formErrors, setFormErrors] = useState<FormErrors>({})

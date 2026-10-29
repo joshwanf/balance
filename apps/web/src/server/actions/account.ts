@@ -75,7 +75,7 @@ export const createAccountAction = async (
       }
     }
 
-    revalidatePath("/my-balance/accounts", "page")
+    revalidatePath("/my-balance", "layout")
     return { status: "success" }
   } catch (err) {
     return {
@@ -94,7 +94,7 @@ export const deleteAccountAction = async (
   const count = await deleteAccount(user.id, accountId)
 
   if (count > 0) {
-    revalidatePath("/my-balance/accounts", "page")
+    revalidatePath("/my-balance", "layout")
   }
 
   return count > 0

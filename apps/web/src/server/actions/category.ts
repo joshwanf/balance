@@ -76,7 +76,7 @@ export const createCategoryAction = async (
     }
     throw e
   }
-  revalidatePath("/my-balance/budgets", "page")
+  revalidatePath("/my-balance", "layout")
 
   return { status: "success" }
 }
@@ -103,7 +103,7 @@ export const changeCategoryAction = async ({
   )
 
   if (result) {
-    revalidatePath("/my-balance/budgets", "page")
+    revalidatePath("/my-balance", "layout")
   }
   return result
 }
@@ -115,6 +115,6 @@ export const deleteCategoryAction = async (
 
   const count = await deleteCategories(user.id, categoryIds)
 
-  revalidatePath("/my-balance/budgets", "page")
+  revalidatePath("/my-balance", "layout")
   return { status: "success" }
 }
