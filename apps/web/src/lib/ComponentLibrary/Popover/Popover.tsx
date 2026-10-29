@@ -18,15 +18,15 @@ interface Props {
     | "belowLeftAligned"
     | "aboveLeftAligned"
 }
-export const Popover: React.FC<Props> = props => {
-  const {
-    selector,
-    closePopover,
-    callerRef,
-    overlayStyle,
-    positionStyle,
-    ...rest
-  } = props
+export const Popover = ({
+  children,
+  selector,
+  closePopover,
+  callerRef,
+  overlayStyle,
+  positionStyle,
+  ...rest
+}: Props) => {
   const [node, setNode] = useState<Element | null>(null)
   useEffect(() => {
     setNode(document.querySelector(selector))
@@ -111,7 +111,7 @@ export const Popover: React.FC<Props> = props => {
             }}
           >
             <ContentAnimation overlayStyle={overlayStyle}>
-              {props.children}
+              {children}
             </ContentAnimation>
           </div>
         </Overlay>,

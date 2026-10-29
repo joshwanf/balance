@@ -4,22 +4,17 @@ import type { ApiTypes } from "@balance/api-types"
 import { SideModal } from "../../lib/ComponentLibrary/SideModal"
 import { TransactionDetails } from "./TransactionDetails"
 import { Money } from "../../utils/classes/Money"
-import { useAppSelector } from "../../store/hooks"
-import { selectCategories } from "../../features/categoriesSlice"
-import { selectAccounts } from "../../features/accountsSlice"
 import { AnimatePresence } from "motion/react"
 
-type Transaction = ApiTypes.Transaction.TSerialized
+type Transaction = ApiTypes.Transaction.TRow
 
 interface Props {
   t: Transaction
+  allTags: string[]
   checked: boolean
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
-export const TransactionCard: React.FC<Props> = props => {
-  const { t, checked, onChange, ...rest } = props
-  const categories = useAppSelector(selectCategories)
-  const accounts = useAppSelector(selectAccounts)
+export const TransactionCard = ({ t, allTags, checked, onChange }: Props) => {
   const [form, setForm] = useState(t)
   const [showModal, setShowModal] = useState(false)
   const tAmount = Money.fromCents(`${t.amount}`)
@@ -51,15 +46,21 @@ export const TransactionCard: React.FC<Props> = props => {
       </td>
       <td className="py-2 text-left">{t.date}</td>
       <td>{t.payee}</td>
-      <td>{accounts[t.accountId]?.name}</td>
+      <td>{t.accountName}</td>
       <td className="py-2 text-left">{tAmount.format()}</td>
-      <td>{t.categoryId ? categories[t.categoryId]?.name : "(unassigned)"}</td>
+      <td>{t.categoryName ?? "(unassigned)"}</td>
       <AnimatePresence>
         {showModal && (
           <SideModal
             selector="#transactionDetailNode"
             closeModal={closeModal}
-            element={<TransactionDetails closeModal={closeModal} t={t} />}
+            element={
+              <TransactionDetails
+                closeModal={closeModal}
+                t={t}
+                allTags={allTags}
+              />
+            }
           />
         )}
       </AnimatePresence>

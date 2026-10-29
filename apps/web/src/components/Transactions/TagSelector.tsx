@@ -1,41 +1,35 @@
 "use client"
 import { useState } from "react"
 import { InputWithSelector } from "../../lib/ComponentLibrary/InputDropdownSelector/InputWithSelector"
-import balance from "../../utils/api"
-import { ApiError } from "../../utils/classes/ApiError"
-import { useAppDispatch, useAppSelector } from "../../store/hooks"
 import {
-  addTagsToT,
-  removeTagsFromT,
-  selectTags,
-} from "../../features/transactionsSlice"
+  addTransactionTagsAction,
+  removeTransactionTagsAction,
+} from "@/server/actions/transaction"
 
 interface Props {
   transactionId: string
   transactionTags: string[]
+  allTags: string[]
 }
-export const TagSelector: React.FC<Props> = props => {
-  const { transactionId, transactionTags, ...rest } = props
-  const dispatch = useAppDispatch()
+export const TagSelector = ({
+  transactionId,
+  transactionTags,
+  allTags,
+}: Props) => {
   const [selectedTags, setSelectedTags] = useState<string[]>(transactionTags)
-  const tags = useAppSelector(selectTags)
+  const [tags, setTags] = useState(allTags)
 
   const addTagToTransaction = async (newTags: string[]) => {
     const diff = newTags.filter(tag => !selectedTags.includes(tag))
-    const res = await balance.tag.add(transactionId, diff)
-    if (res instanceof ApiError) {
-      console.log("error adding tag")
-    }
-    dispatch(addTagsToT({ id: transactionId, tags: diff }))
+    const result = await addTransactionTagsAction(transactionId, diff)
+    if (result.status === "error") return setSelectedTags(selectedTags)
+    setTags([...new Set([...tags, ...diff])])
   }
 
   const removeTagFromTransaction = async (newTags: string[]) => {
     const diff = selectedTags.filter(tag => !newTags.includes(tag))
-    const res = await balance.tag.remove(transactionId, diff)
-    if (res instanceof ApiError) {
-      console.log("error removing tag")
-    }
-    dispatch(removeTagsFromT({ id: transactionId, tags: diff }))
+    const result = await removeTransactionTagsAction(transactionId, diff)
+    if (result.status === "error") setSelectedTags(selectedTags)
   }
 
   const handleChangeTag = async (newTags: string[]) => {

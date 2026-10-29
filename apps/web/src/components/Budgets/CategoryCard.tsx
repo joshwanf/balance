@@ -1,17 +1,13 @@
 "use client"
-import { useState } from "react"
-import { useAppDispatch, useAppSelector } from "../../store/hooks"
-import { EditableText } from "../../lib/ComponentLibrary/EditableText"
-import { Money } from "../../utils/classes/Money"
+import { useState, useTransition } from "react"
+import { useCurMonth } from "@/hooks/useUrlState"
 import type { ApiTypes } from "@balance/api-types"
-import { changeCategoryThunk } from "../../utils/thunks/category"
+import { Money } from "@/utils/classes/Money"
+import { EditableText } from "@/lib/ComponentLibrary/EditableText"
+import { changeCategoryAction } from "@/server/actions/category"
+import { Errors } from "@/lib/ComponentLibrary/Errors"
+import { LoadingSpinner } from "@/components/Skeletons/LoadingSpinner"
 
-interface ChangeForm {
-  id: string
-  month: string
-  name?: string
-  amount?: number
-}
 interface FormErrors {
   name?: string
   budgetedAmount?: string
@@ -22,11 +18,10 @@ interface Props {
   checked: boolean
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
-export const CategoryCard: React.FC<Props> = props => {
-  const { id, c, checked, onChange, ...rest } = props
+export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
+  const curMonth = useCurMonth()
 
-  const dispatch = useAppDispatch()
-  const curMonth = useAppSelector(state => state.session.settings.curMonth)
+  const [isPending, startTransition] = useTransition()
 
   const [formErrors, setFormErrors] = useState<FormErrors>({})
 
@@ -39,52 +34,70 @@ export const CategoryCard: React.FC<Props> = props => {
   const isCheckedClassname = checked ? "bg-blue-200" : ""
   const unifiedClassNames = `${isCheckedClassname} border-b-2`
 
-  const handleChangeForm = (field: string) => async (newValue: string) => {
-    const formWithUpdatedData: ChangeForm = {
-      id: c.id,
-      month: curMonth,
-    }
-    if (field === "name") {
-      formWithUpdatedData.name = newValue
-    } else if (field === "amount") {
-      try {
-        setFormErrors({})
-        const newBudgetedAmount = Money.parse(newValue)
-        formWithUpdatedData.amount = newBudgetedAmount.toInt()
-      } catch (e) {
-        if (typeof e === "string") {
-          setFormErrors({ budgetedAmount: e })
-        }
-      }
-    }
+  const handleChangeForm =
+    (field: "name" | "amount") => async (newValue: string) => {
+      const isValidName = field === "name" ? newValue.length > 0 : true
+      const isValidAmount =
+        field === "amount" ? Money.isValidMoney(newValue) : true
 
-    /** change to thunk */
-    const res = await dispatch(
-      changeCategoryThunk(formWithUpdatedData),
-    ).unwrap()
-  }
+      if (!isValidName || !isValidAmount) {
+        setFormErrors({
+          name: isValidName ? undefined : "Please enter a name.",
+          budgetedAmount: isValidAmount
+            ? undefined
+            : "Please enter a valid money value.",
+        })
+        return
+      }
+
+      startTransition(async () => {
+        const result = await changeCategoryAction({
+          id: c.id,
+          month: curMonth,
+          [field]: newValue,
+        })
+
+        if (result) {
+          setFormErrors({})
+        }
+      })
+    }
 
   return (
     <tr className={unifiedClassNames}>
       <td className="pl-2">
-        <input type="checkbox" checked={checked} onChange={onChange} />
+        <div className="flex gap-2">
+          <input type="checkbox" checked={checked} onChange={onChange} />
+          {isPending && <LoadingSpinner />}
+        </div>
       </td>
-      <td className="py-2 text-left">
-        <EditableText text={c.name} editText={handleChangeForm("name")} />
+
+      <td className="py-2">
+        <div className="flex gap-2">
+          <EditableText text={c.name} editText={handleChangeForm("name")} />
+
+          {formErrors.name && <Errors errors={formErrors.name} />}
+        </div>
       </td>
-      <td>
-        <div>
+
+      <td className="py-2">
+        <div className="flex gap-2 items-center">
           <span className={`${budgetedClasses} px-2 py-1 rounded-md`}>
-            {budgetedAmount.currencySymbol}
+            <span className="select-none">{budgetedAmount.currencySymbol}</span>
             <EditableText
               text={`${budgetedAmount.format({ noCurrencySymbol: true })}`}
               editText={handleChangeForm("amount")}
             />
           </span>
+
+          {formErrors.budgetedAmount && (
+            <Errors errors={formErrors.budgetedAmount} />
+          )}
         </div>
-        {formErrors.budgetedAmount && <div>{formErrors.budgetedAmount}</div>}
       </td>
+
       <td className="py-2 text-left">{usedAmount.format()}</td>
+
       <td>
         <div className="grid grid-cols-[5%_auto]">
           <div className="text-right">{leftoverBudget.negSign}</div>

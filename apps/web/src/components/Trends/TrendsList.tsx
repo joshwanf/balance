@@ -1,15 +1,11 @@
-"use client"
-import { useRef, useState } from "react"
-import { Overview } from "./Overview/Overview"
+import { withMonth } from "@/utils/month"
 import { TrendCard } from "./TrendCard"
-import { Popover } from "../../lib/ComponentLibrary/Popover/Popover"
-import { SettingsMenu } from "../Main/SettingsMenu"
 
-interface Props {}
+interface Props {
+  month: string
+}
 
-export const TrendsList: React.FC<Props> = props => {
-  const [showPopover, setShowPopover] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
+export const TrendsList = ({ month }: Props) => {
   const trends = [
     { title: "Overview", to: "/my-balance/trends/overview" },
     { title: "Compare", to: "/my-balance/trends/compare" },
@@ -19,24 +15,13 @@ export const TrendsList: React.FC<Props> = props => {
       <h1>Trends</h1>
       <div className="flex space-x-2">
         {trends.map(t => (
-          <TrendCard key={t.title} title={t.title} to={t.to} />
+          <TrendCard
+            key={t.title}
+            title={t.title}
+            to={withMonth(t.to, month)}
+          />
         ))}
       </div>
-      <div onClick={() => setShowPopover(true)} ref={ref}>
-        Open popover
-      </div>
-      {showPopover && (
-        <Popover
-          selector="#authNode"
-          closePopover={() => setShowPopover(false)}
-          callerRef={ref}
-          // content={<SettingsMenu />}
-          overlayStyle="blur"
-          positionStyle="aboveLeftAligned"
-        >
-          <SettingsMenu />
-        </Popover>
-      )}
     </div>
   )
 }

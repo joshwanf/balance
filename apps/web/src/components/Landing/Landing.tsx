@@ -1,28 +1,12 @@
-"use client"
-import { useState } from "react"
+import Link from "next/link"
 import { TopBar } from "./TopBar"
-import * as Btn from "../../lib/Base/Button"
-import { useAppSelector } from "../../store/hooks"
-import { AnimatePresence } from "motion/react"
-import { Modal } from "../../lib/ComponentLibrary/Modal"
-import { SignupForm } from "./SignupForm"
-import { useRouter } from "next/navigation"
 import { Search } from "lucide-react"
+import { getSessionUser } from "@/server/auth"
+import { StartBalancingButton } from "@/components/Landing/StartBalancingButton"
 
-interface Props {}
-export const Landing: React.FC<Props> = props => {
-  const router = useRouter()
-  const session = useAppSelector(state => state.session.user)
-  const [display, setDisplay] = useState("")
-  const url = session ? "my-balance" : ""
+export const Landing = async () => {
+  const user = await getSessionUser()
 
-  const startBalancing = () => {
-    if (session) {
-      router.push("/my-balance")
-    } else {
-      setDisplay("signup")
-    }
-  }
   return (
     <div className="bg-beige flex flex-col">
       <TopBar />
@@ -43,12 +27,16 @@ export const Landing: React.FC<Props> = props => {
             </p>
           </div>
           <div className="mt-[10%]">
-            <Btn.SecondaryButton
-              onClick={startBalancing}
-              className="inline-block px-6 py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-900 transition-all duration-1000"
-            >
-              Start Balancing
-            </Btn.SecondaryButton>
+            {user ? (
+              <Link
+                href="/my-balance"
+                className="inline-block px-6 py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-900 transition-all duration-1000"
+              >
+                My Balance
+              </Link>
+            ) : (
+              <StartBalancingButton className="inline-block px-6 py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-900 transition-all duration-1000" />
+            )}
           </div>
         </div>
       </div>
@@ -118,25 +106,20 @@ export const Landing: React.FC<Props> = props => {
             <p className="py-4">for a much better... typing... experience...</p>
           </div>
           <div className="self-center">
-            <Btn.SecondaryButton
-              onClick={startBalancing}
-              className="inline-block px-6 py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-900 transition-all duration-1000 shadow-xl"
-            >
-              Start Balancing
-            </Btn.SecondaryButton>
+            {user ? (
+              <Link
+                href="/my-balance"
+                className="inline-block px-6 py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-900 transition-all duration-1000 shadow-xl"
+              >
+                My Balance
+              </Link>
+            ) : (
+              <StartBalancingButton className="inline-block px-6 py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-900 transition-all duration-1000 shadow-xl" />
+            )}
           </div>
         </div>
       </div>
       <div className="py-10"></div>
-      <AnimatePresence>
-        {display === "signup" && (
-          <Modal
-            selector="#authNode"
-            closeModal={() => setDisplay("")}
-            element={<SignupForm closeModal={() => setDisplay("")} />}
-          />
-        )}
-      </AnimatePresence>
     </div>
   )
 }

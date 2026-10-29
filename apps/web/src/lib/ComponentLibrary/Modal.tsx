@@ -8,13 +8,12 @@ interface Props {
   element: React.JSX.Element
   closeModal: () => void
 }
-export const Modal: React.FC<Props> = props => {
-  const { selector, element, closeModal, ...rest } = props
+export const Modal = ({ selector, element, closeModal, ...rest }: Props) => {
   const [authNode, setPortalNode] = useState<Element | null>(null)
   useEffect(() => {
     setPortalNode(document.querySelector(selector))
   }, [selector])
-  if (!authNode) return <div></div>
+  if (!authNode) return null
 
   return (
     <>

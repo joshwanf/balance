@@ -1,25 +1,18 @@
 "use client"
 import { EllipsisVertical, FileX } from "lucide-react"
-import { useAppDispatch, useAppSelector } from "../../store/hooks"
-import { selectAccountById } from "../../features/accountsSlice"
 import { useEffect, useRef, useState } from "react"
+import type { ApiTypes } from "@balance/api-types"
 import { Modal } from "../../lib/ComponentLibrary/Modal"
 import { ConfirmDelete } from "./ConfirmDelete"
 import { AnimatePresence } from "motion/react"
-import balance from "../../utils/api"
-import { ApiError } from "../../utils/classes/ApiError"
-import { removeAccountThunk } from "../../utils/thunks/account"
 
 interface Props {
-  accountId: string
+  account: ApiTypes.Account.TSerialized
 }
-export const AccountCard: React.FC<Props> = props => {
-  const { accountId, ...rest } = props
-  const dispatch = useAppDispatch()
-  const account = useAppSelector(state => selectAccountById(state, accountId))
+export const AccountCard = ({ account }: Props) => {
   const [showMenu, setShowMenu] = useState(false)
   const [showConfirmDelete, setShowConfirmDelete] = useState(false)
-  const [confirmDelete, setConfirmDelete] = useState(false)
+
   const menuRef = useRef<HTMLDivElement>(null)
 
   const handleClickMenu = (e: MouseEvent) => {
@@ -30,29 +23,6 @@ export const AccountCard: React.FC<Props> = props => {
       !menuRef.current.contains(e.target as Node)
     ) {
       setShowMenu(false)
-    }
-  }
-
-  const handleShowConfirmModal = () => {
-    setConfirmDelete(true)
-    setShowConfirmDelete(true)
-  }
-  const handleCloseConfirmModal = () => {
-    setConfirmDelete(false)
-    setShowConfirmDelete(false)
-  }
-  const handleClickDelete = async (
-    e: React.MouseEvent<HTMLButtonElement | HTMLDivElement>,
-  ) => {
-    if (confirmDelete) {
-      const response = await balance.account.remove([accountId])
-      if (!(response instanceof ApiError)) {
-        dispatch(removeAccountThunk({ accountIds: [accountId] }))
-        setConfirmDelete(false)
-      }
-    } else {
-      setShowConfirmDelete(true)
-      setConfirmDelete(true)
     }
   }
 
@@ -75,7 +45,7 @@ export const AccountCard: React.FC<Props> = props => {
         </div>
         {showMenu && (
           <div
-            onClick={handleShowConfirmModal}
+            onClick={() => setShowConfirmDelete(true)}
             className="absolute top-10 right-1 px-2 py-2 rounded-lg
             flex 
           bg-white border-2 border-grass-300 hover:cursor-pointer hover:bg-grass-300"
@@ -101,11 +71,11 @@ export const AccountCard: React.FC<Props> = props => {
         {showConfirmDelete && (
           <Modal
             selector="#authNode"
-            closeModal={handleCloseConfirmModal}
+            closeModal={() => setShowConfirmDelete(false)}
             element={
               <ConfirmDelete
-                closeModal={handleCloseConfirmModal}
-                onDelete={handleClickDelete}
+                accountId={account.id}
+                closeModal={() => setShowConfirmDelete(false)}
               />
             }
           />

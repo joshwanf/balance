@@ -51,7 +51,7 @@ export const searchParamsToText = (
   }
   const newGeneralSearch = generalSearch ? generalSearch.join(" ") : ""
   const newStartDate = startDate ? `startDate:${startDate}` : ""
-  const newEndDate = endDate ? `endMonth:${endDate}` : ""
+  const newEndDate = endDate ? `endDate:${endDate}` : ""
   const newTags = tags && tags.length > 0 ? `tags:"${tags.join(", ")}"` : ""
 
   return [newGeneralSearch, newStartDate, newEndDate, newTags]

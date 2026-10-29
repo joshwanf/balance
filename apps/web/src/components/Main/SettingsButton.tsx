@@ -5,7 +5,7 @@ import { SettingsMenu } from "./SettingsMenu"
 import { Popover } from "../../lib/ComponentLibrary/Popover/Popover"
 
 interface Props {}
-export const SettingsButton: React.FC<Props> = props => {
+export const SettingsButton = ({}: Props) => {
   const [showMenu, setShowMenu] = useState(false)
   const callerRef = useRef<HTMLDivElement>(null)
 

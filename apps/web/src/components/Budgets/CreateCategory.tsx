@@ -1,71 +1,39 @@
 "use client"
-import { useState } from "react"
-import { useAppDispatch, useAppSelector } from "../../store/hooks"
+import { useCurMonth } from "../../hooks/useUrlState"
+import { useActionState } from "react"
 import { m, LazyMotion, domAnimation } from "motion/react"
 import { CirclePlus } from "lucide-react"
-import { createCategoriesThunk } from "../../utils/thunks/category"
-import { ApiError } from "../../utils/classes/ApiError"
-import { Money } from "../../utils/classes/Money"
 import { FormField } from "../../lib/ComponentLibrary/FormField"
 import { PrimaryButton } from "../../lib/Base/Button"
 import { Errors } from "../../lib/ComponentLibrary/Errors"
+import {
+  createCategoryAction,
+  CreateCategoryState,
+} from "@/server/actions/category"
+import { LoadingSpinner } from "@/components/Skeletons/LoadingSpinner"
 
-type CreateErrors = { name?: string; amount?: string }
 interface Props {
   onAfterSubmitForm?: () => void
 }
-export const CreateCategory: React.FC<Props> = props => {
-  const { onAfterSubmitForm, ...rest } = props
-  const emptyForm = { name: "", amount: "" }
+export const CreateCategory = ({ onAfterSubmitForm, ...rest }: Props) => {
+  const month = useCurMonth()
 
-  const dispatch = useAppDispatch()
-  const curMonth = useAppSelector(state => state.session.settings.curMonth)
-  const [form, setForm] = useState(emptyForm)
-  const [createErrors, setCreateErrors] = useState<CreateErrors>({})
+  const [state, action, isPending] = useActionState<
+    CreateCategoryState,
+    FormData
+  >(
+    async (_prev, formData) => {
+      const result = await createCategoryAction(_prev, formData)
+      if (result.status === "success" && onAfterSubmitForm) onAfterSubmitForm()
+      return result
+    },
+    { status: "idle" },
+  )
 
-  const isValidForm = Money.isValidMoney(form.amount) && form.name.length > 0
-  const addCatButtonClassnames = isValidForm
-    ? "text-grass-700 border-grass-700 hover:border-grass-600"
-    : "text-grass-300 border-grass-300"
+  const name = state.status === "error" ? state.form.name : ""
+  const amount = state.status === "error" ? state.form.amount : ""
+  const createErrors = state.status === "error" ? state.error : {}
 
-  const handleChangeForm = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const field = e.target.name
-    setForm({ ...form, [field]: e.target.value })
-  }
-
-  const handleSubmitForm = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault()
-    const isAmountValidNumber = Money.isValidMoney(form.amount)
-    const isValidForm = form.name.length > 0 && isAmountValidNumber
-    if (isValidForm) {
-      const preparedAmount = Money.parse(form.amount).cents
-      const preparedForm = {
-        name: form.name,
-        amount: preparedAmount,
-        month: curMonth,
-      }
-      try {
-        const res = await dispatch(createCategoriesThunk(preparedForm)).unwrap()
-        setForm(emptyForm)
-        if (onAfterSubmitForm) {
-          onAfterSubmitForm()
-        }
-      } catch (e) {
-        if (e instanceof ApiError) {
-          setCreateErrors({ ...e.err.message })
-        }
-      }
-    } else {
-      const accErrors: CreateErrors = {}
-      if (form.name.length < 1) {
-        accErrors.name = "Name must be filled out"
-      }
-      if (!/\d+/.test(form.amount)) {
-        accErrors.amount = "Amount must be a valid positive dollar amount"
-      }
-      setCreateErrors(accErrors)
-    }
-  }
   return (
     <LazyMotion features={domAnimation}>
       <m.div
@@ -87,40 +55,49 @@ export const CreateCategory: React.FC<Props> = props => {
         className="align-top shadow-xl
       bg-grass-50 py-6 px-2 rounded-lg border-2 border-grass-600"
       >
-        <div className="flex flex-col lg:flex-row lg:space-x-2 w-fit items-center text-sm">
-          <div>
+        <form
+          action={action}
+          className="flex flex-col lg:flex-row gap-2 lg:space-x-2 w-fit items-end text-sm"
+        >
+          <input type="hidden" value={month} name="month" />
+
+          <div className="w-full lg:w-fit">
             <FormField
-              field="name"
+              name="name"
               displayText="Name"
               placeholder="Category name..."
-              value={form.name}
-              onChange={e => handleChangeForm(e)}
+              defaultValue={name}
+              data-1p-ignore
             />
             {createErrors.name && <Errors errors={createErrors.name} />}
           </div>
-          <div>
+
+          <div className="w-full lg:w-fit">
             <FormField
-              field="amount"
+              name="amount"
               displayText="Amount"
               placeholder="Amount..."
-              value={form.amount}
-              onChange={e => handleChangeForm(e)}
+              defaultValue={amount}
+              type="number"
             />
             {createErrors.amount && <Errors errors={createErrors.amount} />}
           </div>
-          {/* </div> */}
+
           <div>
             <PrimaryButton
-              onClick={handleSubmitForm}
-              className={`${addCatButtonClassnames}
-              flex items-center
-              border-2 border-grass-300 rounded-md px-4`}
+              className={`flex items-center px-4 py-0.5
+                border-2 rounded-md 
+                border-grass-700 hover:border-grass-600 disabled:border-grass-300 
+                text-grass-700 hover:text-grass-600 disabled:text-grass-300`}
+              disabled={isPending}
             >
-              <CirclePlus size={18} />
-              Add new category
+              <div className="flex gap-2 items-center justify-center">
+                {isPending ? <LoadingSpinner /> : <CirclePlus size={18} />}Add
+                new category
+              </div>
             </PrimaryButton>
           </div>
-        </div>
+        </form>
       </m.div>
     </LazyMotion>
   )

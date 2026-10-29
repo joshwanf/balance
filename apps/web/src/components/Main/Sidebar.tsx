@@ -12,8 +12,7 @@ import { useState } from "react"
 interface Props {
   hidden?: boolean
 }
-export const Sidebar: React.FC<Props> = props => {
-  const { hidden, ...rest } = props
+export const Sidebar = ({ hidden, ...rest }: Props) => {
   const [hideSidebar, setHideSidebar] = useState(false)
   return (
     <div className="pt-4 px-4 flex flex-col items-start" hidden={hidden}>

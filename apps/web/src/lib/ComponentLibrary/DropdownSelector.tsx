@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 
 interface Props {
   field: string
@@ -9,19 +9,19 @@ interface Props {
   selected: string
   onChange: (id: any) => void
   labelId?: string
+  name?: string
 }
-export const DropdownSelector: React.FC<Props> = props => {
-  const {
-    field,
-    options,
-    displayText,
-    disableBlankSelection,
-    selected,
-    onChange,
-    labelId,
-    ...rest
-  } = props
-
+export const DropdownSelector = ({
+  field,
+  options,
+  displayText,
+  disableBlankSelection,
+  selected,
+  onChange,
+  labelId,
+  name,
+  ...rest
+}: Props) => {
   const [showOpts, setShowOpts] = useState(false)
   const divRef = useRef(null)
 
@@ -41,6 +41,7 @@ export const DropdownSelector: React.FC<Props> = props => {
           value={selected}
           onChange={e => onChange(e.target.value)}
           id={field}
+          name={name}
         >
           <option value="" disabled={disableBlankSelection}>
             Choose an option
@@ -57,6 +58,7 @@ export const DropdownSelector: React.FC<Props> = props => {
         </select>
         {!disableBlankSelection && (
           <button
+            type="button"
             className="px-2 w-8 border-l-2 rounded-r-sm border-l-slate-300 hover:bg-gray-200 hover:rounded-r-md"
             onClick={() => onChange("")}
           >

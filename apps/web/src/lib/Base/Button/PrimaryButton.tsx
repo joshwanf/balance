@@ -15,10 +15,13 @@ interface Props {
   }
   [key: string]: any
 }
-export const PrimaryButton = (props: Props) => {
-  const { children, additionalClasses, classSchema: cs, ...rest } = props
-
-  const classSchema = props.classSchema || {}
+export const PrimaryButton = ({
+  children,
+  additionalClasses,
+  classSchema: cs,
+  ...rest
+}: Props) => {
+  const classSchema = cs || {}
   const {
     bgColor,
     hoverBgColor,

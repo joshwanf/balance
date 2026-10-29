@@ -114,13 +114,18 @@ export declare namespace ApiTypes {
       date: string
       tags: string[]
     }
+    /** A list or search row, with its account and category names joined in */
+    interface TRow extends TSerialized {
+      accountName: string
+      categoryName: string | null
+    }
     interface ListSearchParams {
       startMonth: string
       endMonth?: string
     }
     interface ListRequest {}
     interface ListResponse {
-      transactions: TSerialized[]
+      transactions: TRow[]
       categories: {
         id: string
         name: string
@@ -137,7 +142,7 @@ export declare namespace ApiTypes {
       generalSearch: string[]
     }
     interface SearchResponse {
-      transactions: TSerialized[]
+      transactions: TRow[]
     }
     interface CreateRequest {
       /** change type to 'outgoing' | 'incoming' ? */
@@ -145,7 +150,7 @@ export declare namespace ApiTypes {
       payee: string
       amount: number
       date: string
-      categoryName?: string
+      categoryId?: string
       accountId: string
     }
     interface CreateResponse extends TSerialized {}
@@ -156,7 +161,7 @@ export declare namespace ApiTypes {
       payee: string
       amount: number
       date: string
-      categoryName: string
+      categoryId: string
       accountId: string
     }
     interface ChangeResponse extends TSerialized {}
@@ -258,7 +263,7 @@ export declare namespace ApiTypes {
       initialBalance: number
     }
     interface CreateResponse {
-      accounts: TSerialized[]
+      account: TSerialized
     }
     interface ChangeRequest {
       name: string

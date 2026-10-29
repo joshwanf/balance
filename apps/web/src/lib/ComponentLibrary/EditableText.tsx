@@ -7,8 +7,13 @@ interface Props {
   additionalClasses?: string[]
   [key: string]: any
 }
-export const EditableText = (props: Props) => {
-  const { text, editText, onTextChange, additionalClasses, ...rest } = props
+export const EditableText = ({
+  text,
+  editText,
+  onTextChange,
+  additionalClasses,
+  ...rest
+}: Props) => {
   const originalText = text
   const [value, setValue] = useState<string>(text)
   const divRef = useRef<HTMLDivElement>(null)

@@ -3,13 +3,8 @@ import { useState } from "react"
 import { CreateAccountButton } from "./CreateAccountButton"
 import { CreateAccountForm } from "./CreateAccountForm"
 
-interface Props {
-  onAfterSubmitForm: () => void
-}
-export const CreateAccountCard: React.FC<Props> = props => {
-  const { onAfterSubmitForm, ...rest } = props
+export const CreateAccountCard = () => {
   const [isEditing, setIsEditing] = useState(false)
-  const [form, setForm] = useState({ name: "", type: "", initialBalance: "" })
 
   return (
     <div>

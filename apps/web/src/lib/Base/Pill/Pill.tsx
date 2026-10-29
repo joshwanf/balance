@@ -6,8 +6,7 @@ interface Props {
   // onClick: () => void
   [key: string]: any
 }
-export const Pill = (props: Props) => {
-  const { text, ...rest } = props
+export const Pill = ({ text, ...rest }: Props) => {
   return (
     <div className="pill" {...rest}>
       <div className="pill-close">&times;</div>

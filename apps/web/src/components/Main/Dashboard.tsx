@@ -1,4 +1,3 @@
-"use client"
 import {
   ArrowRightLeft,
   ChartNoAxesCombined,
@@ -6,17 +5,29 @@ import {
   WalletCards,
 } from "lucide-react"
 import Link from "next/link"
+import { withMonth } from "@/utils/month"
 
-interface Props {}
-export const Dashboard: React.FC<Props> = props => {
+interface Props {
+  month: string
+}
+
+export const Dashboard = ({ month }: Props) => {
   const tiles = [
-    { title: "Budget", to: "/my-balance/budgets", element: <Scale size={64} /> },
+    {
+      title: "Budget",
+      to: "/my-balance/budgets",
+      element: <Scale size={64} />,
+    },
     {
       title: "Transactions",
       to: "/my-balance/transactions",
       element: <ArrowRightLeft size={64} />,
     },
-    { title: "Accounts", to: "/my-balance/accounts", element: <WalletCards size={64} /> },
+    {
+      title: "Accounts",
+      to: "/my-balance/accounts",
+      element: <WalletCards size={64} />,
+    },
     {
       title: "Trends",
       to: "/my-balance/trends",
@@ -29,7 +40,7 @@ export const Dashboard: React.FC<Props> = props => {
         {tiles.map(t => (
           <Link
             key={t.title}
-            href={t.to}
+            href={withMonth(t.to, month)}
             className="border-[0.2em] border-grass-200 rounded-[0.7em] p-8 w-full h-full
           text-4xl text-grass-700 hover:text-grass-900
       hover:border-grass-400 hover:cursor-pointer hover:shadow-lg hover:shadow-grass-500

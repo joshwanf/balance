@@ -12,10 +12,13 @@ interface Props {
   }
   [key: string]: any
 }
-export const TertiaryButton: React.FC<Props> = props => {
-  const { children, additionalClasses, ...rest } = props
-
-  const classSchema = props.classSchema || {}
+export const TertiaryButton = ({
+  children,
+  additionalClasses,
+  classSchema: cs,
+  ...rest
+}: Props) => {
+  const classSchema = cs || {}
   const { bgColor, hoverBgColor, borderColor, hoverBorderColor } = classSchema
 
   const unifiedBgColor = bgColor ?? "bg-beige"

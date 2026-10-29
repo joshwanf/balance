@@ -7,8 +7,12 @@ interface Props {
   element: React.JSX.Element
   closeModal: (e: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) => void
 }
-export const SideModal: React.FC<Props> = props => {
-  const { selector, element, closeModal, ...rest } = props
+export const SideModal = ({
+  selector,
+  element,
+  closeModal,
+  ...rest
+}: Props) => {
   const [portalNode, setPortalNode] = useState<Element | null>(null)
   useEffect(() => {
     setPortalNode(document.querySelector(selector))

@@ -8,10 +8,8 @@ import {
   Title,
   Tooltip,
   Legend,
-  scales,
 } from "chart.js"
 import { Bar } from "react-chartjs-2"
-import { useRef, useState } from "react"
 
 ChartJS.register(
   CategoryScale,
@@ -33,8 +31,7 @@ interface Props {
   labels: string[]
 }
 
-export const OverviewChart: React.FC<Props> = props => {
-  const { categories, labels, ...rest } = props
+export const OverviewChart = ({ categories, labels, ...rest }: Props) => {
   const datasets =
     categories?.map(c => ({
       label: c.name,

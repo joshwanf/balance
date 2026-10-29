@@ -1,63 +1,28 @@
-"use client"
-import { useRef, useState } from "react"
-import { useAppSelector } from "../../store/hooks"
-import { selectUser } from "../../features/sessionSlice"
+import { getSessionUser } from "@/server/auth"
+import { SignupButton } from "@/components/Landing/SignupButton"
+import { LoginButton } from "@/components/Landing/LoginButton"
+import Link from "next/link"
 
-import { Modal } from "../../lib/ComponentLibrary/Modal"
-import { LoginForm } from "./LoginForm"
-import { SignupForm } from "./SignupForm"
-import * as Btn from "../../lib/Base/Button"
-import { AnimatePresence } from "motion/react"
-import { Popover } from "../../lib/ComponentLibrary/Popover/Popover"
-
-interface Props {}
-export const TopBar: React.FC<Props> = () => {
-  const user = useAppSelector(selectUser)
-  const [display, setDisplay] = useState<string | null>(null)
-  const ref = useRef<HTMLDivElement>(null)
-  const closeModal = () => setDisplay(null)
+export const TopBar = async () => {
+  const user = await getSessionUser()
 
   return (
     <nav className="py-4 flex justify-end">
       <div>
-        {!user && (
-          <div ref={ref}>
-            <Btn.PrimaryButton onClick={() => setDisplay("signup")}>
-              Sign Up
-            </Btn.PrimaryButton>
-            <Btn.SecondaryButton onClick={() => setDisplay("login")}>
-              Log In
-            </Btn.SecondaryButton>
-          </div>
+        {!user ? (
+          <>
+            <SignupButton />
+            <LoginButton />
+          </>
+        ) : (
+          <Link
+            href="/my-balance"
+            className="mx-1 px-6 py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-900 transition-all duration-1000"
+          >
+            My Balance
+          </Link>
         )}
       </div>
-      <AnimatePresence>
-        {display === "login" && (
-          // <Modal
-          //   selector="#authNode"
-          //   closeModal={closeModal}
-          //   element={<LoginForm closeModal={closeModal} />}
-          // />
-          <Popover
-            selector="#authNode"
-            callerRef={ref}
-            closePopover={closeModal}
-            // content={<LoginForm closeModal={closeModal} />}
-            overlayStyle="darken"
-          >
-            <LoginForm closeModal={closeModal} />
-          </Popover>
-        )}
-      </AnimatePresence>
-      <AnimatePresence>
-        {display === "signup" && (
-          <Modal
-            selector="#authNode"
-            closeModal={closeModal}
-            element={<SignupForm closeModal={closeModal} />}
-          />
-        )}
-      </AnimatePresence>
     </nav>
   )
 }

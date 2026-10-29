@@ -2,7 +2,7 @@
 interface Props {
   errors: Record<string, string> | string
 }
-export const Errors: React.FC<Props> = ({ errors }) => {
+export const Errors = ({ errors }: Props) => {
   const baseTwClasses = []
   if (typeof errors === "string") {
     return (

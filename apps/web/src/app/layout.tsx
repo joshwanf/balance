@@ -1,5 +1,4 @@
 import type { Metadata } from "next"
-import { Providers } from "@/components/Providers"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -15,9 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Providers>
-          <div>{children}</div>
-        </Providers>
+        <div>{children}</div>
         <div id="authNode" className=""></div>
         <div id="transactionDetailNode"></div>
         <div id="confirmActionNode"></div>

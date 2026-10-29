@@ -1,79 +1,39 @@
 "use client"
-import { useState } from "react"
-import { TextInput } from "../../lib/Base/Input"
+import { useActionState } from "react"
 import { X } from "lucide-react"
-import { Money } from "../../utils/classes/Money"
-import { useAppDispatch } from "../../store/hooks"
-import { createAccountThunk } from "../../utils/thunks/account"
 import * as Btn from "../../lib/Base/Button"
 import { Errors } from "../../lib/ComponentLibrary/Errors"
+import {
+  createAccountAction,
+  CreateAccountState,
+} from "@/server/actions/account"
+import { LoadingSpinner } from "@/components/Skeletons/LoadingSpinner"
 
-interface FormErrors {
-  name?: string
-  balance?: string
-}
 interface Props {
   closeForm?: () => void
 }
-export const CreateAccountForm: React.FC<Props> = props => {
-  const { closeForm, ...rest } = props
-  const dispatch = useAppDispatch()
-  const [form, setForm] = useState({ name: "", type: "", initialBalance: "" })
-  const [acctName, setAcctName] = useState("")
-  const [acctType, setAcctType] = useState("checking")
-  const [acctBalance, setAcctBalance] = useState("")
-  const [formErrors, setFormErrors] = useState<FormErrors>({})
+export const CreateAccountForm = ({ closeForm, ...rest }: Props) => {
+  const [state, action, isPending] = useActionState<
+    CreateAccountState,
+    FormData
+  >(
+    async (_prev, formData) => {
+      const result = await createAccountAction(_prev, formData)
+      if (result.status === "success" && closeForm) closeForm()
+      return result
+    },
+    { status: "idle" },
+  )
 
-  const handleSubmitForm = async () => {
-    /** prepare form fields for submitting */
-    const isValidBalance = Money.isValidMoney(acctBalance || "0")
-    const isPositiveBalance = isValidBalance
-      ? Money.parse(acctBalance || "0").isPositive()
-      : false
-    const isBalanceFittableInDb = isPositiveBalance
-      ? Money.parse(acctBalance || "0").lte(Money.parse("21000000"))
-      : false
-    console.log(isBalanceFittableInDb, Money.parse(acctBalance || "0"))
-    const isValidName = acctName.length > 0
+  const name = state.status === "error" ? state.form.name : ""
+  const accountType =
+    state.status === "error" ? state.form.accountType : "checking"
+  const initialBalance =
+    state.status === "error" ? state.form.initialBalance : ""
+  const error = state.status === "error" ? state.error : {}
 
-    const isValidForm =
-      isValidName &&
-      isValidBalance &&
-      isPositiveBalance &&
-      isBalanceFittableInDb
-
-    if (!isValidForm) {
-      const accErrors: FormErrors = {}
-      if (!isValidBalance) {
-        accErrors.balance = "Must be a valid money"
-      }
-      if (isValidBalance && !isPositiveBalance) {
-        accErrors.balance = "Balance must be positive and above $0.00"
-      }
-      if (isValidBalance && isPositiveBalance && !isBalanceFittableInDb) {
-        accErrors.balance = "Balance must be below $21,000,000"
-      }
-      if (!isValidName) {
-        accErrors.name = "Must have a name"
-      }
-
-      setFormErrors(accErrors)
-    } else {
-      setFormErrors({})
-      const pBalance = acctBalance ? Money.parse(acctBalance) : Money.parse("0")
-      const pForm = {
-        name: acctName,
-        accountType: acctType,
-        initialBalance: pBalance.toInt(),
-      }
-      await dispatch(createAccountThunk(pForm))
-      if (closeForm) {
-        closeForm()
-      }
-    }
-  }
   return (
-    <div onClick={e => e.stopPropagation()} className="relative p-4 w-full">
+    <div className="relative p-4 w-full">
       <div
         className="absolute right-1 top-1 rounded-md p-1
         text-grass-400
@@ -82,51 +42,65 @@ export const CreateAccountForm: React.FC<Props> = props => {
       >
         <X />
       </div>
-      <div>
-        <div>
-          Name:
-          <TextInput text={acctName} onChange={setAcctName} />
-          {formErrors.name && <Errors errors={formErrors.name} />}
-        </div>
-        <div>
+
+      <form action={action} className="flex flex-col gap-2">
+        {error?.invalid && <Errors errors={error.invalid} />}
+        <label htmlFor="name">
+          Name
+          {state.status === "error" && state.error.name && (
+            <Errors errors={state.error.name} />
+          )}
+          <input
+            className="px-3 py-1 border border-slate-400 rounded-lg w-full hover:border-slate-600"
+            defaultValue={name}
+            type="text"
+            id="name"
+            name="name"
+            data-1p-ignore
+          />
+        </label>
+
+        <div className="flex gap-2">
           Type:
-          <div className="space-x-2">
-            <label>
-              <input
-                type="radio"
-                name="accountType"
-                value="checking"
-                checked={acctType === "checking"}
-                onChange={e => setAcctType(e.target.value)}
-              />
-              Checking
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="accountType"
-                value="savings"
-                checked={acctType === "savings"}
-                onChange={e => setAcctType(e.target.value)}
-              />
-              Savings
-            </label>
+          <input
+            type="radio"
+            value="checking"
+            defaultChecked={accountType === "checking"}
+            id="checking"
+            name="accountType"
+          />
+          <label htmlFor="checking">Checking</label>
+          <input
+            type="radio"
+            value="savings"
+            defaultChecked={accountType === "savings"}
+            id="savings"
+            name="accountType"
+          />
+          <label htmlFor="savings">Savings</label>
+        </div>
+
+        <label htmlFor="initialBalance">
+          Initial balance
+          {state.status === "error" && state.error.initialBalance && (
+            <Errors errors={state.error.initialBalance} />
+          )}
+          <input
+            className="px-3 py-1 border border-slate-400 rounded-lg w-full hover:border-slate-600"
+            defaultValue={initialBalance}
+            type="number"
+            id="initialBalance"
+            name="initialBalance"
+            step="0.01"
+          />
+        </label>
+
+        <Btn.PrimaryButton additionalClasses={["py-1", "px-2", "bg-grass-50"]}>
+          <div className="flex gap-2 items-center justify-center">
+            {isPending && <LoadingSpinner />}Add new account
           </div>
-        </div>
-        <div>
-          <div>Initial balance: </div>
-          <TextInput text={acctBalance} onChange={setAcctBalance} />
-          {formErrors.balance && <Errors errors={formErrors.balance} />}
-        </div>
-        <div>
-          <Btn.PrimaryButton
-            additionalClasses={["py-1", "px-2", "bg-grass-50"]}
-            onClick={handleSubmitForm}
-          >
-            Add new account
-          </Btn.PrimaryButton>
-        </div>
-      </div>
+        </Btn.PrimaryButton>
+      </form>
     </div>
   )
 }

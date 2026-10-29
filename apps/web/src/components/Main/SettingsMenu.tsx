@@ -1,30 +1,21 @@
 "use client"
 import { LogOut } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
 import { SecondaryButton } from "../../lib/Base/Button"
-import { useAppDispatch } from "../../store/hooks"
-import balance from "../../utils/api"
-import { logout, setCurMonth } from "../../features/sessionSlice"
-import dayjs from "dayjs"
+import { useTransition } from "react"
+import { logoutAction } from "@/server/actions/auth"
 
-interface Props {
-  // closeMenu: (input: boolean) => void
-}
-export const SettingsMenu: React.FC<Props> = props => {
-  const dispatch = useAppDispatch()
+export const SettingsMenu = () => {
+  const [isPending, startTransition] = useTransition()
 
-  const handleLogout = async (e: React.FocusEvent<HTMLButtonElement>) => {
-    e.preventDefault()
-    const response = await balance.session.logout()
-    dispatch(setCurMonth(dayjs().format("YYYY-MM")))
-    dispatch(logout())
-    // router.push("/")
-    window.location.href = "/"
+  const handleLogout = () => {
+    startTransition(async () => {
+      await logoutAction()
+    })
   }
-
   return (
     <div className="p-2 border-2 rounded-lg bg-grass-300 border-grass-700 text-grass-800">
       <SecondaryButton
+        disabled={isPending}
         onClick={handleLogout}
         additionalClasses={[
           "py-0.5",

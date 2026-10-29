@@ -1,15 +1,25 @@
 "use client"
-interface Props {
-  field: string
+
+import { DetailedHTMLProps, InputHTMLAttributes, useState } from "react"
+
+interface Props extends DetailedHTMLProps<
+  InputHTMLAttributes<HTMLInputElement>,
+  HTMLInputElement
+> {
+  name: string
   displayText?: string
-  placeholder: string
-  value: string
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
-export const FormField: React.FC<Props> = props => {
-  const { field, displayText, placeholder, value, onChange, ...rest } = props
+export const FormField = ({
+  name,
+  displayText,
+  placeholder,
+  defaultValue,
+  ...rest
+}: Props) => {
+  const [value, setValue] = useState(defaultValue || "")
+
   return (
-    <label htmlFor={field} className="grid grid-cols-[30%_70%]">
+    <label htmlFor={name} className="grid grid-cols-[30%_70%] items-center">
       <div className="mr-2 justify-self-end">{displayText}</div>
       <input
         className="bg-transparent py-0.5 pl-2 
@@ -18,10 +28,11 @@ export const FormField: React.FC<Props> = props => {
         hover:border-grass-400
         focus:ring-0 focus:outline-none focus:border-grass-700
         placeholder:italic placeholder:text-grass-500"
-        name={field}
+        name={name}
         placeholder={placeholder}
         value={value}
-        onChange={onChange}
+        onChange={e => setValue(e.target.value)}
+        id={name}
         {...rest}
       />
     </label>

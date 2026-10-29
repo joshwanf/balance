@@ -12,8 +12,7 @@ interface Props {
   closeMenu: () => void
 }
 
-export const DatePicker: React.FC<Props> = props => {
-  const { onChange, closeMenu } = props
+export const DatePicker = ({ onChange, closeMenu }: Props) => {
   const curMonth = dayjs().format("MM")
   const curYear = dayjs().format("YYYY")
 

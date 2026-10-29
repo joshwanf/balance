@@ -1,4 +1,5 @@
 import "server-only"
+import moment from "moment"
 import { NextRequest, NextResponse } from "next/server"
 import { Prisma } from "@prisma/client"
 import { apiError, isApiErrorBody } from "./errors"
@@ -9,12 +10,12 @@ type Ctx<P extends Params> = { params: Promise<P> }
 
 type Handler<P extends Params> = (
   request: NextRequest,
-  ctx: Ctx<P>
+  ctx: Ctx<P>,
 ) => Promise<Response>
 
 type AuthedHandler<P extends Params> = (
   request: NextRequest,
-  ctx: { params: P; user: SessionUser }
+  ctx: { params: P; user: SessionUser },
 ) => Promise<Response>
 
 const toResponse = (e: unknown) => {
@@ -25,13 +26,13 @@ const toResponse = (e: unknown) => {
     const status = e.code === "P2025" ? 404 : 400
     return NextResponse.json(
       apiError(status, "Database error", e.message, { code: e.code }),
-      { status }
+      { status },
     )
   }
   console.error(e)
   return NextResponse.json(
     apiError(500, "Server error", "Something went wrong"),
-    { status: 500 }
+    { status: 500 },
   )
 }
 
@@ -62,7 +63,7 @@ export const withErrors =
 
 /** Requires a logged-in user (old isLoggedIn) and resolves params. */
 export const withAuth = <P extends Params = Params>(
-  handler: AuthedHandler<P>
+  handler: AuthedHandler<P>,
 ): Handler<P> =>
   withErrors<P>(async (request, ctx) => {
     const user = await getSessionUser()
@@ -74,7 +75,9 @@ export const withAuth = <P extends Params = Params>(
   })
 
 /** Parses a JSON body, returning {} for an empty or invalid body. */
-export const readJson = async <T>(request: NextRequest): Promise<Partial<T>> => {
+export const readJson = async <T>(
+  request: NextRequest,
+): Promise<Partial<T>> => {
   try {
     return (await request.json()) as Partial<T>
   } catch {
@@ -93,3 +96,14 @@ export const listParam = (request: NextRequest, key: string) =>
     .filter(Boolean)
 
 export const noContent = () => new Response(null, { status: 204 })
+
+const MONTH = /^\d{4}-\d{2}$/
+
+/** ?startMonth=YYYY-MM, defaulting to the current month. */
+export const monthParam = (value: string | undefined, title: string) => {
+  const month = value || moment().format("YYYY-MM")
+  if (!MONTH.test(month)) {
+    throw apiError(400, title, "Month must be in YYYY-MM format")
+  }
+  return month
+}
