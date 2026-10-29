@@ -1,10 +1,9 @@
 "use server"
-import { requireUser } from "@/server/auth"
+import { userMutation } from "@/server/mutation"
 import { changeCategory, createCategory, deleteCategories } from "@/server/data"
 import { getFormData } from "@/server/utils/formData"
 import { isApiErrorBody } from "@/server/errors"
 import { Money } from "@/server/utils/Money"
-import { revalidatePath } from "next/cache"
 import { monthFromSearchParams } from "@/utils/month"
 
 export type CreateCategoryState =
@@ -33,49 +32,46 @@ export type DeleteCategoryState =
 export const createCategoryAction = async (
   _prev: CreateCategoryState,
   formData: FormData,
-): Promise<CreateCategoryState> => {
-  const user = await requireUser()
+): Promise<CreateCategoryState> =>
+  userMutation(async user => {
+    const name = getFormData(formData, "name").trim()
+    const amount = getFormData(formData, "amount")
+    const month = monthFromSearchParams(getFormData(formData, "month"))
 
-  const name = getFormData(formData, "name").trim()
-  const amount = getFormData(formData, "amount")
-  const month = monthFromSearchParams(getFormData(formData, "month"))
+    const isValidName = name.length > 0
+    const isAmountValidNumber = Money.isValidMoney(amount)
+    const isValidForm = isValidName && isAmountValidNumber
 
-  const isValidName = name.length > 0
-  const isAmountValidNumber = Money.isValidMoney(amount)
-  const isValidForm = isValidName && isAmountValidNumber
-
-  if (!isValidForm) {
-    return {
-      status: "error",
-      form: { name, amount },
-      error: {
-        name: isValidName ? undefined : "Please enter a category name.",
-        amount: isAmountValidNumber
-          ? undefined
-          : "Please enter a valid amount.",
-      },
-    }
-  }
-
-  const preparedAmount = Money.parse(amount).cents
-  const preparedForm = { name, amount: preparedAmount, month }
-
-  try {
-    await createCategory(user.id, preparedForm)
-  } catch (e) {
-    if (isApiErrorBody(e)) {
+    if (!isValidForm) {
       return {
         status: "error",
         form: { name, amount },
-        error: { name: String(e.message) },
+        error: {
+          name: isValidName ? undefined : "Please enter a category name.",
+          amount: isAmountValidNumber
+            ? undefined
+            : "Please enter a valid amount.",
+        },
       }
     }
-    throw e
-  }
-  revalidatePath("/my-balance", "layout")
 
-  return { status: "success" }
-}
+    const preparedAmount = Money.parse(amount).cents
+    const preparedForm = { name, amount: preparedAmount, month }
+
+    try {
+      await createCategory(user.id, preparedForm)
+    } catch (e) {
+      if (isApiErrorBody(e)) {
+        return {
+          status: "error",
+          form: { name, amount },
+          error: { name: String(e.message) },
+        }
+      }
+      throw e
+    }
+    return { status: "success" }
+  })
 
 export const changeCategoryAction = async ({
   id,
@@ -87,30 +83,21 @@ export const changeCategoryAction = async ({
   month: string
   name?: string
   amount?: string
-}) => {
-  const user = await requireUser()
-
-  const result = await changeCategory(
-    { userId: user.id, id, month },
-    {
-      name,
-      amount: amount !== undefined ? Money.parse(amount).toInt() : undefined,
-    },
+}) =>
+  userMutation(async user =>
+    changeCategory(
+      { userId: user.id, id, month },
+      {
+        name,
+        amount: amount !== undefined ? Money.parse(amount).toInt() : undefined,
+      },
+    ),
   )
-
-  if (result) {
-    revalidatePath("/my-balance", "layout")
-  }
-  return result
-}
 
 export const deleteCategoryAction = async (
   categoryIds: string[],
-): Promise<DeleteCategoryState> => {
-  const user = await requireUser()
-
-  const count = await deleteCategories(user.id, categoryIds)
-
-  revalidatePath("/my-balance", "layout")
-  return { status: "success" }
-}
+): Promise<DeleteCategoryState> =>
+  userMutation(async user => {
+    await deleteCategories(user.id, categoryIds)
+    return { status: "success" }
+  })
