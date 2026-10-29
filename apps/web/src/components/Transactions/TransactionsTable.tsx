@@ -7,6 +7,7 @@ type Transaction = ApiTypes.Transaction.TRow
 
 interface Props {
   accounts: { id: string; name: string }[]
+  categories: { id: string; name: string }[]
   transactions: Transaction[]
   /** every tag the user has, for the tag picker */
   allTags: string[]
@@ -15,6 +16,7 @@ interface Props {
 /** Server-fetched rows; the table only owns row selection. */
 export const TransactionsTable = ({
   accounts,
+  categories,
   transactions,
   allTags,
 }: Props) => {
@@ -62,6 +64,7 @@ export const TransactionsTable = ({
         {transactions.map(t => (
           <TransactionCard
             accounts={accounts}
+            categories={categories}
             key={t.id}
             t={t}
             allTags={allTags}

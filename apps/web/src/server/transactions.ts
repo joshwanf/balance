@@ -16,7 +16,7 @@ export const createSchema = z.object({
   amount: z.number().int("Amount must be in cents"),
   date,
   accountId: z.string().min(1),
-  categoryName: z.string().optional(),
+  categoryId: z.string().nullable().optional(),
 })
 
 export const changeSchema = createSchema.partial()
@@ -43,6 +43,19 @@ export const assertAccountOwned = async (
   })
   if (!account) {
     throw apiError(400, "Transaction", "Account couldn't be found")
+  }
+}
+
+export const assertCategoryOwned = async (
+  categoryId: string,
+  userId: string,
+  prisma: TxClient | typeof pc = pc,
+) => {
+  const category = await prisma.category.findFirst({
+    where: { id: categoryId, userId },
+  })
+  if (!category) {
+    throw apiError(400, "Transaction", "Category couldn't be found")
   }
 }
 

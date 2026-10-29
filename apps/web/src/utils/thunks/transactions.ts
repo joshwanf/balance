@@ -1,6 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import { addOneT } from "../../features/transactionsSlice"
-import { addCategoryFromTransaction } from "../../features/categoriesSlice"
 import type { ApiTypes } from "@balance/api-types"
 import { ApiError } from "../classes/ApiError"
 import balance from "../api"

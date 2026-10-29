@@ -5,11 +5,11 @@ import { noContent, readJson, withAuth } from "@/server/handler"
 import { confirmT, transactionQueryOpts } from "@/server/queries"
 import {
   assertAccountOwned,
+  assertCategoryOwned,
   changeSchema,
   formatTransaction,
   getFormattedTransaction,
   parseBody,
-  upsertCategoryId,
 } from "@/server/transactions"
 
 export const runtime = "nodejs"
@@ -56,23 +56,22 @@ export const GET = withAuth<Params>(async (_request, { params, user }) => {
  */
 export const PATCH = withAuth<Params>(async (request, { params, user }) => {
   const { id } = params
-  const { categoryName, ...fields } = parseBody(
+  const { categoryId, ...fields } = parseBody(
     changeSchema,
     await readJson(request),
-    "Change transaction"
+    "Change transaction",
   )
   await confirmT(id, user.id)
   if (fields.accountId) await assertAccountOwned(fields.accountId, user.id)
+  if (categoryId) await assertCategoryOwned(categoryId, user.id)
 
   const updated = await pc.$transaction(async prisma => {
-    let categoryId: string | null | undefined = undefined
-    if (categoryName === "") categoryId = null
-    else if (categoryName) {
-      categoryId = await upsertCategoryId(categoryName, user.id, prisma)
-    }
     await prisma.transaction.update({
       where: { id, userId: user.id },
-      data: { ...fields, categoryId },
+      data: {
+        ...fields,
+        categoryId: categoryId && categoryId.length > 0 ? categoryId : null,
+      },
     })
     return getFormattedTransaction(id, prisma)
   })

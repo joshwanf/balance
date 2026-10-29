@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server"
-import { uuidv7 } from "uuidv7"
 import type { ApiTypes } from "@balance/api-types"
-import { pc } from "@/server/prisma"
 import { apiError } from "@/server/errors"
 import {
   listParam,
@@ -10,11 +8,8 @@ import {
   searchParam,
   withAuth,
 } from "@/server/handler"
-import {
-  checkValidCategoryName,
-  getCategoriesWithTransAgg,
-  monthParam,
-} from "@/server/queries"
+import { getCategoriesWithTransAgg, monthParam } from "@/server/queries"
+import { createCategory, deleteCategories } from "@/server/category"
 
 export const runtime = "nodejs"
 
@@ -22,7 +17,7 @@ export const runtime = "nodejs"
 export const GET = withAuth(async (request, { user }) => {
   const startMonth = monthParam(
     searchParam(request, "startMonth"),
-    "List categories"
+    "List categories",
   )
   const categories = await getCategoriesWithTransAgg(user.id, startMonth)
   const res: ApiTypes.Category.ListResponse = { categories }
@@ -35,32 +30,21 @@ export const GET = withAuth(async (request, { user }) => {
  */
 export const POST = withAuth(async (request, { user }) => {
   const title = "Create category"
-  const startMonth = monthParam(searchParam(request, "startMonth"), title)
+  const month = monthParam(searchParam(request, "startMonth"), title)
   const { name, amount = 0 } =
     await readJson<ApiTypes.Category.CreateRequest>(request)
   if (!name) throw apiError(400, title, "Include a category name")
   if (!Number.isInteger(amount)) {
     throw apiError(400, title, "Amount must be in cents")
   }
-  const cleanedName = await checkValidCategoryName(name, user.id)
 
-  const created = await pc.category.create({
-    include: { CategoryMonth: true },
-    data: {
-      id: uuidv7(),
-      userId: user.id,
-      name,
-      cleanedName,
-      CategoryMonth: {
-        create: [{ id: uuidv7(), amount, month: startMonth, userId: user.id }],
-      },
-    },
-  })
+  const created = await createCategory(user.id, { name, amount, month })
+
   const res: ApiTypes.Category.CreateResponse = {
     id: created.id,
     name: created.name,
-    month: startMonth,
-    amount: created.CategoryMonth[0].amount,
+    month,
+    amount,
     usedAmount: 0,
   }
   return NextResponse.json(res, { status: 201 })
@@ -73,6 +57,6 @@ export const DELETE = withAuth(async (request, { user }) => {
     throw apiError(400, "Delete categories", "Include ?ids=")
   }
   // Scoped to the user: the old route deleted any user's categories by id.
-  await pc.category.deleteMany({ where: { id: { in: ids }, userId: user.id } })
+  await deleteCategories(user.id, ids)
   return noContent()
 })

@@ -1,15 +1,10 @@
 import { NextResponse } from "next/server"
-import { uuidv7 } from "uuidv7"
 import type { ApiTypes } from "@balance/api-types"
 import { pc } from "@/server/prisma"
 import { apiError } from "@/server/errors"
 import { noContent, readJson, searchParam, withAuth } from "@/server/handler"
-import {
-  confirmC,
-  getCategoryForMonth,
-  monthParam,
-} from "@/server/queries"
-import { cleanName } from "@/server/utils/cleanName"
+import { confirmC, getCategoryForMonth, monthParam } from "@/server/queries"
+import { changeCategory } from "@/server/category"
 
 export const runtime = "nodejs"
 
@@ -43,28 +38,11 @@ export const PATCH = withAuth<Params>(async (request, { params, user }) => {
   }
   await confirmC(id, user.id)
 
-  const result = await pc.$transaction(async prisma => {
-    if (name) {
-      await prisma.category.update({
-        where: { id, userId: user.id },
-        data: { name, cleanedName: cleanName(name) },
-      })
-    }
-    await prisma.categoryMonth.upsert({
-      where: {
-        userId_categoryId_month: { userId: user.id, categoryId: id, month },
-      },
-      update: amount !== undefined ? { amount } : {},
-      create: {
-        id: uuidv7(),
-        userId: user.id,
-        categoryId: id,
-        amount: amount ?? 0,
-        month,
-      },
-    })
-    return getCategoryForMonth(id, user.id, month, prisma)
-  })
+  const result = await changeCategory(
+    { userId: user.id, id, month },
+    { name, amount },
+  )
+
   if (!result) throw notFound(title)
   const res: ApiTypes.Category.ChangeResponse = result
   return NextResponse.json(res)

@@ -1,13 +1,12 @@
 "use client"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useTransition } from "react"
 import type { ApiTypes } from "@balance/api-types"
-import { useAppDispatch } from "../../store/hooks"
-import { removeCategoriesThunk } from "../../utils/thunks/category"
 import { CategoryCard } from "./CategoryCard"
 import { AnimatePresence } from "motion/react"
 import { CreateCategory } from "./CreateCategory"
 import { PrimaryButton } from "../../lib/Base/Button"
+import { deleteCategoryAction } from "@/server/actions/category"
+import { LoadingSpinner } from "@/components/Skeletons/LoadingSpinner"
 
 interface Props {
   /** this month's categories with budget and spend, fetched on the server */
@@ -16,8 +15,8 @@ interface Props {
 
 /** Toolbar and table for the budgets page; owns selection and the add form. */
 export const CategoryTable = ({ categories }: Props) => {
-  const dispatch = useAppDispatch()
-  const router = useRouter()
+  const [isDeletePending, startDeleteTransition] = useTransition()
+
   const [selectedCat, setSelectedCat] = useState<string[]>([])
   const [checkAllItems, setCheckAllItems] = useState(false)
   const [showEditCat, setShowEditCat] = useState(false)
@@ -48,16 +47,14 @@ export const CategoryTable = ({ categories }: Props) => {
     }
   }
 
-  const handleDeleteCats = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    // console.log("deleting categories", selectedCat)
-    try {
-      const res = await dispatch(
-        removeCategoriesThunk({ categoryIds: selectedCat }),
-      )
-      setSelectedCat([])
-      setCheckAllItems(false)
-      router.refresh()
-    } catch (e) {}
+  const handleDeleteCats = () => {
+    startDeleteTransition(async () => {
+      const result = await deleteCategoryAction(selectedCat)
+      if (result.status === "success") {
+        setSelectedCat([])
+        setCheckAllItems(false)
+      }
+    })
   }
 
   return (
@@ -103,7 +100,10 @@ export const CategoryTable = ({ categories }: Props) => {
                   ${isDisabledDelete ? "border-grass-200" : "border-grass-700"}
                   `}
               >
-                Delete {selectedCat.length <= 1 ? "category" : "categories"}
+                <div className="flex gap-2 items-center">
+                  {isDeletePending && <LoadingSpinner />}
+                  Delete {selectedCat.length <= 1 ? "category" : "categories"}
+                </div>
               </PrimaryButton>
             </div>
             <div>Search</div>

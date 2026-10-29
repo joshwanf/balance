@@ -10,10 +10,10 @@ import {
 } from "@/server/data/transactions"
 import {
   assertAccountOwned,
+  assertCategoryOwned,
   createSchema,
   getFormattedTransaction,
   parseBody,
-  upsertCategoryId,
 } from "@/server/transactions"
 import { SessionUser } from "@/server/auth"
 
@@ -56,19 +56,24 @@ const search = async (request: NextRequest, user: SessionUser) => {
 /** Create a transaction, creating its category by name if needed. */
 export const POST = withAuth(async (request, { user }) => {
   const title = "Create transaction"
-  const { categoryName, ...fields } = parseBody(
+  const { categoryId, ...fields } = parseBody(
     createSchema,
     await readJson(request),
     title,
   )
   await assertAccountOwned(fields.accountId, user.id)
+  if (categoryId) {
+    await assertCategoryOwned(categoryId, user.id)
+  }
 
   const created = await pc.$transaction(async prisma => {
-    const categoryId = categoryName
-      ? await upsertCategoryId(categoryName, user.id, prisma)
-      : null
     const { id } = await prisma.transaction.create({
-      data: { ...fields, id: uuidv7(), userId: user.id, categoryId },
+      data: {
+        ...fields,
+        id: uuidv7(),
+        userId: user.id,
+        categoryId: categoryId || null,
+      },
     })
     return getFormattedTransaction(id, prisma)
   })

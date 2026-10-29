@@ -2,8 +2,7 @@
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { FormField } from "../../lib/ComponentLibrary/FormField"
-import { useAppDispatch, useAppSelector } from "../../store/hooks"
-import { selectCategories } from "../../features/categoriesSlice"
+import { useAppDispatch } from "../../store/hooks"
 import { DropdownSelector } from "../../lib/ComponentLibrary/DropdownSelector"
 import { createTransaction } from "../../utils/thunks/transactions"
 import { m, LazyMotion, domAnimation } from "motion/react"
@@ -20,10 +19,12 @@ type CreateErrors = {
 }
 interface Props {
   accounts: { id: string; name: string }[]
+  categories: { id: string; name: string }[]
   onAfterSubmitForm?: () => void
 }
 export const CreateTransaction = ({
   accounts,
+  categories,
   onAfterSubmitForm,
   ...rest
 }: Props) => {
@@ -31,7 +32,6 @@ export const CreateTransaction = ({
   const dispatch = useAppDispatch()
   const [form, setForm] = useState(emptyForm)
   const router = useRouter()
-  const categories = useAppSelector(selectCategories)
   const [selectedCat, setSelectedCat] = useState<string>("")
   const [selectedAcct, setSelectedAcct] = useState<string>(
     accounts[0]?.id || "",
@@ -58,9 +58,6 @@ export const CreateTransaction = ({
       const preparedAmount = Money.parse(form.amount).toInt()
       const preparedDate = dayjs(form.date, "YYYY-MM-DD").format("YYYY-MM-DD")
       const preparedAccount = selectedAcct
-      const preparedCatName = selectedCat
-        ? categories[selectedCat].name
-        : undefined
 
       const preparedForm = {
         ...form,
@@ -68,7 +65,7 @@ export const CreateTransaction = ({
         date: preparedDate,
         amount: preparedAmount,
         accountId: preparedAccount,
-        categoryName: preparedCatName,
+        categoryId: selectedCat,
       }
 
       try {
@@ -123,7 +120,7 @@ export const CreateTransaction = ({
         {/* <div className="flex flex-col md:flex-col lg:flex-col xl:flex-row lg:space-x-2 text-sm"> */}
         <div className="grid grid-cols-2 text-sm">
           <FormField
-            field="date"
+            name="date"
             displayText="Date"
             placeholder="YYYY-MM-DD"
             value={form.date}
@@ -135,7 +132,7 @@ export const CreateTransaction = ({
             <div></div>
           )}
           <FormField
-            field="payee"
+            name="payee"
             displayText="Payee"
             placeholder="Payee"
             value={form.payee}
@@ -160,7 +157,7 @@ export const CreateTransaction = ({
             <div></div>
           )}
           <FormField
-            field="amount"
+            name="amount"
             displayText="Amount"
             placeholder="Amount"
             value={form.amount}
@@ -174,7 +171,7 @@ export const CreateTransaction = ({
           <DropdownSelector
             field="category"
             displayText="Category"
-            options={Object.values(categories)}
+            options={categories}
             selected={selectedCat}
             onChange={handleChangeCat}
           />

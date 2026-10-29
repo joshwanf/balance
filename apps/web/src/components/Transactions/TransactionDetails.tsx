@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { useAppDispatch, useAppSelector } from "../../store/hooks"
+import { useAppDispatch } from "../../store/hooks"
 import type { ApiTypes } from "@balance/api-types"
 import { EditableText } from "../../lib/ComponentLibrary/EditableText"
 import balance from "../../utils/api"
@@ -11,12 +11,10 @@ import { AnimatePresence, m, LazyMotion, domAnimation } from "motion/react"
 import { Modal } from "../../lib/ComponentLibrary/Modal"
 import { ConfirmDelete } from "./ConfirmDelete"
 import { changeTransactionThunk } from "../../utils/thunks/transactions"
-import { selectCategories } from "../../features/categoriesSlice"
 import { DropdownSelector } from "../../lib/ComponentLibrary/DropdownSelector"
 import { Money } from "../../utils/classes/Money"
 import { X } from "lucide-react"
 import { validateDate } from "../../utils/helpers/date"
-import { InputWithSelector } from "../../lib/ComponentLibrary/InputDropdownSelector/InputWithSelector"
 import { Errors } from "../../lib/ComponentLibrary/Errors"
 import { PrimaryButton } from "../../lib/Base/Button"
 import { TagSelector } from "./TagSelector"
@@ -28,19 +26,20 @@ interface FormErrors {
 }
 interface Props {
   accounts: { id: string; name: string }[]
+  categories: { id: string; name: string }[]
   t: ApiTypes.Transaction.TSerialized
   allTags: string[]
   closeModal: (e: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) => void
 }
 export const TransactionDetails = ({
   accounts,
+  categories,
   t,
   allTags,
   closeModal,
 }: Props) => {
   const dispatch = useAppDispatch()
   const router = useRouter()
-  const categories = useAppSelector(selectCategories)
 
   const tAmount = Money.fromCents(t.amount.toString())
   const [form, setForm] = useState({ ...t, amount: tAmount.format() })
@@ -61,8 +60,7 @@ export const TransactionDetails = ({
       formWithUpdatedData.type = newValue
     } else if (field === "category") {
       setForm({ ...form, categoryId: newValue })
-      const catName = categories[newValue]?.name || ""
-      formWithUpdatedData.categoryName = catName
+      formWithUpdatedData.categoryId = newValue
     } else if (field === "account") {
       setForm({ ...form, accountId: newValue })
       formWithUpdatedData.accountId = newValue
@@ -220,10 +218,8 @@ export const TransactionDetails = ({
             <div className="w-fit">
               <DropdownSelector
                 field="category"
-                options={Object.values(categories)}
-                selected={
-                  form.categoryId ? categories[form.categoryId]?.id : ""
-                }
+                options={categories}
+                selected={form.categoryId ? form.categoryId : ""}
                 onChange={handleChangeForm("category")}
               />
             </div>

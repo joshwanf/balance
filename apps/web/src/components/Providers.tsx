@@ -3,7 +3,6 @@ import { useEffect, useRef } from "react"
 import { Provider } from "react-redux"
 import type { ApiTypes } from "@balance/api-types"
 import { makeStore, type AppStore } from "../store/store"
-import { addManyPartialCategories } from "../features/categoriesSlice"
 
 type SessionUser = ApiTypes.Session.LoginResponse["success"]["user"]
 
@@ -19,7 +18,6 @@ export const Providers = ({ user, children }: Props) => {
     const store = makeStore()
     if (user) {
       const { accounts, categories, ...safeUser } = user
-      store.dispatch(addManyPartialCategories(categories))
     }
     storeRef.current = store
   }
@@ -27,7 +25,6 @@ export const Providers = ({ user, children }: Props) => {
   useEffect(() => {
     if (user && storeRef.current) {
       const { accounts, categories, ...safeUser } = user
-      storeRef.current.dispatch(addManyPartialCategories(categories))
     }
   }, [user?.id])
 

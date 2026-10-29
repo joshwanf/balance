@@ -10,6 +10,7 @@ type Transaction = ApiTypes.Transaction.TRow
 
 interface Props {
   accounts: { id: string; name: string }[]
+  categories: { id: string; name: string }[]
   t: Transaction
   allTags: string[]
   checked: boolean
@@ -17,6 +18,7 @@ interface Props {
 }
 export const TransactionCard = ({
   accounts,
+  categories,
   t,
   allTags,
   checked,
@@ -64,6 +66,7 @@ export const TransactionCard = ({
             element={
               <TransactionDetails
                 accounts={accounts}
+                categories={categories}
                 closeModal={closeModal}
                 t={t}
                 allTags={allTags}

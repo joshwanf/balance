@@ -11,6 +11,7 @@ import {
 } from "@/utils/month"
 import { getSessionUser } from "@/server/auth"
 import { listAccounts } from "@/server/data"
+import { listCategoryNames } from "@/server/category"
 
 export default async function Page({
   searchParams,
@@ -28,14 +29,16 @@ export default async function Page({
     id: a.id,
     name: a.name,
   }))
+  const categories = await listCategoryNames(user.id)
 
   return (
     <div>
-      <TransactionsToolbar accounts={accounts} />
+      <TransactionsToolbar accounts={accounts} categories={categories} />
       {/* A new key shows the shimmer again when the month or search changes */}
       <Suspense key={`${month}|${searchText}`} fallback={<TableSkeleton />}>
         <TransactionsList
           accounts={accounts}
+          categories={categories}
           month={month}
           searchText={searchText}
         />

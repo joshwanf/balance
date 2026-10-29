@@ -9,6 +9,7 @@ import { TransactionsTable } from "./TransactionsTable"
 
 interface Props {
   accounts: { id: string; name: string }[]
+  categories: { id: string; name: string }[]
   month: string
   /** raw search text from ?q=; when set, search across all months */
   searchText: string
@@ -17,6 +18,7 @@ interface Props {
 /** Fetches the month (or the search) on the server and renders the table. */
 export const TransactionsList = async ({
   accounts,
+  categories,
   month,
   searchText,
 }: Props) => {
@@ -33,6 +35,7 @@ export const TransactionsList = async ({
   return (
     <TransactionsTable
       accounts={accounts}
+      categories={categories}
       transactions={rows}
       allTags={allTags}
     />

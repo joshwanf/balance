@@ -10,10 +10,11 @@ import { useSearchText } from "../../hooks/useUrlState"
 
 interface Props {
   accounts: { id: string; name: string }[]
+  categories: { id: string; name: string }[]
 }
 
 /** Add-transaction form and the search box above the table. */
-export const TransactionsToolbar = ({ accounts }: Props) => {
+export const TransactionsToolbar = ({ accounts, categories }: Props) => {
   const [showAddItem, setShowAddItem] = useState(false)
   const searchText = useSearchText()
   const searchParams = searchTextToParams(searchText)
@@ -46,6 +47,7 @@ export const TransactionsToolbar = ({ accounts }: Props) => {
         {showAddItem && (
           <CreateTransaction
             accounts={accounts}
+            categories={categories}
             onAfterSubmitForm={() => setShowAddItem(false)}
           />
         )}
