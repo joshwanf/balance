@@ -64,6 +64,10 @@ export const listActiveItems = () =>
 export const listItemsForUser = (userId: string) =>
   pc.plaidItem.findMany({ where: { userId }, orderBy: { createdAt: "asc" } })
 
+/** Items whose accounts have all been deleted. */
+export const listEmptyItemsForUser = (userId: string) =>
+  pc.plaidItem.findMany({ where: { userId, accounts: { none: {} } } })
+
 /** Active items not synced since `before` (or never synced). */
 export const listStaleItemsForUser = (userId: string, before: Date) =>
   pc.plaidItem.findMany({
@@ -112,7 +116,7 @@ export const createItemWithAccounts = async (input: {
         plaidAccountId: a.plaidAccountId,
       })),
     })
-    return item
+    return { ...item, accountCount: input.accounts.length }
   })
 
 export const setItemStatus = (id: string, status: PlaidItemStatus) =>
@@ -302,3 +306,6 @@ export const applySyncRun = async (input: {
   )
 
 export type ApplySyncResult = Awaited<ReturnType<typeof applySyncRun>>
+
+export const countItemsForUser = (userId: string) =>
+  pc.plaidItem.count({ where: { userId, accounts: { some: {} } } })

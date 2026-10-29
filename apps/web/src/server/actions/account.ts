@@ -1,6 +1,7 @@
 "use server"
 import { createAccount, deleteAccount } from "@/server/data"
 import { userMutation } from "@/server/mutation"
+import { removeEmptyItems } from "@/server/plaid/link"
 import { getFormData } from "@/server/utils/formData"
 import { Money } from "@/utils/classes/Money"
 
@@ -89,6 +90,7 @@ export const deleteAccountAction = async (
 ): Promise<DeleteAccountState> =>
   userMutation(async user => {
     const count = await deleteAccount(user.id, accountId)
+    if (count > 0) await removeEmptyItems(user.id).catch(console.error)
     return count > 0
       ? { status: "success" }
       : { status: "error", error: "Couldn't delete account." }

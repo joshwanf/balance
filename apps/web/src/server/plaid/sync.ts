@@ -151,5 +151,20 @@ export const syncStaleItems = async (userId: string) => {
     userId,
     new Date(Date.now() - STALE_AFTER_MS),
   )
-  for (const item of stale) await syncItem(item.id)
+  for (const item of stale) {
+    await syncItem(item.id)
+    // Sandbox data only grows when asked; the new rows arrive on the next sync
+    await refreshSandboxItem(item)
+  }
+}
+
+/** Asks Plaid to generate new test transactions. A no-op for real banks. */
+export const refreshSandboxItem = async (item: {
+  environment: string
+  accessToken: string
+}) => {
+  if (item.environment !== "sandbox") return
+  await plaidClient("sandbox")
+    .transactionsRefresh({ access_token: decryptToken(item.accessToken) })
+    .catch(() => {})
 }

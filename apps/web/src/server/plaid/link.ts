@@ -1,9 +1,15 @@
 import "server-only"
 import { AccountSubtype, CountryCode, type AccountBase } from "plaid"
-import type { PlaidEnvironment } from "../config"
-import { createItemWithAccounts, type LinkedAccount } from "../data/plaid"
-import { plaidClient } from "./client"
-import { encryptToken } from "./crypto"
+import config, { type PlaidEnvironment } from "../config"
+import {
+  createItemWithAccounts,
+  deleteItem,
+  isDemoUser,
+  listEmptyItemsForUser,
+  type LinkedAccount,
+} from "../data/plaid"
+import { isPlaidConfigured, plaidClient } from "./client"
+import { decryptToken, encryptToken } from "./crypto"
 
 /** The Plaid accounts Balance tracks; anything else (loans, CDs, IRAs) is skipped. */
 export const toLinkedAccounts = (accounts: AccountBase[]): LinkedAccount[] =>
@@ -63,4 +69,27 @@ export const storeLinkedItem = async (input: {
     institutionName,
     accounts: toLinkedAccounts(accounts.accounts),
   })
+}
+
+/** The demo always links in Sandbox; everyone else uses PLAID_ENV. */
+export const linkEnvironmentFor = async (
+  userId: string,
+): Promise<PlaidEnvironment> =>
+  (await isDemoUser(userId))
+    ? "sandbox"
+    : (config.plaid?.linkEnvironment ?? "sandbox")
+
+/**
+ * Disconnects bank connections that no longer have any accounts, so Plaid
+ * stops syncing (and billing) them and they don't count against limits.
+ */
+export const removeEmptyItems = async (userId: string) => {
+  for (const item of await listEmptyItemsForUser(userId)) {
+    if (isPlaidConfigured()) {
+      await plaidClient(item.environment as PlaidEnvironment)
+        .itemRemove({ access_token: decryptToken(item.accessToken) })
+        .catch(() => {}) // already gone at Plaid; drop our copy anyway
+    }
+    await deleteItem(item.id)
+  }
 }

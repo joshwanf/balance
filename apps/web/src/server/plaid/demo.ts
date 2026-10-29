@@ -7,7 +7,7 @@ import {
 } from "../data/plaid"
 import { decryptToken } from "./crypto"
 import { isPlaidConfigured, plaidClient } from "./client"
-import { storeLinkedItem } from "./link"
+import { removeEmptyItems, storeLinkedItem } from "./link"
 import { syncItem } from "./sync"
 
 // First Platypus Bank: a non-OAuth sandbox institution
@@ -43,6 +43,8 @@ export const createSandboxItem = async (userId: string) => {
 export const ensureDemoItem = async (userId: string) => {
   if (!isPlaidConfigured() || !(await isDemoUser(userId))) return
 
+  // A bank whose accounts were all deleted doesn't count as working
+  await removeEmptyItems(userId)
   const items = await listItemsForUser(userId)
   if (items.some(i => i.status === "active")) return
 

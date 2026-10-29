@@ -1,10 +1,12 @@
 import { after } from "next/server"
 import { getSessionUser } from "@/server/auth"
 import { listAccounts } from "@/server/data"
+import { isPlaidConfigured } from "@/server/plaid/client"
 import { ensureDemoItem } from "@/server/plaid/demo"
 import { syncStaleItems } from "@/server/plaid/sync"
 import { AccountCard } from "./AccountCard"
 import { CreateAccountCard } from "./CreateAccountCard"
+import { LinkBankCard } from "./LinkBankCard"
 
 interface Props {
   month: string
@@ -31,6 +33,7 @@ export const AccountList = async ({ month }: Props) => {
         <AccountCard key={a.id} account={a} />
       ))}
       <CreateAccountCard />
+      {isPlaidConfigured() && <LinkBankCard />}
     </div>
   )
 }
