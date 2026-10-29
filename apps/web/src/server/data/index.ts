@@ -3,12 +3,21 @@
  * so a page and its endpoint always return the same shapes.
  */
 export {
+  addTransactionTags,
+  changeTransaction,
+  createTransaction,
+  deleteTransaction,
   listTagNames,
   listTransactionRows,
   listTransactions,
+  removeTransactionTags,
   searchTransactions,
 } from "./transactions"
-export type { TransactionSearch } from "./transactions"
+export type {
+  NewTransaction,
+  TransactionChanges,
+  TransactionSearch,
+} from "./transactions"
 export { trendOverview, trendCompare } from "./trends"
 export {
   getCategoriesWithTransAgg as listCategories,

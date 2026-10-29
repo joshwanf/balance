@@ -4,13 +4,11 @@ import { pc } from "@/server/prisma"
 import { noContent, readJson, withAuth } from "@/server/handler"
 import { confirmT, transactionQueryOpts } from "@/server/queries"
 import {
-  assertAccountOwned,
-  assertCategoryOwned,
   changeSchema,
   formatTransaction,
-  getFormattedTransaction,
   parseBody,
 } from "@/server/transactions"
+import { changeTransaction, deleteTransaction } from "@/server/data"
 
 export const runtime = "nodejs"
 
@@ -50,10 +48,7 @@ export const GET = withAuth<Params>(async (_request, { params, user }) => {
   return NextResponse.json(res)
 })
 
-/**
- * Update any supplied fields. categoryName "" clears the category; any
- * other value moves it to that category, creating it if needed.
- */
+/** Update any supplied fields. categoryId "" clears the category. */
 export const PATCH = withAuth<Params>(async (request, { params, user }) => {
   const { id } = params
   const { categoryId, ...fields } = parseBody(
@@ -61,26 +56,15 @@ export const PATCH = withAuth<Params>(async (request, { params, user }) => {
     await readJson(request),
     "Change transaction",
   )
-  await confirmT(id, user.id)
-  if (fields.accountId) await assertAccountOwned(fields.accountId, user.id)
-  if (categoryId) await assertCategoryOwned(categoryId, user.id)
-
-  const updated = await pc.$transaction(async prisma => {
-    await prisma.transaction.update({
-      where: { id, userId: user.id },
-      data: {
-        ...fields,
-        categoryId: categoryId && categoryId.length > 0 ? categoryId : null,
-      },
-    })
-    return getFormattedTransaction(id, prisma)
+  const updated = await changeTransaction(user.id, id, {
+    categoryId,
+    ...fields,
   })
   const res: ApiTypes.Transaction.ChangeResponse = updated
   return NextResponse.json(res)
 })
 
 export const DELETE = withAuth<Params>(async (_request, { params, user }) => {
-  await confirmT(params.id, user.id)
-  await pc.transaction.delete({ where: { id: params.id, userId: user.id } })
+  await deleteTransaction(user.id, params.id)
   return noContent()
 })

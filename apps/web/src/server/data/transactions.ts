@@ -1,9 +1,20 @@
 import "server-only"
 import moment from "moment"
+import { uuidv7 } from "uuidv7"
+import { z } from "zod"
 import type { ApiTypes } from "@balance/api-types"
 import { pc, TxClient } from "../prisma"
-import { getCategoriesWithTransAgg } from "../queries"
-import { formatRow, rowInclude } from "../transactions"
+import { confirmT, getCategoriesWithTransAgg } from "../queries"
+import {
+  assertAccountOwned,
+  assertCategoryOwned,
+  changeSchema,
+  createSchema,
+  formatRow,
+  getFormattedTransaction,
+  rowInclude,
+} from "../transactions"
+import { cleanName } from "../utils/cleanName"
 
 const nextMonth = (month: string) =>
   moment(month, "YYYY-MM").add(1, "month").format("YYYY-MM")
@@ -83,4 +94,103 @@ export const searchTransactions = async (
       )
     : trans
   return { transactions: matches.map(formatRow) }
+}
+
+export type NewTransaction = z.infer<typeof createSchema>
+export type TransactionChanges = z.infer<typeof changeSchema>
+
+const toCategoryId = (categoryId: string | null | undefined) =>
+  categoryId === undefined ? undefined : categoryId || null
+
+export const createTransaction = async (
+  userId: string,
+  { categoryId, ...fields }: NewTransaction,
+): Promise<ApiTypes.Transaction.CreateResponse> => {
+  await assertAccountOwned(fields.accountId, userId)
+  if (categoryId) await assertCategoryOwned(categoryId, userId)
+
+  return pc.$transaction(async prisma => {
+    const { id } = await prisma.transaction.create({
+      data: {
+        ...fields,
+        id: uuidv7(),
+        userId,
+        categoryId: toCategoryId(categoryId) ?? null,
+      },
+    })
+    return getFormattedTransaction(id, prisma)
+  })
+}
+
+export const changeTransaction = async (
+  userId: string,
+  id: string,
+  { categoryId, ...fields }: TransactionChanges,
+): Promise<ApiTypes.Transaction.ChangeResponse> => {
+  await confirmT(id, userId)
+  if (fields.accountId) await assertAccountOwned(fields.accountId, userId)
+  if (categoryId) await assertCategoryOwned(categoryId, userId)
+
+  return pc.$transaction(async prisma => {
+    await prisma.transaction.update({
+      where: { id, userId },
+      data: { ...fields, categoryId: toCategoryId(categoryId) },
+    })
+    return getFormattedTransaction(id, prisma)
+  })
+}
+
+export const deleteTransaction = async (userId: string, id: string) => {
+  await confirmT(id, userId)
+  await pc.transaction.delete({ where: { id, userId } })
+}
+
+const transactionTags = async (transactionId: string, prisma: TxClient) => {
+  const t = await prisma.transaction.findFirstOrThrow({
+    include: { tags: { include: { tags: true } } },
+    where: { id: transactionId },
+  })
+  return t.tags.map(tag => ({ id: tag.tagId, name: tag.tags.name }))
+}
+
+export const addTransactionTags = async (
+  userId: string,
+  transactionId: string,
+  tags: string[],
+) => {
+  await confirmT(transactionId, userId)
+  return pc.$transaction(async prisma => {
+    for (const name of tags) {
+      const cleanedName = cleanName(name)
+      const tag = await prisma.tags.upsert({
+        where: { userId_cleanedName: { userId, cleanedName } },
+        update: {},
+        create: { id: uuidv7(), userId, name, cleanedName },
+      })
+
+      await prisma.transactionsOnTags.upsert({
+        where: { transactionId_tagId: { tagId: tag.id, transactionId } },
+        update: {},
+        create: { tagId: tag.id, transactionId },
+      })
+    }
+    return transactionTags(transactionId, prisma)
+  })
+}
+
+export const removeTransactionTags = async (
+  userId: string,
+  transactionId: string,
+  names: string[],
+) => {
+  await confirmT(transactionId, userId)
+  return pc.$transaction(async prisma => {
+    await prisma.transactionsOnTags.deleteMany({
+      where: {
+        transactionId,
+        tags: { userId, cleanedName: { in: names.map(cleanName) } },
+      },
+    })
+    return transactionTags(transactionId, prisma)
+  })
 }

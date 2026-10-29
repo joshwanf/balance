@@ -1,16 +1,14 @@
 "use client"
 import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { useAppDispatch } from "../../store/hooks"
 import type { ApiTypes } from "@balance/api-types"
 import { EditableText } from "../../lib/ComponentLibrary/EditableText"
-import balance from "../../utils/api"
-import { ApiError } from "../../utils/classes/ApiError"
-import { removeT } from "../../features/transactionsSlice"
+import {
+  changeTransactionAction,
+  deleteTransactionAction,
+} from "@/server/actions/transaction"
 import { AnimatePresence, m, LazyMotion, domAnimation } from "motion/react"
 import { Modal } from "../../lib/ComponentLibrary/Modal"
 import { ConfirmDelete } from "./ConfirmDelete"
-import { changeTransactionThunk } from "../../utils/thunks/transactions"
 import { DropdownSelector } from "../../lib/ComponentLibrary/DropdownSelector"
 import { Money } from "../../utils/classes/Money"
 import { X } from "lucide-react"
@@ -23,6 +21,7 @@ interface FormErrors {
   date?: string
   payee?: string
   amount?: string
+  invalid?: string
 }
 interface Props {
   accounts: { id: string; name: string }[]
@@ -38,9 +37,6 @@ export const TransactionDetails = ({
   allTags,
   closeModal,
 }: Props) => {
-  const dispatch = useAppDispatch()
-  const router = useRouter()
-
   const tAmount = Money.fromCents(t.amount.toString())
   const [form, setForm] = useState({ ...t, amount: tAmount.format() })
   const [formErrors, setFormErrors] = useState<FormErrors>({})
@@ -49,12 +45,7 @@ export const TransactionDetails = ({
   const [selectedTags, setSelectedTags] = useState<string[]>(t.tags)
 
   const handleChangeForm = (field: string) => async (newValue: string) => {
-    const formWithUpdatedData: { id: string; amount?: number } & Record<
-      string,
-      string
-    > = {
-      id: t.id,
-    }
+    const formWithUpdatedData: { amount?: number } & Record<string, string> = {}
     if (field === "type") {
       setForm({ ...form, type: newValue })
       formWithUpdatedData.type = newValue
@@ -105,11 +96,8 @@ export const TransactionDetails = ({
       setFormErrors(accErrors)
     } else {
       setFormErrors({})
-      /** change to thunk */
-      const res = await dispatch(
-        changeTransactionThunk(formWithUpdatedData),
-      ).unwrap()
-      router.refresh()
+      const result = await changeTransactionAction(t.id, formWithUpdatedData)
+      if (result.status === "error") setFormErrors({ invalid: result.error })
     }
   }
   const handleShowConfirmModal = () => {
@@ -124,12 +112,11 @@ export const TransactionDetails = ({
     e: React.MouseEvent<HTMLDivElement | HTMLButtonElement>,
   ) => {
     if (confirmDelete) {
-      const response = await balance.transaction.remove(t.id)
-      if (!(response instanceof ApiError)) {
-        dispatch(removeT(t.id))
-        setConfirmDelete(false)
-        router.refresh()
+      const result = await deleteTransactionAction(t.id)
+      if (result.status === "error") {
+        setFormErrors({ invalid: result.error })
       }
+      setConfirmDelete(false)
     } else {
       setShowConfirmDelete(true)
       setConfirmDelete(true)
@@ -152,6 +139,7 @@ export const TransactionDetails = ({
             Click on a field to change its value. Hit "Enter" or click off to
             save it.
           </h1>
+          {formErrors.invalid && <Errors errors={formErrors.invalid} />}
           <div>
             ID: <code className="bg-slate-200 rounded-md p-1">{t.id}</code>
           </div>
