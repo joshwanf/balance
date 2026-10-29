@@ -5,12 +5,13 @@ import {
   applySyncRun,
   CursorConflictError,
   getItemById,
+  listStaleItemsForUser,
   setItemStatus,
   type ApplySyncResult,
   type SyncedTransaction,
 } from "../data/plaid"
 import { cleanName } from "../utils/cleanName"
-import { plaidClient } from "./client"
+import { isPlaidConfigured, plaidClient } from "./client"
 import { decryptToken } from "./crypto"
 
 // Plaid restarts are rare; give up after this many in one run
@@ -138,4 +139,17 @@ export const syncItem = async (itemId: string): Promise<SyncResult> => {
       throw e
     }
   }
+}
+
+// How old a sync can get before opening the Accounts page triggers another
+const STALE_AFTER_MS = 12 * 60 * 60 * 1000
+
+/** Syncs the user's items not synced in 12 hours; a backstop for missed webhooks. */
+export const syncStaleItems = async (userId: string) => {
+  if (!isPlaidConfigured()) return
+  const stale = await listStaleItemsForUser(
+    userId,
+    new Date(Date.now() - STALE_AFTER_MS),
+  )
+  for (const item of stale) await syncItem(item.id)
 }

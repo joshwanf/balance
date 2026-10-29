@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import type { ApiTypes } from "@balance/api-types"
 import { Modal } from "../../lib/ComponentLibrary/Modal"
 import { ConfirmDelete } from "./ConfirmDelete"
+import { LinkedBank } from "./LinkedBank"
 import { AnimatePresence } from "motion/react"
 
 interface Props {
@@ -66,6 +67,7 @@ export const AccountCard = ({ account }: Props) => {
           <span className="font-bold">Type: </span>
           {account.accountType}
         </div>
+        {account.bank && <LinkedBank bank={account.bank} />}
       </div>
       <AnimatePresence>
         {showConfirmDelete && (

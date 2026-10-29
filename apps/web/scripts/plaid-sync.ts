@@ -7,34 +7,15 @@
  *
  * Reads apps/web/.env. Needs PLAID_CLIENT_ID, PLAID_SECRET_SANDBOX and PLAID_TOKEN_KEY.
  */
-import { Products } from "plaid"
 import { pc } from "../src/server/prisma"
 import { listActiveItems } from "../src/server/data/plaid"
-import { plaidClient } from "../src/server/plaid/client"
-import { storeLinkedItem } from "../src/server/plaid/link"
+import { createSandboxItem } from "../src/server/plaid/demo"
 import { syncItem } from "../src/server/plaid/sync"
-
-// First Platypus Bank: a non-OAuth sandbox institution
-const SANDBOX_INSTITUTION = "ins_109508"
 
 const linkSandbox = async (username: string) => {
   const user = await pc.user.findUnique({ where: { username } })
   if (!user) throw new Error(`No user named ${username}`)
-
-  const { data } = await plaidClient("sandbox").sandboxPublicTokenCreate({
-    institution_id: SANDBOX_INSTITUTION,
-    initial_products: [Products.Transactions],
-    options: {
-      // Recurring data that grows on each /transactions/refresh
-      override_username: "user_transactions_dynamic",
-      override_password: "pass_good",
-    },
-  })
-  const item = await storeLinkedItem({
-    userId: user.id,
-    publicToken: data.public_token,
-    environment: "sandbox",
-  })
+  const item = await createSandboxItem(user.id)
   console.log(`Linked item ${item.id} (${item.institutionName})`)
   return item.id
 }

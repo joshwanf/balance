@@ -61,6 +61,23 @@ export const getItemForUser = (id: string, userId: string) =>
 export const listActiveItems = () =>
   pc.plaidItem.findMany({ where: { status: "active" } })
 
+export const listItemsForUser = (userId: string) =>
+  pc.plaidItem.findMany({ where: { userId }, orderBy: { createdAt: "asc" } })
+
+/** Active items not synced since `before` (or never synced). */
+export const listStaleItemsForUser = (userId: string, before: Date) =>
+  pc.plaidItem.findMany({
+    where: {
+      userId,
+      status: "active",
+      OR: [{ lastSyncedAt: null }, { lastSyncedAt: { lt: before } }],
+    },
+  })
+
+export const isDemoUser = async (userId: string) =>
+  (await pc.user.findUnique({ where: { id: userId }, select: { isDemo: true } }))
+    ?.isDemo ?? false
+
 /** Stores a new connection and one Account row per chosen Plaid account. */
 export const createItemWithAccounts = async (input: {
   userId: string
@@ -104,6 +121,13 @@ export const setItemStatus = (id: string, status: PlaidItemStatus) =>
 /** Deletes the item; its accounts and transactions stay, as manual ones. */
 export const deleteItem = (id: string) =>
   pc.plaidItem.delete({ where: { id } })
+
+/** Deletes the item with its accounts and their transactions (demo resets only). */
+export const deleteItemWithAccounts = (id: string) =>
+  pc.$transaction([
+    pc.account.deleteMany({ where: { plaidItemId: id } }),
+    pc.plaidItem.delete({ where: { id } }),
+  ])
 
 const shiftDate = (date: string, days: number) =>
   moment(date).add(days, "days").format("YYYY-MM-DD")

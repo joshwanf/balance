@@ -107,6 +107,9 @@ export declare namespace ApiTypes {
       payee: string
       date: string
       accountId: string
+      source: string
+      plaidTransactionId: string | null
+      pending: boolean
     }
 
     /** serialization of prisma Decimal and Date types */
@@ -252,6 +255,15 @@ export declare namespace ApiTypes {
       name: string
       accountType: string
       usedAmount: number
+      /** set for accounts linked through Plaid */
+      bank: LinkedBank | null
+    }
+    interface LinkedBank {
+      itemId: string
+      institutionName: string | null
+      mask: string | null
+      status: "active" | "login_required" | "error" | "revoked"
+      lastSyncedAt: string | null
     }
     interface ListRequest {}
     interface ListResponse {
