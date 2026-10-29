@@ -14,7 +14,8 @@
     "migrate": "prisma migrate dev",
     "deploy-prisma": "prisma migrate deploy",
     "push": "prisma db push",
-    "seed": "prisma db seed"
+    "seed": "prisma db seed",
+    "plaid:sync": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local --conditions=react-server scripts/plaid-sync.ts"
   },
   "dependencies": {
     "@balance/api-types": "0.1.0",
