@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server"
 import moment from "moment"
-import { uuidv7 } from "uuidv7"
 import type { ApiTypes } from "@balance/api-types"
-import { pc } from "@/server/prisma"
 import { apiError } from "@/server/errors"
 import { readJson, searchParam, withAuth } from "@/server/handler"
-import { getAccountsWithTransAgg } from "@/server/queries"
+import { getAccountsWithTransAgg } from "@/server/data"
 import { cleanName } from "@/server/utils/cleanName"
+import { createAccount } from "@/server/data"
 
 export const runtime = "nodejs"
 
@@ -34,36 +33,23 @@ export const POST = withAuth(async (request, { user }) => {
     throw apiError(400, "Create account", "Initial balance must be in cents")
   }
 
-  const accounts = await pc.$transaction(async prisma => {
-    const newAccount = await prisma.account.create({
-      data: {
-        id: uuidv7(),
-        userId: user.id,
-        name,
-        cleanedName: cleanName(name),
-        accountType,
-        transactions: {
-          create: [
-            {
-              id: uuidv7(),
-              date: moment().format("YYYY-MM-DD"),
-              amount,
-              payee: "Initial balance",
-              type: "incoming",
-              userId: user.id,
-            },
-          ],
-        },
-      },
-    })
-    return getAccountsWithTransAgg(
-      user.id,
-      newAccount.id,
-      moment().format("YYYY-MM"),
-      prisma
-    )
+  const account = await createAccount(user.id, {
+    name,
+    accountType,
+    initialBalance: amount,
   })
 
-  const res: ApiTypes.Account.CreateResponse = { accounts }
+  if (!account) {
+    throw apiError(400, "Create account", "Couldn't create account.")
+  }
+
+  const res: ApiTypes.Account.CreateResponse = {
+    account: {
+      id: account.account.id,
+      name,
+      accountType,
+      usedAmount: initialBalance || 0,
+    },
+  }
   return NextResponse.json(res, { status: 201 })
 })

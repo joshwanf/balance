@@ -1,96 +1,84 @@
 "use client"
-import { useState } from "react"
-import { useAppDispatch } from "../../store/hooks"
-import { useRouter } from "next/navigation"
-import * as Ipt from "../../lib/Base/Input"
-// import * as Btn from "../../lib/Base/Button"
-import { PrimaryButton, TertiaryButton } from "../../lib/Base/Button"
-import { Errors } from "../../lib/ComponentLibrary/Errors"
-import { loginDemoThunk, loginThunk } from "../../utils/thunks/session"
-import { ApiError } from "../../utils/classes/ApiError"
+import { ReactNode, useActionState } from "react"
+import { loginAction, LoginState } from "@/server/actions/auth"
+import { PrimaryButton, TertiaryButton } from "@/lib/Base/Button"
+import { Errors } from "@/lib/ComponentLibrary/Errors"
+import { LoadingSpinner } from "@/components/Skeletons/LoadingSpinner"
+import { useFormStatus } from "react-dom"
 
-interface FormErrors {
-  credential?: string
-  password?: string
-  invalid?: string
-}
-interface Props {
-  closeModal?: () => void
-}
-export const LoginForm = ({ closeModal }: Props) => {
-  const dispatch = useAppDispatch()
-  const router = useRouter()
-  const [form, setForm] = useState({ credential: "", password: "" })
-  const [errors, setErrors] = useState<FormErrors>({})
-  const handleChangeForm = (field: string) => (input: string) => {
-    setForm({ ...form, [field]: input })
-  }
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
-    const isValidCredential = form.credential.length >= 4
-    const isValidPassword = form.password.length >= 6
-    const isValidForm = isValidCredential && isValidPassword
-    if (isValidForm) {
-      try {
-        const res = await dispatch(loginThunk(form)).unwrap()
-        // const categories = await dispatch(listCategoriesThunk()).unwrap()
-        setErrors({})
-        if (closeModal) {
-          closeModal()
-          router.push("/my-balance")
-        }
-      } catch (e) {
-        if (typeof e === "string") {
-          setErrors({ invalid: e })
-        }
-      }
-    } else {
-      const accErrors: FormErrors = {}
-      if (!isValidCredential) {
-        accErrors.credential = "Credentials must be at least 4 characters long"
-      }
-      if (!isValidPassword) {
-        accErrors.password = "Password must be at least 6 characters long"
-      }
-      setErrors(accErrors)
-    }
-  }
-  const handleLoginDemo = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault()
-    const res = await dispatch(loginDemoThunk()).unwrap()
-    setErrors({})
-    // const categories = await dispatch(listCategoriesThunk()).unwrap()
-    if (closeModal) {
-      closeModal()
-      router.push("/my-balance")
-    }
-  }
+export const LoginForm = () => {
+  const [state, action] = useActionState<LoginState, FormData>(loginAction, {
+    status: "idle",
+  })
+  const credential = state.status === "error" ? state.form.credential : ""
 
   return (
     <div>
       <div className="bg-white border-0 border-slate-300 rounded-md p-4 space-y-2">
-        {errors.invalid && <Errors errors={errors.invalid} />}
-        <form className="space-y-2" onSubmit={handleLogin}>
-          <p>Email/username</p>
-          {errors.credential && <Errors errors={errors.credential} />}
-          <Ipt.TextInput
-            text={form.credential}
-            onChange={handleChangeForm("credential")}
-          />
-          <p>Password</p>
-          {errors.password && <Errors errors={errors.password} />}
-          <Ipt.TextInput
-            text={form.password}
-            type="password"
-            onChange={handleChangeForm("password")}
-          />
-          <PrimaryButton>Log In</PrimaryButton>
+        {state.status === "error" && state.error.invalid && (
+          <Errors errors={state.error.invalid} />
+        )}
+        <form className="space-y-2" action={action}>
+          <label htmlFor="credential">
+            {state.status === "error" && state.error.credential && (
+              <Errors errors={state.error.credential} />
+            )}
+            <p>Email/username</p>
+            <input
+              className="px-3 py-1 border border-slate-400 rounded-lg w-full hover:border-slate-600"
+              defaultValue={credential}
+              type="text"
+              name="credential"
+              id="credential"
+            />
+          </label>
+
+          <label htmlFor="password">
+            {state.status === "error" && state.error.password && (
+              <Errors errors={state.error.password} />
+            )}
+            <p>Password</p>
+            <input
+              className="px-3 py-1 border border-slate-400 rounded-lg w-full hover:border-slate-600"
+              type="password"
+              name="password"
+              id="password"
+            />
+          </label>
+
+          <div className="flex flex-col space-y-2">
+            <SubmitButton Button={PrimaryButton} value="login">
+              Log in
+            </SubmitButton>
+            <SubmitButton Button={TertiaryButton} value="demoLogin">
+              Log in as demo user
+            </SubmitButton>
+          </div>
         </form>
-        <TertiaryButton onClick={handleLoginDemo}>
-          Log in as demo user
-        </TertiaryButton>
       </div>
     </div>
+  )
+}
+
+const SubmitButton = ({
+  Button,
+  children,
+  value,
+}: {
+  Button: typeof PrimaryButton
+  children: ReactNode
+  value: string
+}) => {
+  const { pending, data } = useFormStatus()
+  const showSpinner =
+    pending && value === (data?.get("actionType")?.toString() ?? "login")
+
+  return (
+    <Button name="actionType" value={value} disabled={pending}>
+      <div className="flex gap-2 items-center justify-center">
+        {showSpinner && <LoadingSpinner />}
+        {children}
+      </div>
+    </Button>
   )
 }

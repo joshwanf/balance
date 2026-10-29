@@ -1,15 +1,9 @@
 import { NextResponse } from "next/server"
 import type { ApiTypes } from "@balance/api-types"
-import { pc } from "@/server/prisma"
 import { apiError } from "@/server/errors"
 import { readJson, withErrors } from "@/server/handler"
-import {
-  clearTokenCookie,
-  getSessionUser,
-  setTokenCookie,
-} from "@/server/auth"
-import { getUserWithRelations } from "@/server/queries"
-import { hashPassword, isHashed, verifyPassword } from "@/server/password"
+import { clearTokenCookie, getSessionUser, login } from "@/server/auth"
+import { getUserWithRelations } from "@/server/data"
 
 export const runtime = "nodejs"
 
@@ -23,34 +17,21 @@ export const GET = withErrors(async () => {
 
 /** Log in (old POST /session/login). */
 export const POST = withErrors(async request => {
-  await clearTokenCookie()
   const body = await readJson<ApiTypes.Session.LoginRequest>(request)
   const credential = body.credential || ""
   const password = body.password || ""
 
-  const found = await pc.user.findFirst({
-    where: { OR: [{ username: credential }, { email: credential }] },
-  })
-  const isValid =
-    found && (await verifyPassword(password, found.hashedPassword))
-  if (!found || !isValid) {
-    throw apiError(401, "Login", "Couldn't find user, check login info")
-  }
+  const found = await login({ credential, password })
 
-  // Upgrade legacy plaintext passwords on a successful login.
-  if (!isHashed(found.hashedPassword)) {
-    await pc.user.update({
-      where: { id: found.id },
-      data: { hashedPassword: await hashPassword(password) },
-    })
+  if (!found) {
+    throw apiError(401, "Login", "Couldn't find user, check login info")
   }
 
   const user = await getUserWithRelations(found.id)
   if (!user) {
     throw apiError(401, "Login", "Couldn't find user, check login info")
   }
-  const { accounts, categories, ...safeUser } = user
-  await setTokenCookie(safeUser)
+
   const res: ApiTypes.Session.LoginResponse = {
     status: "success",
     success: { user },

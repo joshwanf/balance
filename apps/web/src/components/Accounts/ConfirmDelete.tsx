@@ -1,10 +1,22 @@
 "use client"
+import { useTransition } from "react"
 import { PrimaryButton } from "../../lib/Base/Button"
+import { deleteAccountAction } from "@/server/actions/account"
+import { LoadingSpinner } from "@/components/Skeletons/LoadingSpinner"
 interface Props {
+  accountId: string
   closeModal: () => void
-  onDelete: (e: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) => void
 }
-export const ConfirmDelete = ({ closeModal, onDelete, ...rest }: Props) => {
+export const ConfirmDelete = ({ accountId, closeModal }: Props) => {
+  const [isPending, startTransition] = useTransition()
+
+  const handleDelete = () => {
+    startTransition(async () => {
+      const result = await deleteAccountAction(accountId)
+      if (result.status === "success") closeModal()
+    })
+  }
+
   return (
     <div className="bg-white p-6 space-y-2 rounded-md">
       <div>
@@ -20,7 +32,7 @@ export const ConfirmDelete = ({ closeModal, onDelete, ...rest }: Props) => {
             "font-semibold",
             "hover:text-white",
           ]}
-          onClick={onDelete}
+          onClick={handleDelete}
           classSchema={{
             bgColor: "bg-slate-200",
             hoverBgColor: "hover:bg-red-700",
@@ -29,7 +41,9 @@ export const ConfirmDelete = ({ closeModal, onDelete, ...rest }: Props) => {
             textColor: "text-red-600",
           }}
         >
-          Delete
+          <div className="flex gap-2 items-center justify-center">
+            {isPending && <LoadingSpinner />}Delete
+          </div>
         </PrimaryButton>
         <PrimaryButton
           additionalClasses={[

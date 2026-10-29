@@ -19,7 +19,7 @@ export const SignupButton = () => {
           <Modal
             selector="#authNode"
             closeModal={() => setOpen(false)}
-            element={<SignupForm closeModal={() => setOpen(false)} />}
+            element={<SignupForm />}
           />
         )}
       </AnimatePresence>

@@ -150,7 +150,7 @@ export declare namespace ApiTypes {
       payee: string
       amount: number
       date: string
-      categoryName?: string
+      categoryId?: string
       accountId: string
     }
     interface CreateResponse extends TSerialized {}
@@ -161,7 +161,7 @@ export declare namespace ApiTypes {
       payee: string
       amount: number
       date: string
-      categoryName: string
+      categoryId: string
       accountId: string
     }
     interface ChangeResponse extends TSerialized {}
@@ -263,7 +263,7 @@ export declare namespace ApiTypes {
       initialBalance: number
     }
     interface CreateResponse {
-      accounts: TSerialized[]
+      account: TSerialized
     }
     interface ChangeRequest {
       name: string

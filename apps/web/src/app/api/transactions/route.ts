@@ -1,20 +1,15 @@
 import { NextRequest, NextResponse } from "next/server"
-import { uuidv7 } from "uuidv7"
 import type { ApiTypes } from "@balance/api-types"
-import { pc } from "@/server/prisma"
-import { listParam, readJson, searchParam, withAuth } from "@/server/handler"
-import { monthParam } from "@/server/queries"
 import {
-  listTransactions,
-  searchTransactions,
-} from "@/server/data/transactions"
-import {
-  assertAccountOwned,
-  createSchema,
-  getFormattedTransaction,
-  parseBody,
-  upsertCategoryId,
-} from "@/server/transactions"
+  listParam,
+  monthParam,
+  readJson,
+  searchParam,
+  withAuth,
+} from "@/server/handler"
+import { listTransactions, searchTransactions } from "@/server/data"
+import { createSchema, parseBody } from "@/server/schemas/transactions"
+import { createTransaction } from "@/server/data"
 import { SessionUser } from "@/server/auth"
 
 export const runtime = "nodejs"
@@ -53,25 +48,15 @@ const search = async (request: NextRequest, user: SessionUser) => {
   return NextResponse.json(res)
 }
 
-/** Create a transaction, creating its category by name if needed. */
+/** Create a transaction. */
 export const POST = withAuth(async (request, { user }) => {
   const title = "Create transaction"
-  const { categoryName, ...fields } = parseBody(
+  const { categoryId, ...fields } = parseBody(
     createSchema,
     await readJson(request),
     title,
   )
-  await assertAccountOwned(fields.accountId, user.id)
-
-  const created = await pc.$transaction(async prisma => {
-    const categoryId = categoryName
-      ? await upsertCategoryId(categoryName, user.id, prisma)
-      : null
-    const { id } = await prisma.transaction.create({
-      data: { ...fields, id: uuidv7(), userId: user.id, categoryId },
-    })
-    return getFormattedTransaction(id, prisma)
-  })
+  const created = await createTransaction(user.id, { categoryId, ...fields })
   const res: ApiTypes.Transaction.CreateResponse = created
   return NextResponse.json(res, { status: 201 })
 })

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { apiError } from "@/server/errors"
 import { searchParam, withAuth } from "@/server/handler"
-import { trendCompare } from "@/server/data/trends"
+import { trendCompare } from "@/server/data"
 
 export const runtime = "nodejs"
 
