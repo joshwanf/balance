@@ -1,10 +1,19 @@
 import { NextResponse } from "next/server"
 import type { ApiTypes } from "@balance/api-types"
-import { pc } from "@/server/prisma"
 import { apiError } from "@/server/errors"
-import { noContent, readJson, searchParam, withAuth } from "@/server/handler"
-import { confirmC, getCategoryForMonth, monthParam } from "@/server/queries"
-import { changeCategory } from "@/server/category"
+import {
+  monthParam,
+  noContent,
+  readJson,
+  searchParam,
+  withAuth,
+} from "@/server/handler"
+import {
+  changeCategory,
+  confirmC,
+  deleteCategories,
+  getCategoryForMonth,
+} from "@/server/data"
 
 export const runtime = "nodejs"
 
@@ -50,9 +59,7 @@ export const PATCH = withAuth<Params>(async (request, { params, user }) => {
 
 /** Delete one category (old POST /category/remove). */
 export const DELETE = withAuth<Params>(async (_request, { params, user }) => {
-  const { count } = await pc.category.deleteMany({
-    where: { id: params.id, userId: user.id },
-  })
+  const count = await deleteCategories(user.id, [params.id])
   if (!count) throw notFound("Delete category")
   return noContent()
 })

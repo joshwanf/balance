@@ -4,17 +4,79 @@ import { uuidv7 } from "uuidv7"
 import { z } from "zod"
 import type { ApiTypes } from "@balance/api-types"
 import { pc, TxClient } from "../prisma"
-import { confirmT, getCategoriesWithTransAgg } from "../queries"
-import {
-  assertAccountOwned,
-  assertCategoryOwned,
-  changeSchema,
-  createSchema,
-  formatRow,
-  getFormattedTransaction,
-  rowInclude,
-} from "../transactions"
+import { apiError } from "../errors"
 import { cleanName } from "../utils/cleanName"
+import { changeSchema, createSchema } from "../schemas/transactions"
+import { assertAccountOwned } from "./accounts"
+import { assertCategoryOwned, getCategoriesWithTransAgg } from "./categories"
+
+export const transactionQueryOpts = {
+  include: {
+    category: { select: { id: true, name: true, cleanedName: true } },
+    account: { select: { id: true, name: true, cleanedName: true } },
+    tags: { include: { tags: { select: { name: true } } } },
+  },
+}
+
+/** Throws 404 unless the transaction exists and belongs to the user. */
+export const confirmT = async (transactionId: string, userId: string) => {
+  const found = await pc.transaction.findUnique({
+    where: { id: transactionId },
+  })
+  if (!found || found.userId !== userId) {
+    throw apiError(
+      404,
+      "Couldn't find transaction",
+      "Transaction couldn't be found, or the user isn't authorized",
+    )
+  }
+  return found
+}
+
+export const tagsInclude = {
+  tags: { include: { tags: { select: { name: true } } } },
+} as const
+
+type WithTags<T> = T & { tags: { tags: { name: string } }[] }
+
+export const formatTransaction = <T extends object>({
+  tags,
+  ...rest
+}: WithTags<T>) => ({ ...rest, tags: tags.map(t => t.tags.name) })
+
+/** tags plus the account and category names a list row shows */
+export const rowInclude = {
+  ...tagsInclude,
+  account: { select: { name: true } },
+  category: { select: { name: true } },
+} as const
+
+type WithNames<T> = WithTags<T> & {
+  account: { name: string }
+  category: { name: string } | null
+}
+
+/** A list row: tag names, plus account and category names in place of the relations */
+export const formatRow = <T extends object>({
+  account,
+  category,
+  ...rest
+}: WithNames<T>) => ({
+  ...formatTransaction(rest as WithTags<T>),
+  accountName: account.name,
+  categoryName: category?.name ?? null,
+})
+
+export const getFormattedTransaction = async (
+  id: string,
+  prisma: TxClient | typeof pc = pc,
+): Promise<ApiTypes.Transaction.TSerialized> => {
+  const t = await prisma.transaction.findUniqueOrThrow({
+    where: { id },
+    include: tagsInclude,
+  })
+  return formatTransaction(t)
+}
 
 const nextMonth = (month: string) =>
   moment(month, "YYYY-MM").add(1, "month").format("YYYY-MM")
@@ -193,4 +255,61 @@ export const removeTransactionTags = async (
     })
     return transactionTags(transactionId, prisma)
   })
+}
+
+/** One transaction with its account, category (budget and spend) and tags. */
+export const getTransactionDetail = async (
+  userId: string,
+  id: string,
+): Promise<ApiTypes.Transaction.RetrieveTransactionResponse> => {
+  await confirmT(id, userId)
+  const t = await pc.transaction.findUniqueOrThrow({
+    where: { id, userId },
+    ...transactionQueryOpts,
+  })
+  let category = null
+  if (t.category) {
+    const month = t.date.slice(0, 7)
+    const [categoryMonth, agg] = await Promise.all([
+      pc.categoryMonth.findFirst({
+        where: { userId, categoryId: t.category.id, month },
+      }),
+      pc.transaction.aggregate({
+        where: { userId, categoryId: t.category.id },
+        _sum: { amount: true },
+      }),
+    ])
+    category = {
+      ...t.category,
+      amount: categoryMonth?.amount ?? 0,
+      usedAmount: agg._sum.amount ?? 0,
+    }
+  }
+  return {
+    ...formatTransaction(t),
+    category,
+  } as ApiTypes.Transaction.RetrieveTransactionResponse
+}
+
+/** The user's tags with the transactions each is on. */
+export const listTagsWithTransactions = async (userId: string) => {
+  const tags = await pc.tags.findMany({
+    where: { userId },
+    select: {
+      id: true,
+      name: true,
+      transactions: {
+        include: {
+          transactions: {
+            select: { id: true, date: true, payee: true, amount: true },
+          },
+        },
+      },
+    },
+  })
+  return tags.map(t => ({
+    id: t.id,
+    name: t.name,
+    transactions: t.transactions.map(trans => trans.transactions),
+  }))
 }

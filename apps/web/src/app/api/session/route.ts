@@ -3,7 +3,7 @@ import type { ApiTypes } from "@balance/api-types"
 import { apiError } from "@/server/errors"
 import { readJson, withErrors } from "@/server/handler"
 import { clearTokenCookie, getSessionUser, login } from "@/server/auth"
-import { getUserWithRelations } from "@/server/queries"
+import { getUserWithRelations } from "@/server/data"
 
 export const runtime = "nodejs"
 

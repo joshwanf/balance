@@ -1,10 +1,6 @@
 "use server"
 import { requireUser } from "@/server/auth"
-import {
-  changeCategory,
-  createCategory,
-  deleteCategories,
-} from "@/server/category"
+import { changeCategory, createCategory, deleteCategories } from "@/server/data"
 import { getFormData } from "@/server/utils/formData"
 import { isApiErrorBody } from "@/server/errors"
 import { Money } from "@/server/utils/Money"

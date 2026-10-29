@@ -3,8 +3,8 @@ import { redirect } from "next/navigation"
 import { Main } from "@/components/Main/Main"
 import { LookupsProvider } from "@/components/Lookups/LookupsProvider"
 import { getSessionUser } from "@/server/auth"
-import { listAccountNames } from "@/server/account"
-import { listCategoryNames } from "@/server/category"
+import { listAccountNames } from "@/server/data"
+import { listCategoryNames } from "@/server/data"
 
 export default async function MyBalanceLayout({
   children,

@@ -1,5 +1,5 @@
 "use server"
-import { createAccount, deleteAccount } from "@/server/account"
+import { createAccount, deleteAccount } from "@/server/data"
 import { requireUser } from "@/server/auth"
 import { getFormData } from "@/server/utils/formData"
 import { Money } from "@/utils/classes/Money"

@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server"
 import moment from "moment"
-import { searchParam, withAuth } from "@/server/handler"
-import { monthParam } from "@/server/queries"
-import { trendOverview } from "@/server/data/trends"
+import { monthParam, searchParam, withAuth } from "@/server/handler"
+import { trendOverview } from "@/server/data"
 
 export const runtime = "nodejs"
 

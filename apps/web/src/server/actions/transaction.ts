@@ -10,7 +10,7 @@ import {
   removeTransactionTags,
 } from "@/server/data"
 import { isApiErrorBody } from "@/server/errors"
-import { changeSchema } from "@/server/transactions"
+import { changeSchema } from "@/server/schemas/transactions"
 import { getFormData } from "@/server/utils/formData"
 import { Money } from "@/utils/classes/Money"
 import { validateDate } from "@/utils/helpers/date"
