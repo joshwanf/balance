@@ -1,7 +1,6 @@
 "use server"
-import { revalidatePath } from "next/cache"
 import { z } from "zod"
-import { requireUser } from "@/server/auth"
+import { userMutation } from "@/server/mutation"
 import {
   addTransactionTags,
   changeTransaction,
@@ -20,24 +19,23 @@ export type TransactionActionResult =
   | { status: "error"; error: string }
 
 /**
- * Runs a transaction change for the logged-in user and re-renders
- * /my-balance, since budgets, accounts and trends all depend on
- * transactions. Expected failures (bad input, not found) come back as
- * { status: "error" } instead of throwing.
+ * Runs a transaction change through userMutation. Expected failures (bad
+ * input, not found) come back as { status: "error" } instead of throwing.
  */
-const runMutation = async (
+const runMutation = (
   fn: (userId: string) => Promise<unknown>,
-): Promise<TransactionActionResult> => {
-  const user = await requireUser()
-  try {
-    await fn(user.id)
-  } catch (e) {
-    if (isApiErrorBody(e)) return { status: "error", error: String(e.message) }
-    throw e
-  }
-  revalidatePath("/my-balance", "layout")
-  return { status: "success" }
-}
+): Promise<TransactionActionResult> =>
+  userMutation(async user => {
+    try {
+      await fn(user.id)
+    } catch (e) {
+      if (isApiErrorBody(e)) {
+        return { status: "error", error: String(e.message) } as const
+      }
+      throw e
+    }
+    return { status: "success" } as const
+  })
 
 type Parsed<T> = { ok: true; data: T } | { ok: false; error: string }
 
