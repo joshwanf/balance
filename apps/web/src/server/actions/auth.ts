@@ -2,8 +2,10 @@
 import { createUser, login, logout } from "@/server/auth"
 import { validateEmail } from "@/utils/email"
 import { getFormData } from "@/server/utils/formData"
+import { ensureDemoItem } from "@/server/plaid/demo"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
+import { after } from "next/server"
 
 export type LoginState =
   | { status: "idle" }
@@ -70,6 +72,11 @@ export const loginAction = async (
   const res = await login({ credential, password })
   if (res) {
     revalidatePath("/", "layout")
+
+    if (actionType === "demoLogin") {
+      const userId = res.id
+      after(() => ensureDemoItem(userId).catch(console.error))
+    }
   } else {
     return {
       status: "error",

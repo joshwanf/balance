@@ -36,6 +36,16 @@ export const getAccountsWithTransAgg = async (
 
   const accounts = await prisma.account.findMany({
     where: { userId, id: accountId },
+    include: {
+      plaidItem: {
+        select: {
+          id: true,
+          institutionName: true,
+          status: true,
+          lastSyncedAt: true,
+        },
+      },
+    },
   })
   return accounts.map(a => ({
     id: a.id,
@@ -43,6 +53,15 @@ export const getAccountsWithTransAgg = async (
     accountType: a.accountType,
     month: curMonth,
     usedAmount: aggTransNorm.get(a.id) || 0,
+    bank: a.plaidItem
+      ? {
+          itemId: a.plaidItem.id,
+          institutionName: a.plaidItem.institutionName,
+          mask: a.mask,
+          status: a.plaidItem.status as ApiTypes.Account.LinkedBank["status"],
+          lastSyncedAt: a.plaidItem.lastSyncedAt?.toISOString() ?? null,
+        }
+      : null,
   }))
 }
 

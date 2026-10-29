@@ -14,7 +14,8 @@
     "migrate": "prisma migrate dev",
     "deploy-prisma": "prisma migrate deploy",
     "push": "prisma db push",
-    "seed": "prisma db seed"
+    "seed": "prisma db seed",
+    "plaid:sync": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local --conditions=react-server scripts/plaid-sync.ts"
   },
   "dependencies": {
     "@balance/api-types": "0.1.0",
@@ -27,9 +28,11 @@
     "moment": "^2.30.1",
     "motion": "^11.11.17",
     "next": "^16.4.2",
+    "plaid": "49.0.0",
     "react": "^19.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^19.2.0",
+    "react-plaid-link": "5.0.0",
     "server-only": "^0.0.1",
     "uuidv7": "^1.0.2",
     "zod": "^4.6.7"

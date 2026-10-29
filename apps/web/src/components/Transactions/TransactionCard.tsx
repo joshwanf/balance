@@ -5,6 +5,7 @@ import { SideModal } from "../../lib/ComponentLibrary/SideModal"
 import { TransactionDetails } from "./TransactionDetails"
 import { Money } from "../../utils/classes/Money"
 import { AnimatePresence } from "motion/react"
+import { Landmark } from "lucide-react"
 
 type Transaction = ApiTypes.Transaction.TRow
 
@@ -45,7 +46,21 @@ export const TransactionCard = ({ t, allTags, checked, onChange }: Props) => {
         />
       </td>
       <td className="py-2 text-left">{t.date}</td>
-      <td>{t.payee}</td>
+      <td>
+        <div className="flex items-center gap-2">
+          {t.plaidTransactionId && (
+            <span title="Imported from your bank">
+              <Landmark className="size-4 text-slate-400" />
+            </span>
+          )}
+          {t.payee}
+          {t.pending && (
+            <span className="rounded-full bg-amber-100 px-2 text-xs text-amber-800">
+              Pending
+            </span>
+          )}
+        </div>
+      </td>
       <td>{t.accountName}</td>
       <td className="py-2 text-left">{tAmount.format()}</td>
       <td>{t.categoryName ?? "(unassigned)"}</td>

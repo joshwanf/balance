@@ -49,6 +49,7 @@ export const POST = withAuth(async (request, { user }) => {
       name,
       accountType,
       usedAmount: initialBalance || 0,
+      bank: null,
     },
   }
   return NextResponse.json(res, { status: 201 })
