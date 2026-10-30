@@ -1,26 +1,46 @@
 "use client"
-import { ReactNode } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import type { LucideIcon } from "lucide-react"
 import { useCurMonth } from "../../hooks/useUrlState"
 import { withMonth } from "../../utils/month"
+import { isActivePath } from "./navLinks"
 
 interface Props {
-  children: ReactNode
   to: string
+  label: string
+  Icon: LucideIcon
+  /** only active on this exact path, not its children */
+  end?: boolean
+  /** icon only, with the label kept for screen readers and as a tooltip */
+  collapsed?: boolean
+  onNavigate?: () => void
 }
-export const SidebarLink = ({ children, to, ...rest }: Props) => {
+export const SidebarLink = ({
+  to,
+  label,
+  Icon,
+  end,
+  collapsed,
+  onNavigate,
+}: Props) => {
   const pathname = usePathname()
   const curMonth = useCurMonth()
-  // Mirrors react-router NavLink's default (non-`end`) matching
-  const isActive = pathname === to || (pathname?.startsWith(to + "/") ?? false)
+  const isActive = isActivePath(pathname, to, end)
   return (
     <Link
       href={withMonth(to, curMonth)}
       aria-current={isActive ? "page" : undefined}
-      className={`flex py-1 px-4 w-full text-lg border-2 rounded-lg hover:bg-grass-300 hover:border-grass-600 hover:text-grass-800${isActive ? " active" : ""}`}
+      title={collapsed ? label : undefined}
+      onClick={onNavigate}
+      className={`flex items-center gap-3 py-1.5 w-full text-lg border-2 border-transparent rounded-lg
+        hover:bg-grass-300 hover:border-grass-600 hover:text-grass-800
+        focus-visible:outline-none focus-visible:border-grass-700
+        aria-[current=page]:bg-grass-200 aria-[current=page]:text-grass-900
+        ${collapsed ? "justify-center px-0" : "px-3"}`}
     >
-      {children}
+      <Icon className="size-6 shrink-0" />
+      <span className={collapsed ? "sr-only" : "truncate"}>{label}</span>
     </Link>
   )
 }
