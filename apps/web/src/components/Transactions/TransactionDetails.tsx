@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { Fragment, useState } from "react"
 import type { ApiTypes } from "@balance/api-types"
 import { EditableText } from "../../lib/ComponentLibrary/EditableText"
 import {
@@ -24,6 +24,15 @@ interface FormErrors {
   amount?: string
   invalid?: string
 }
+
+interface TransactionFields {
+  type: "outgoing" | "incoming"
+  date: string
+  payee: string
+  accountId: string
+  categoryId: string
+  amount: string
+}
 interface Props {
   t: ApiTypes.Transaction.TSerialized
   allTags: string[]
@@ -38,62 +47,54 @@ export const TransactionDetails = ({ t, allTags, closeModal }: Props) => {
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [selectedTags, setSelectedTags] = useState<string[]>(t.tags)
 
-  const handleChangeForm = (field: string) => async (newValue: string) => {
-    const formWithUpdatedData: { amount?: number } & Record<string, string> = {}
-    if (field === "type") {
-      setForm({ ...form, type: newValue })
-      formWithUpdatedData.type = newValue
-    } else if (field === "category") {
-      setForm({ ...form, categoryId: newValue })
-      formWithUpdatedData.categoryId = newValue
-    } else if (field === "account") {
-      setForm({ ...form, accountId: newValue })
-      formWithUpdatedData.accountId = newValue
-    } else if (field === "date") {
-      // setForm({ ...form, date: newValue })
-      formWithUpdatedData.date = newValue
-    } else if (field === "amount") {
-      try {
-        const newAmount = Money.parse(newValue)
-        formWithUpdatedData.amount = newAmount.toInt()
-      } catch (e) {
-        if (typeof e === "string") {
-          return setFormErrors({ amount: e })
-        }
+  const handleChangeForm =
+    (field: keyof TransactionFields) => async (newValue: string) => {
+      const isValidDate =
+        field === "date"
+          ? validateDate({ date: newValue, format: "YYYY-MM-DD" })
+          : true
+      const isValidPayee = field === "payee" ? newValue.length > 0 : true
+      const isValidAmount =
+        field === "amount" ? Money.isValidMoney(newValue) : true
+      const isValidForm = isValidDate && isValidPayee && isValidAmount
+
+      if (field === "amount" && !isValidAmount) {
+        setFormErrors(prev => ({
+          ...prev,
+          amount: "Please enter a valid Money amount.",
+        }))
+      } else if (field === "date" && !isValidDate) {
+        setFormErrors(prev => ({
+          ...prev,
+          date: "Please enter a valid date YYYY-MM-DD.",
+        }))
+      } else if (field === "payee" && !isValidPayee) {
+        setFormErrors(prev => ({
+          ...prev,
+          payee: "Please enter a valid payee.",
+        }))
       }
-    } else {
-      formWithUpdatedData[field] = newValue
-    }
 
-    const isValidDate = formWithUpdatedData.date
-      ? validateDate({ date: formWithUpdatedData.date, format: "YYYY-MM-DD" })
-      : true
-    const isValidPayee = Object.keys(formWithUpdatedData).includes("payee")
-      ? formWithUpdatedData.payee.length > 0
-      : true
-    const isValidAmount = formWithUpdatedData.amount
-      ? Money.isValidMoney(formWithUpdatedData.amount.toString())
-      : true
-    const isValidForm = isValidDate && isValidPayee && isValidAmount
+      if (!isValidForm) return false
 
-    const accErrors: FormErrors = {}
-    if (!isValidDate) {
-      accErrors.date = "Enter a valid date YYYY-MM-DD after 1970-01-01"
-    }
-    if (!isValidPayee) {
-      accErrors.payee = "Enter a valid payee"
-    }
-    if (!isValidAmount) {
-      accErrors.amount = "Enter a valid amount"
-    }
-    if (!isValidForm) {
-      setFormErrors(accErrors)
-    } else {
+      const previous = form[field]
+      setForm(prev => ({ ...prev, [field]: newValue }))
       setFormErrors({})
-      const result = await changeTransactionAction(t.id, formWithUpdatedData)
-      if (result.status === "error") setFormErrors({ invalid: result.error })
+      const valueToSave =
+        field === "amount" ? Money.parse(newValue).toInt() : newValue
+
+      const result = await changeTransactionAction(t.id, {
+        [field]: valueToSave,
+      })
+
+      if (result.status === "error") {
+        setForm(prev => ({ ...prev, [field]: previous }))
+        setFormErrors({ invalid: result.error })
+      }
+
+      return result.status !== "error"
     }
-  }
+
   const handleShowConfirmModal = () => {
     setConfirmDelete(true)
     setShowConfirmDelete(true)
@@ -137,84 +138,84 @@ export const TransactionDetails = ({ t, allTags, closeModal }: Props) => {
           <div>
             ID: <code className="bg-slate-200 rounded-md p-1">{t.id}</code>
           </div>
-          <div className="grid grid-cols-[20%_80%]">
+          <div className="grid grid-cols-[20%_80%] gap-y-2 items-center">
             <div className="mr-2 font-semibold text-right">Type:</div>
-            <div>
-              <div>
-                <label htmlFor="outgoing">
+            <div className="flex gap-2">
+              {[
+                { label: "Outgoing", value: "outgoing" },
+                { label: "Incoming", value: "incoming" },
+              ].map(({ label, value }) => (
+                <Fragment key={value}>
                   <input
                     type="radio"
-                    id="outgoing"
-                    // defaultChecked={form.type === "outgoing"}
-                    checked={form.type === "outgoing"}
-                    value="outgoing"
-                    // onClick={e =>
-                    //   setForm({ ...form, type: e.currentTarget.value })
-                    // }
-                    onChange={() => handleChangeForm("type")("outgoing")}
+                    id={value}
+                    checked={form.type === value}
+                    value={value}
+                    onChange={() => handleChangeForm("type")(value)}
                   />
-                  Outgoing
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    checked={form.type === "incoming"}
-                    value="incoming"
-                    onChange={() => handleChangeForm("type")("incoming")}
-                  />
-                  Incoming
-                </label>
-              </div>
+                  <label htmlFor={value} className="">
+                    {label}
+                  </label>
+                </Fragment>
+              ))}
             </div>
+
             <div className="mr-2 font-semibold text-right">Account:</div>
-            {/* <div className="w-fit"> */}
-            <DropdownSelector
-              field="account"
-              options={accounts}
-              disableBlankSelection={true}
-              selected={form.accountId ? form.accountId : ""}
-              onChange={handleChangeForm("account")}
-              labelId="categorySelector"
-            />
-            {/* </div> */}
+            <div className="w-full">
+              <DropdownSelector
+                field="accountId"
+                options={accounts}
+                disableBlankSelection={true}
+                selected={form.accountId ? form.accountId : ""}
+                onChange={handleChangeForm("accountId")}
+                labelId="categorySelector"
+              />
+            </div>
+
             <div className="mr-2 font-semibold text-right">Date:</div>
-            <div className="w-fit">
+            <div className="w-full">
               <EditableText
                 text={form.date}
-                editText={handleChangeForm("date")}
+                type="date"
+                onFinishEditing={handleChangeForm("date")}
                 additionalClasses={["pr-4"]}
               />
               {formErrors.date && <Errors errors={formErrors.date} />}
             </div>
 
             <div className="mr-2 font-semibold text-right">Payee:</div>
-            <div className="w-fit">
+            <div className="">
               <EditableText
                 text={form.payee}
-                editText={handleChangeForm("payee")}
+                onFinishEditing={handleChangeForm("payee")}
+                placeholder="Payee"
                 additionalClasses={["pr-4"]}
               />
               {formErrors.payee && <div>{formErrors.payee}</div>}
             </div>
+
             <div className="mr-2 font-semibold text-right">Category:</div>
-            <div className="w-fit">
+            <div className="w-full">
               <DropdownSelector
-                field="category"
+                field="categoryId"
                 options={categories}
                 selected={form.categoryId ? form.categoryId : ""}
-                onChange={handleChangeForm("category")}
+                onChange={handleChangeForm("categoryId")}
               />
             </div>
+
             <div className="mr-2 font-semibold text-right">Amount:</div>
-            <div className="w-fit">
+            <div className="w-full flex items-center">
               {tAmount.currencySymbol}
               <EditableText
                 text={tAmount.format({ noCurrencySymbol: true })}
-                editText={handleChangeForm("amount")}
+                type="number"
+                onFinishEditing={handleChangeForm("amount")}
                 additionalClasses={["pr-4"]}
               />
               {formErrors.amount && <div>{formErrors.amount}</div>}
             </div>
+
             <div className="mr-2 font-semibold text-right">Tags:</div>
             {/* <div className="w-fit"> */}
             {/* <InputWithSelector

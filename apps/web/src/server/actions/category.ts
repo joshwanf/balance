@@ -3,7 +3,7 @@ import { userMutation } from "@/server/mutation"
 import { changeCategory, createCategory, deleteCategories } from "@/server/data"
 import { getFormData } from "@/server/utils/formData"
 import { isApiErrorBody } from "@/server/errors"
-import { Money } from "@/server/utils/Money"
+import { Money } from "@/utils/classes/Money"
 import { monthFromSearchParams } from "@/utils/month"
 
 export type CreateCategoryState =
@@ -84,15 +84,27 @@ export const changeCategoryAction = async ({
   name?: string
   amount?: string
 }) =>
-  userMutation(async user =>
-    changeCategory(
-      { userId: user.id, id, month },
-      {
-        name,
-        amount: amount !== undefined ? Money.parse(amount).toInt() : undefined,
-      },
-    ),
-  )
+  userMutation(async user => {
+    try {
+      const result = await changeCategory(
+        { userId: user.id, id, month },
+        {
+          name,
+          amount:
+            amount !== undefined ? Money.parse(amount).toInt() : undefined,
+        },
+      )
+      return result === null
+        ? { status: "error", error: "Could not change category. " }
+        : { status: "success" }
+    } catch (err) {
+      if (isApiErrorBody(err))
+        return { status: "error", error: String(err.message) } as const
+      if (typeof err === "string")
+        return { status: "error", error: err } as const
+      throw err
+    }
+  })
 
 export const deleteCategoryAction = async (
   categoryIds: string[],

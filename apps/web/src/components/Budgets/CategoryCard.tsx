@@ -47,19 +47,22 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
             ? undefined
             : "Please enter a valid money value.",
         })
-        return
+        return false
       }
 
-      startTransition(async () => {
-        const result = await changeCategoryAction({
-          id: c.id,
-          month: curMonth,
-          [field]: newValue,
-        })
+      return new Promise<boolean>(resolve => {
+        startTransition(async () => {
+          const result = await changeCategoryAction({
+            id: c.id,
+            month: curMonth,
+            [field]: newValue,
+          })
 
-        if (result) {
-          setFormErrors({})
-        }
+          if (result.status === "success") {
+            setFormErrors({})
+          }
+          resolve(result.status === "success")
+        })
       })
     }
 
@@ -74,7 +77,10 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
 
       <td className="py-2">
         <div className="flex gap-2">
-          <EditableText text={c.name} editText={handleChangeForm("name")} />
+          <EditableText
+            text={c.name}
+            onFinishEditing={handleChangeForm("name")}
+          />
 
           {formErrors.name && <Errors errors={formErrors.name} />}
         </div>
@@ -82,11 +88,14 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
 
       <td className="py-2">
         <div className="flex gap-2 items-center">
-          <span className={`${budgetedClasses} px-2 py-1 rounded-md`}>
+          <span
+            className={`${budgetedClasses} flex items-center px-2 py-1 rounded-md`}
+          >
             <span className="select-none">{budgetedAmount.currencySymbol}</span>
             <EditableText
               text={`${budgetedAmount.format({ noCurrencySymbol: true })}`}
-              editText={handleChangeForm("amount")}
+              type="number"
+              onFinishEditing={handleChangeForm("amount")}
             />
           </span>
 

@@ -34,6 +34,8 @@ interface ValidMoneyConstructorInput {
   cents: number
 }
 
+const validMoneyRegex = /^(\-){0,1}(\$){0,1}(\d+)(\.\d{1,2}){0,1}$/
+
 /**
  * Money class for working with money and decimals.
  * Assume all Money values are strings from the API
@@ -51,7 +53,7 @@ export class Money extends MoneyPredicates {
       curSymbol: "$",
       dollars: 0,
       cents: 0,
-    }
+    },
   ) {
     super()
     const { negSign, curSymbol, dollars, cents } = input
@@ -74,7 +76,6 @@ export class Money extends MoneyPredicates {
   }
 
   static parse(value: string, options?: ParseOptions) {
-    const validMoneyRegex = /^(\-){0,1}(\$){0,1}(\d+)((?:\.)\d{2}){0,1}$/
     const isValidString = validMoneyRegex.test(value)
 
     // [match, negSign, curSymbol, dollars, cents]
@@ -85,7 +86,9 @@ export class Money extends MoneyPredicates {
     const negSign = extracted[1] || ""
     const curSymbol = extracted[2] || "$"
     const dollars = Number(extracted[3])
-    const cents = extracted[4] ? Number(extracted[4].slice(1)) : 0
+    const cents = extracted[4]
+      ? Number(extracted[4].slice(1).padEnd(2, "0"))
+      : 0
     const moneyResult = new Money({ negSign, curSymbol, dollars, cents })
     return moneyResult
   }
@@ -122,7 +125,6 @@ export class Money extends MoneyPredicates {
     return this.cents
   }
   static isValidMoney(input: string) {
-    const validMoneyRegex = /^(\-){0,1}(\$){0,1}(\d+)((?:\.)\d{2}){0,1}$/
     const isValidString = validMoneyRegex.test(input)
     return isValidString
   }
@@ -139,14 +141,14 @@ export class Money extends MoneyPredicates {
   addMany(...vals: Money[]): Money {
     const sum = vals.reduce(
       (sum: Money, val: Money): Money => sum.add(val),
-      this
+      this,
     )
     return sum
   }
   subtractMany(...vals: Money[]): Money {
     const sum = vals.reduce(
       (sum: Money, val: Money): Money => sum.subtract(val),
-      this
+      this,
     )
     return sum
   }
