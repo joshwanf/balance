@@ -1,56 +1,38 @@
 "use client"
 import { SidebarLink } from "./SidebarLink"
-import {
-  ArrowRightLeft,
-  ChartNoAxesCombined,
-  LayoutGrid,
-  Scale,
-  WalletCards,
-} from "lucide-react"
-import { useState } from "react"
+import { NAV_LINKS } from "./navLinks"
 
 interface Props {
-  hidden?: boolean
+  /** desktop icon rail */
+  collapsed?: boolean
+  /** called when a link is followed, so the phone drawer can close */
+  onNavigate?: () => void
 }
-export const Sidebar = ({ hidden, ...rest }: Props) => {
-  const [hideSidebar, setHideSidebar] = useState(false)
+export const Sidebar = ({ collapsed, onNavigate }: Props) => {
   return (
-    <div className="pt-4 px-4 flex flex-col items-start" hidden={hidden}>
-      <div>Logo</div>
-      <div hidden={hideSidebar} className="w-full">
-        <div className="space-y-2 text-slate-600">
-          <SidebarLink to="/my-balance">
-            <>
-              <LayoutGrid className="w-6" />
-              <span className="px-2">Home</span>
-            </>
-          </SidebarLink>
-          <SidebarLink to="/my-balance/budgets">
-            <>
-              <Scale className="w-6" />
-              <span className="px-2">Budgets</span>
-            </>
-          </SidebarLink>
-          <SidebarLink to="/my-balance/transactions">
-            <>
-              <ArrowRightLeft className="w-6" />
-              <span className="pl-2">Transactions</span>
-            </>
-          </SidebarLink>
-          <SidebarLink to="/my-balance/accounts">
-            <>
-              <WalletCards className="w-6" />
-              <span className="pl-2">Accounts</span>
-            </>
-          </SidebarLink>
-          <SidebarLink to="/my-balance/trends">
-            <>
-              <ChartNoAxesCombined className="w-6" />
-              <span className="pl-2">Trends</span>
-            </>
-          </SidebarLink>
-        </div>
+    <nav aria-label="Main" className="flex flex-col gap-4">
+      <div
+        className={`flex items-center gap-2 h-10 ${collapsed ? "justify-center" : "px-3"}`}
+      >
+        <img src="/assets/balance.svg" alt="" className="size-7" />
+        <span
+          className={
+            collapsed ? "sr-only" : "text-xl font-semibold text-grass-800"
+          }
+        >
+          Balance
+        </span>
       </div>
-    </div>
+      <div className="space-y-2 text-slate-600">
+        {NAV_LINKS.map(l => (
+          <SidebarLink
+            key={l.to}
+            {...l}
+            collapsed={collapsed}
+            onNavigate={onNavigate}
+          />
+        ))}
+      </div>
+    </nav>
   )
 }

@@ -1,6 +1,8 @@
 import { Suspense } from "react"
+import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { Main } from "@/components/Main/Main"
+import { SIDEBAR_COOKIE } from "@/components/Main/navLinks"
 import { LookupsProvider } from "@/components/Lookups/LookupsProvider"
 import { getSessionUser } from "@/server/auth"
 import { listAccountNames } from "@/server/data"
@@ -14,6 +16,9 @@ export default async function MyBalanceLayout({
   const user = await getSessionUser()
   if (!user) redirect("/")
 
+  const sidebarCollapsed =
+    (await cookies()).get(SIDEBAR_COOKIE)?.value === "collapsed"
+
   const lookups = Promise.all([
     listAccountNames(user.id),
     listCategoryNames(user.id),
@@ -24,7 +29,7 @@ export default async function MyBalanceLayout({
   return (
     <LookupsProvider lookups={lookups}>
       <Suspense>
-        <Main>{children}</Main>
+        <Main defaultCollapsed={sidebarCollapsed}>{children}</Main>
       </Suspense>
     </LookupsProvider>
   )
