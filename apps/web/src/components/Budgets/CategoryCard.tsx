@@ -5,7 +5,8 @@ import type { ApiTypes } from "@balance/api-types"
 import { Money } from "@/utils/classes/Money"
 import { EditableText } from "@/lib/ComponentLibrary/EditableText"
 import { changeCategoryAction } from "@/server/actions/category"
-import { Errors } from "@/lib/ComponentLibrary/Errors"
+import { FloatingErrors } from "@/lib/ComponentLibrary/Errors"
+import { ROW_CLASS } from "@/components/Table/layout"
 import { LoadingSpinner } from "@/components/Skeletons/LoadingSpinner"
 
 interface FormErrors {
@@ -32,7 +33,7 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
   const budgetedClasses = isOverBudget ? "bg-red-300" : "bg-green-200 "
 
   const isCheckedClassname = checked ? "bg-blue-200" : ""
-  const unifiedClassNames = `${isCheckedClassname} border-b-2`
+  const unifiedClassNames = `${isCheckedClassname} ${ROW_CLASS}`
 
   const handleChangeForm =
     (field: "name" | "amount") => async (newValue: string) => {
@@ -69,27 +70,32 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
   return (
     <tr className={unifiedClassNames}>
       <td className="pl-2">
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           <input type="checkbox" checked={checked} onChange={onChange} />
-          {isPending && <LoadingSpinner />}
+          {/* always takes its space, so saving doesn't widen the column */}
+          <span
+            className={isPending ? "" : "invisible"}
+            aria-hidden={!isPending}
+          >
+            <LoadingSpinner />
+          </span>
         </div>
       </td>
 
-      <td className="py-2">
-        <div className="flex gap-2">
+      <td className="pr-4">
+        <div className="relative">
           <EditableText
             text={c.name}
             onFinishEditing={handleChangeForm("name")}
           />
-
-          {formErrors.name && <Errors errors={formErrors.name} />}
+          {formErrors.name && <FloatingErrors errors={formErrors.name} />}
         </div>
       </td>
 
-      <td className="py-2">
-        <div className="flex gap-2 items-center">
+      <td className="pr-4">
+        <div className="relative">
           <span
-            className={`${budgetedClasses} flex items-center px-2 py-1 rounded-md`}
+            className={`${budgetedClasses} flex items-center px-2 py-0.5 rounded-md`}
           >
             <span className="select-none">{budgetedAmount.currencySymbol}</span>
             <EditableText
@@ -98,20 +104,16 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
               onFinishEditing={handleChangeForm("amount")}
             />
           </span>
-
           {formErrors.budgetedAmount && (
-            <Errors errors={formErrors.budgetedAmount} />
+            <FloatingErrors errors={formErrors.budgetedAmount} />
           )}
         </div>
       </td>
 
-      <td className="py-2 text-left">{usedAmount.format()}</td>
+      <td className="text-right pr-4 tabular-nums">{usedAmount.format()}</td>
 
-      <td>
-        <div className="grid grid-cols-[5%_auto]">
-          <div className="text-right">{leftoverBudget.negSign}</div>
-          <div>{leftoverBudget.format({ noNegSign: true })}</div>
-        </div>
+      <td className="text-right pr-4 tabular-nums">
+        {leftoverBudget.format().replace(/^-/, "\u2212")}
       </td>
     </tr>
   )

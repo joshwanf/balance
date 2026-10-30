@@ -22,3 +22,16 @@ export const Errors = ({ errors }: Props) => {
     ))
   }
 }
+
+/**
+ * Errors floating just below their field, for fields inside fixed-height rows:
+ * showing one doesn't resize the row or its column. Put it in a `relative` box.
+ */
+export const FloatingErrors = ({ errors }: Props) => (
+  <div
+    role="alert"
+    className="absolute left-0 top-full z-10 mt-1 w-max max-w-xs text-sm shadow-md"
+  >
+    <Errors errors={errors} />
+  </div>
+)

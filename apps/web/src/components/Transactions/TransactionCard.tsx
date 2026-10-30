@@ -6,6 +6,7 @@ import { TransactionDetails } from "./TransactionDetails"
 import { Money } from "../../utils/classes/Money"
 import { AnimatePresence } from "motion/react"
 import { Landmark } from "lucide-react"
+import { ROW_CLASS } from "@/components/Table/layout"
 
 type Transaction = ApiTypes.Transaction.TRow
 
@@ -16,13 +17,12 @@ interface Props {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 export const TransactionCard = ({ t, allTags, checked, onChange }: Props) => {
-  const [form, setForm] = useState(t)
   const [showModal, setShowModal] = useState(false)
   const tAmount = Money.fromCents(`${t.amount}`)
 
   const hasCategory = t.categoryId
   const isCheckedClassname = checked ? "bg-blue-200" : ""
-  const unifiedClassNames = `${isCheckedClassname} hover:cursor-pointer hover:shadow-md hover:shadow-slate-200 border-b-2`
+  const unifiedClassNames = `${isCheckedClassname} ${ROW_CLASS} hover:cursor-pointer hover:shadow-md hover:shadow-slate-200`
   const closeModal = (
     e: React.MouseEvent<HTMLDivElement | HTMLButtonElement>,
   ) => {
@@ -45,25 +45,31 @@ export const TransactionCard = ({ t, allTags, checked, onChange }: Props) => {
           onClick={e => e.stopPropagation()}
         />
       </td>
-      <td className="py-2 text-left">{t.date}</td>
+      <td className="tabular-nums">{t.date}</td>
       <td>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 min-w-0 pr-2">
           {t.plaidTransactionId && (
-            <span title="Imported from your bank">
+            <span title="Imported from your bank" className="shrink-0">
               <Landmark className="size-4 text-slate-400" />
             </span>
           )}
-          {t.payee}
+          <span className="truncate" title={t.payee}>
+            {t.payee}
+          </span>
           {t.pending && (
-            <span className="rounded-full bg-amber-100 px-2 text-xs text-amber-800">
+            <span className="shrink-0 rounded-full bg-amber-100 px-2 text-xs text-amber-800">
               Pending
             </span>
           )}
         </div>
       </td>
-      <td>{t.accountName}</td>
-      <td className="py-2 text-left">{tAmount.format()}</td>
-      <td>{t.categoryName ?? "(unassigned)"}</td>
+      <td className="truncate pr-2" title={t.accountName}>
+        {t.accountName}
+      </td>
+      <td className="text-right pr-4 tabular-nums">
+        {tAmount.format().replace(/^-/, "\u2212")}
+      </td>
+      <td className="truncate">{t.categoryName ?? "(unassigned)"}</td>
       <AnimatePresence>
         {showModal && (
           <SideModal

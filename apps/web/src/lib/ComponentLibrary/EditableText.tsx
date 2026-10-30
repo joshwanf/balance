@@ -58,7 +58,8 @@ export const EditableText = ({
 
   const defaultClasses = [
     // default style
-    "w-full px-2 py-0.5",
+    // same box in both states, so starting to edit doesn't change the row height
+    "w-full h-8 px-2 py-0.5 leading-6",
     "border rounded-md",
     "hover:border-grass-300",
     "focus:outline-none",
@@ -88,7 +89,7 @@ export const EditableText = ({
           onFocus={handleStartEditing}
           tabIndex={0}
           role="button"
-          className={`${unifiedClassNames} inline-block border-transparent cursor-pointer`}
+          className={`${unifiedClassNames} inline-block truncate border-transparent cursor-pointer`}
         >
           {committed || (
             <span className="text-slate-400">

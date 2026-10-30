@@ -4,6 +4,7 @@ import { redirect } from "next/navigation"
 import { Main } from "@/components/Main/Main"
 import { SIDEBAR_COOKIE } from "@/components/Main/navLinks"
 import { LookupsProvider } from "@/components/Lookups/LookupsProvider"
+import { UrlTransitionProvider } from "@/hooks/urlTransition"
 import { getSessionUser } from "@/server/auth"
 import { listAccountNames } from "@/server/data"
 import { listCategoryNames } from "@/server/data"
@@ -28,9 +29,11 @@ export default async function MyBalanceLayout({
   // Suspense boundary so the rest of the page can still prerender.
   return (
     <LookupsProvider lookups={lookups}>
-      <Suspense>
-        <Main defaultCollapsed={sidebarCollapsed}>{children}</Main>
-      </Suspense>
+      <UrlTransitionProvider>
+        <Suspense>
+          <Main defaultCollapsed={sidebarCollapsed}>{children}</Main>
+        </Suspense>
+      </UrlTransitionProvider>
     </LookupsProvider>
   )
 }
