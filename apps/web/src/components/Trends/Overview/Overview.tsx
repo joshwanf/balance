@@ -4,6 +4,9 @@ import dayjs from "dayjs"
 import { getSessionUser } from "@/server/auth"
 import { getNthMonth } from "@/server/utils/date"
 import { trendOverview } from "@/server/data"
+/** Height of the chart area, shared with the loading skeleton */
+export const OVERVIEW_CHART_CLASS = "relative h-80 sm:h-96"
+
 interface Props {
   month: string
   range: number
@@ -56,13 +59,20 @@ export const Overview = async ({ month, range }: Props) => {
 
   return (
     <>
-      <div>
-        You spent {total.outgoing.format()} and brought in{" "}
-        {total.incoming.format()} over the past {range}{" "}
-        {range === 1 ? "month" : "months"}.
+      <p>
+        You spent{" "}
+        <span className="font-semibold tabular-nums">
+          {total.outgoing.format()}
+        </span>{" "}
+        and brought in{" "}
+        <span className="font-semibold tabular-nums">
+          {total.incoming.format()}
+        </span>{" "}
+        over the past {range} {range === 1 ? "month" : "months"}.
+      </p>
+      <div className={OVERVIEW_CHART_CLASS}>
+        <OverviewChart categories={sortedOutgoing} labels={months} />
       </div>
-
-      <OverviewChart categories={sortedOutgoing} labels={months} />
     </>
   )
 }

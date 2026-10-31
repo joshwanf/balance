@@ -10,7 +10,7 @@ export const CreateAccountCard = () => {
     <div>
       <div
         className="border-4 border-dashed border-grass-300 rounded-lg 
-                  w-full h-full flex flex-col items-center justify-center "
+                  w-full h-full min-h-32 flex flex-col items-center justify-center "
       >
         {!isEditing ? (
           <CreateAccountButton onClick={() => setIsEditing(true)} />

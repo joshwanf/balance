@@ -6,8 +6,9 @@ export const PieChartSkeleton = () => {
       aria-busy="true"
       aria-label="Loading chart"
     >
-      <div className="h-4 mb-4 bg-grass-100"></div>
+      <div className="h-6 mb-4 mx-auto w-32 rounded bg-grass-100"></div>
       <div className="aspect-square rounded-full bg-grass-100" />
+      <div className="h-10 mt-4 rounded bg-grass-100"></div>
     </div>
   )
 }

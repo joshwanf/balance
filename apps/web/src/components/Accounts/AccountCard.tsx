@@ -34,38 +34,39 @@ export const AccountCard = ({ account }: Props) => {
 
   return (
     <div>
-      <div className="border-4 border-grass-300 rounded-lg p-4 h-full relative">
-        <div
-          ref={menuRef}
-          className="absolute right-1 top-1 rounded-md p-1
-        text-grass-400
-        hover:cursor-pointer hover:bg-grass-200 hover:text-grass-700"
-          onClick={e => setShowMenu(!showMenu)}
-        >
-          <EllipsisVertical />
+      <div className="border-4 border-grass-300 rounded-lg p-4 h-full min-h-32 relative">
+        <div ref={menuRef} className="absolute right-1 top-1">
+          <button
+            type="button"
+            aria-label="Account options"
+            aria-expanded={showMenu}
+            className="rounded-md p-1 text-grass-400 hover:bg-grass-200 hover:text-grass-700
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-grass-600"
+            onClick={() => setShowMenu(!showMenu)}
+          >
+            <EllipsisVertical />
+          </button>
         </div>
         {showMenu && (
-          <div
+          <button
+            type="button"
             onClick={() => setShowConfirmDelete(true)}
-            className="absolute top-10 right-1 px-2 py-2 rounded-lg
-            flex 
-          bg-white border-2 border-grass-300 hover:cursor-pointer hover:bg-grass-300"
+            className="absolute top-10 right-1 z-10 flex items-center gap-2 whitespace-nowrap rounded-lg
+              border-2 border-grass-300 bg-white px-2 py-2 hover:bg-grass-300"
           >
             <FileX />
             Delete Account
-          </div>
+          </button>
         )}
-        <div className="text-wrap">
-          <span className="font-bold">ID: </span>
-          <pre className="text-wrap inline">{account.id}</pre>
-        </div>
-        <div>
-          <span className="font-bold">Name: </span>
-          {account.name}
-        </div>
-        <div>
-          <span className="font-bold">Type: </span>
-          {account.accountType}
+        {/* name first; the id is reference detail, so it's small and may wrap anywhere */}
+        <div className="pr-8 space-y-1">
+          <h2 className="text-lg font-semibold truncate">{account.name}</h2>
+          <span className="inline-block rounded-full bg-grass-100 px-2 text-sm capitalize text-grass-800">
+            {account.accountType}
+          </span>
+          <div className="font-mono text-xs text-slate-500 break-all">
+            {account.id}
+          </div>
         </div>
         {account.bank && <LinkedBank bank={account.bank} />}
       </div>

@@ -6,7 +6,7 @@ interface Props {
 export const CardGridSkeleton = ({ count = 3 }: Props) => {
   return (
     <div
-      className="grid grid-cols-3 gap-5 animate-pulse"
+      className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 animate-pulse"
       aria-busy="true"
       aria-label="Loading"
     >

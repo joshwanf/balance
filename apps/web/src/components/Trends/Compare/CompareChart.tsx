@@ -15,9 +15,11 @@ ChartJS.register(ArcElement, PieController, Colors, Legend, Tooltip)
 
 interface Props {
   data: ApiTypes.Trend.PieChart
+  /** category name to colour, shared by both charts */
+  colors: Record<string, string>
 }
 
-export const CompareChart = ({ data, ...rest }: Props) => {
+export const CompareChart = ({ data, colors, ...rest }: Props) => {
   const chartData = {
     labels: data.summary.map(s => s.name),
     datasets: [
@@ -26,6 +28,7 @@ export const CompareChart = ({ data, ...rest }: Props) => {
         data: data.summary.map(
           s => Money.fromCents(s.spent.toString()).dollars,
         ),
+        backgroundColor: data.summary.map(s => colors[s.name]),
         hoverOffset: 20,
       },
     ],
@@ -35,20 +38,10 @@ export const CompareChart = ({ data, ...rest }: Props) => {
     return <div>No spending data for {data.month}</div>
   }
 
-  const data2 = {
-    labels: ["Red", "Blue", "Yellow"],
-    datasets: [
-      {
-        label: "My First Dataset",
-        data: [300, 50, 100],
-        backgroundColor: [
-          "rgb(255, 99, 132)",
-          "rgb(54, 162, 235)",
-          "rgb(255, 205, 86)",
-        ],
-        hoverOffset: 4,
-      },
-    ],
-  }
-  return <Pie data={chartData} />
+  return (
+    <Pie
+      data={chartData}
+      options={{ plugins: { legend: { position: "bottom" } } }}
+    />
+  )
 }
