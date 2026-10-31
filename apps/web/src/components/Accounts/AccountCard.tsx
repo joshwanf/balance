@@ -19,7 +19,7 @@ export const AccountCard = ({ account }: Props) => {
 
   return (
     <div>
-      <div className="border-4 border-grass-300 rounded-lg p-4 h-full min-h-32 relative">
+      <div className="border-4 border-grass-300 rounded-lg p-4 h-full min-h-28 relative">
         <div className="absolute right-1 top-1">
           <button
             ref={menuButtonRef}
