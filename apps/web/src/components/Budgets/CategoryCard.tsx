@@ -67,6 +67,9 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
       })
     }
 
+  const clearError = (field: keyof FormErrors) => () =>
+    setFormErrors(prev => ({ ...prev, [field]: undefined }))
+
   return (
     <tr className={unifiedClassNames}>
       <td className="pl-2">
@@ -87,8 +90,14 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
           <EditableText
             text={c.name}
             onFinishEditing={handleChangeForm("name")}
+            onCancel={clearError("name")}
           />
-          {formErrors.name && <FloatingErrors errors={formErrors.name} />}
+          {formErrors.name && (
+            <FloatingErrors
+              errors={formErrors.name}
+              onDismiss={clearError("name")}
+            />
+          )}
         </div>
       </td>
 
@@ -102,10 +111,14 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
               text={`${budgetedAmount.format({ noCurrencySymbol: true })}`}
               type="number"
               onFinishEditing={handleChangeForm("amount")}
+              onCancel={clearError("budgetedAmount")}
             />
           </span>
           {formErrors.budgetedAmount && (
-            <FloatingErrors errors={formErrors.budgetedAmount} />
+            <FloatingErrors
+              errors={formErrors.budgetedAmount}
+              onDismiss={clearError("budgetedAmount")}
+            />
           )}
         </div>
       </td>
