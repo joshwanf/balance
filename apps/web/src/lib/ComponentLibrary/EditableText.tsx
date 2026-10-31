@@ -1,9 +1,11 @@
 "use client"
-import React, { useState } from "react"
+import React, { useRef, useState } from "react"
 
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   text: string
   onFinishEditing?: (newValue: string) => boolean | Promise<boolean>
+  /** Escape was pressed: the edit is dropped without saving */
+  onCancel?: () => void
   additionalClasses?: string[]
 }
 
@@ -11,6 +13,7 @@ export const EditableText = ({
   text,
   type,
   onFinishEditing,
+  onCancel,
   additionalClasses,
   ...rest
 }: Props) => {
@@ -18,6 +21,8 @@ export const EditableText = ({
   const [committed, setCommitted] = useState(text)
   const [draft, setDraft] = useState(text)
   const [prevText, setPrevText] = useState(text)
+  // set by Escape so the blur that follows doesn't save
+  const cancelled = useRef(false)
 
   if (text !== prevText) {
     setPrevText(text)
@@ -37,6 +42,10 @@ export const EditableText = ({
     if (e.key === "Enter") {
       e.preventDefault()
       e.currentTarget.blur()
+    } else if (e.key === "Escape") {
+      e.preventDefault()
+      cancelled.current = true
+      e.currentTarget.blur()
     }
   }
 
@@ -47,6 +56,12 @@ export const EditableText = ({
 
   const handleStopEditing = async () => {
     setIsEditing(false)
+    if (cancelled.current) {
+      cancelled.current = false
+      setDraft(committed)
+      onCancel?.()
+      return
+    }
     if (draft === committed) return
 
     const previous = committed
@@ -58,7 +73,8 @@ export const EditableText = ({
 
   const defaultClasses = [
     // default style
-    "w-full px-2 py-0.5",
+    // same box in both states, so starting to edit doesn't change the row height
+    "w-full h-8 px-2 py-0.5 leading-6",
     "border rounded-md",
     "hover:border-grass-300",
     "focus:outline-none",
@@ -88,7 +104,7 @@ export const EditableText = ({
           onFocus={handleStartEditing}
           tabIndex={0}
           role="button"
-          className={`${unifiedClassNames} inline-block border-transparent cursor-pointer`}
+          className={`${unifiedClassNames} inline-block truncate border-transparent cursor-pointer`}
         >
           {committed || (
             <span className="text-slate-400">

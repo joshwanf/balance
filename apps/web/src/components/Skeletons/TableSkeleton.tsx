@@ -1,23 +1,39 @@
+import { TableHead } from "@/components/Table/TableHead"
+import {
+  type Column,
+  ROW_CLASS,
+  TABLE_CLASS,
+  TABLE_WRAPPER_CLASS,
+} from "@/components/Table/layout"
+
 interface Props {
+  /** the real table's columns, so the skeleton has the same geometry */
+  columns: Column[]
+  /** min-width class of the real table */
+  minWidth?: string
   rows?: number
-  cols?: number
 }
 
-/** Grey placeholder rows, sized like a data table, shown while it loads. */
-export const TableSkeleton = ({ rows = 10, cols = 5 }: Props) => {
+/** Grey placeholder rows in the real table's layout, shown while it loads. */
+export const TableSkeleton = ({ columns, minWidth = "", rows = 10 }: Props) => {
   return (
-    <div className="w-full animate-pulse" aria-busy="true" aria-label="Loading">
-      {Array.from({ length: rows }, (_, r) => (
-        <div
-          key={r}
-          className="flex items-center space-x-4 border-b-2 py-3 pl-2"
-        >
-          <div className="h-4 w-4 rounded bg-grass-100" />
-          {Array.from({ length: cols }, (_, c) => (
-            <div key={c} className="h-4 flex-1 rounded bg-grass-100" />
+    <div className={TABLE_WRAPPER_CLASS} aria-busy="true" aria-label="Loading">
+      <table className={`${TABLE_CLASS} ${minWidth}`}>
+        <TableHead columns={columns} />
+        <tbody className="animate-pulse">
+          {Array.from({ length: rows }, (_, r) => (
+            <tr key={r} className={ROW_CLASS}>
+              {columns.map((col, c) => (
+                <td key={c} className={col.checkbox ? "pl-2" : "pr-4"}>
+                  <div
+                    className={`h-4 rounded bg-grass-100 ${col.checkbox ? "w-4" : "w-3/4"} ${col.align === "right" ? "ml-auto" : ""}`}
+                  />
+                </td>
+              ))}
+            </tr>
           ))}
-        </div>
-      ))}
+        </tbody>
+      </table>
     </div>
   )
 }

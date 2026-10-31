@@ -6,6 +6,7 @@ import { Sidebar } from "./Sidebar"
 import { SettingsButton } from "./SettingsButton"
 import { MonthNavigator } from "./MonthNavigator"
 import { SIDEBAR_COOKIE, sectionLabel } from "./navLinks"
+import { useUrlTransition } from "../../hooks/urlTransition"
 
 interface Props {
   children?: React.ReactNode
@@ -28,6 +29,7 @@ export const Main = ({ children, defaultCollapsed = false }: Props) => {
   const [collapsed, setCollapsed] = useState(defaultCollapsed)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [prevPathname, setPrevPathname] = useState(pathname)
+  const { isPending } = useUrlTransition()
 
   if (pathname !== prevPathname) {
     setPrevPathname(pathname)
@@ -140,7 +142,13 @@ export const Main = ({ children, defaultCollapsed = false }: Props) => {
         <main className="flex-1 overflow-y-auto [scrollbar-gutter:stable] px-2 pb-6 lg:pt-4">
           <div className="bg-white rounded-3xl px-4 pb-6">
             <MonthNavigator />
-            {children}
+            {/* a month or search change keeps the old page, dimmed, until the new one is ready */}
+            <div
+              aria-busy={isPending}
+              className={`transition-opacity duration-150 motion-reduce:transition-none ${isPending ? "opacity-50" : ""}`}
+            >
+              {children}
+            </div>
           </div>
         </main>
       </div>

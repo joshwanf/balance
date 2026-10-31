@@ -7,6 +7,7 @@ import {
   currentMonth,
   monthFromSearchParams,
 } from "../utils/month"
+import { useUrlTransition } from "./urlTransition"
 
 /** The selected month from ?month=, defaulting to the current month. */
 export const useCurMonth = () =>
@@ -20,15 +21,18 @@ const useSetParam = (key: string, isDefault: (value: string) => boolean) => {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const { startTransition } = useUrlTransition()
   return useCallback(
     (value: string) => {
       const params = new URLSearchParams(searchParams.toString())
       if (!value || isDefault(value)) params.delete(key)
       else params.set(key, value)
       const query = params.toString()
-      router.push(query ? `${pathname}?${query}` : pathname)
+      startTransition(() =>
+        router.push(query ? `${pathname}?${query}` : pathname),
+      )
     },
-    [router, pathname, searchParams, key, isDefault],
+    [router, pathname, searchParams, key, isDefault, startTransition],
   )
 }
 

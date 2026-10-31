@@ -7,6 +7,9 @@ import { CreateCategory } from "./CreateCategory"
 import { PrimaryButton } from "../../lib/Base/Button"
 import { deleteCategoryAction } from "@/server/actions/category"
 import { LoadingSpinner } from "@/components/Skeletons/LoadingSpinner"
+import { TableHead } from "@/components/Table/TableHead"
+import { TABLE_CLASS, TABLE_WRAPPER_CLASS } from "@/components/Table/layout"
+import { CATEGORY_COLUMNS, CATEGORIES_MIN_WIDTH } from "./columns"
 
 interface Props {
   /** this month's categories with budget and spend, fetched on the server */
@@ -101,8 +104,11 @@ export const CategoryTable = ({ categories }: Props) => {
                   `}
               >
                 <div className="flex gap-2 items-center">
-                  {isDeletePending && <LoadingSpinner />}
-                  Delete {selectedCat.length <= 1 ? "category" : "categories"}
+                  {/* spinner keeps its space so the button doesn't grow */}
+                  <span className={isDeletePending ? "" : "invisible"}>
+                    <LoadingSpinner />
+                  </span>
+                  Delete selected
                 </div>
               </PrimaryButton>
             </div>
@@ -114,35 +120,26 @@ export const CategoryTable = ({ categories }: Props) => {
             )}
           </AnimatePresence>
         </div>
-        <table className=" w-full border-collapse">
-          <thead>
-            <tr>
-              <th className="py-2 pl-2 text-left">
-                <input
-                  type="checkbox"
-                  checked={checkAllItems}
-                  onChange={handleSelectAllItems}
-                  onClick={e => e.stopPropagation()}
+        <div className={TABLE_WRAPPER_CLASS}>
+          <table className={`${TABLE_CLASS} ${CATEGORIES_MIN_WIDTH}`}>
+            <TableHead
+              columns={CATEGORY_COLUMNS}
+              allChecked={checkAllItems}
+              onCheckAll={handleSelectAllItems}
+            />
+            <tbody>
+              {categories.map(c => (
+                <CategoryCard
+                  key={`${c.id}-${c.month}`}
+                  id={c.id}
+                  c={c}
+                  checked={selectedCat?.includes(c.id)}
+                  onChange={handleSelectCat(c.id)}
                 />
-              </th>
-              <th className="py-2 text-left">Category name</th>
-              <th className="py-2 text-left">Budgeted amount</th>
-              <th className="py-2 text-left">Used amount</th>
-              <th className="py-2 text-left">Available amount</th>
-            </tr>
-          </thead>
-          <tbody className="space-y-40">
-            {categories.map(c => (
-              <CategoryCard
-                key={`${c.id}-${c.month}`}
-                id={c.id}
-                c={c}
-                checked={selectedCat?.includes(c.id)}
-                onChange={handleSelectCat(c.id)}
-              />
-            ))}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   )

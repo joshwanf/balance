@@ -106,7 +106,10 @@ export const CreateTransaction = ({ onAfterSubmitForm }: Props) => {
         <div>
           <PrimaryButton type="submit" disabled={isPending}>
             <div className="flex gap-2 items-center justify-center">
-              {isPending && <LoadingSpinner />}Add transaction
+              <span className={isPending ? "" : "invisible"}>
+                <LoadingSpinner />
+              </span>
+              Add transaction
             </div>
           </PrimaryButton>
         </div>
