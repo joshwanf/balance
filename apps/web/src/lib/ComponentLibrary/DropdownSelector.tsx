@@ -64,7 +64,7 @@ export const DropdownSelector = ({
         {!disableBlankSelection && (
           <button
             type="button"
-            className="px-2 w-8 border-l-2 rounded-r-sm border-l-slate-300 hover:bg-neutral-200 hover:rounded-r-md"
+            className="px-2 w-8 border-l-2 rounded-r-sm border-l-neutral-300 hover:bg-neutral-200 hover:rounded-r-md"
             onClick={() => onChange("")}
           >
             &times;
