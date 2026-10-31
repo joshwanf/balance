@@ -21,7 +21,7 @@ export const MonthNavigator = ({}: Props) => {
   }
   const setNewMonth = (toMonth: string) => setMonth(toMonth)
   return (
-    <div className="py-4 flex space-x-1">
+    <div className="py-2 md:py-4 flex items-center space-x-1">
       <button onClick={changeCurMonth(-1)}>
         <ChevronLeft />
       </button>
@@ -29,10 +29,13 @@ export const MonthNavigator = ({}: Props) => {
         onClick={() => setShowDatePicker(!showDatePicker)}
         className="relative hover:cursor-pointer"
       >
-        <div ref={dateRef} className="text-center w-24">
-          {dayjs(curMonth).format("MMMM")}
-          <br />
-          {dayjs(curMonth).format("YYYY")}
+        {/* one line below md; fixed widths so the chevrons don't move with the month name */}
+        <div
+          ref={dateRef}
+          className="text-center w-36 whitespace-nowrap md:w-24 md:whitespace-normal"
+        >
+          {dayjs(curMonth).format("MMMM")}{" "}
+          <span className="md:block">{dayjs(curMonth).format("YYYY")}</span>
         </div>
         {showDatePicker && (
           <Popover

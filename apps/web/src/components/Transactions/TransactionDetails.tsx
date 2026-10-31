@@ -1,5 +1,5 @@
 "use client"
-import { Fragment, useState } from "react"
+import { useState } from "react"
 import type { ApiTypes } from "@balance/api-types"
 import { EditableText } from "../../lib/ComponentLibrary/EditableText"
 import {
@@ -149,18 +149,22 @@ export const TransactionDetails = ({ t, allTags, closeModal }: Props) => {
                 { label: "Outgoing", value: "outgoing" },
                 { label: "Incoming", value: "incoming" },
               ].map(({ label, value }) => (
-                <Fragment key={value}>
+                <label
+                  key={value}
+                  className={`cursor-pointer rounded-full border-2 px-3 py-0.5 text-sm
+                    has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-grass-500
+                    ${form.type === value ? "border-grass-600 bg-grass-100 font-semibold text-grass-900" : "border-slate-200 text-slate-500 hover:border-slate-300"}`}
+                >
                   <input
                     type="radio"
-                    id={value}
+                    name="type"
+                    className="sr-only"
                     checked={form.type === value}
                     value={value}
                     onChange={() => handleChangeForm("type")(value)}
                   />
-                  <label htmlFor={value} className="">
-                    {label}
-                  </label>
-                </Fragment>
+                  {label}
+                </label>
               ))}
             </div>
 

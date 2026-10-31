@@ -11,9 +11,7 @@ interface Props {
 export const Sidebar = ({ collapsed, onNavigate }: Props) => {
   return (
     <nav aria-label="Main" className="flex flex-col gap-4">
-      <div
-        className={`flex items-center gap-2 h-10 ${collapsed ? "justify-center" : "px-3"}`}
-      >
+      <div className="flex items-center gap-2 h-10 px-2.5">
         <img src="/assets/balance.svg" alt="" className="size-7" />
         <span
           className={

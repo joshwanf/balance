@@ -34,13 +34,21 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
   const budgetedClasses = isOverBudget ? "bg-red-300" : "bg-green-200 "
 
   const isCheckedClassname = checked ? "bg-blue-200" : ""
-  // Below md the row stacks: name and available, then budget and used, with a
-  // thin bar along the bottom for how much of the budget is used
-  const unifiedClassNames = `${isCheckedClassname} ${ROW_CLASS} ${STACKED.row} ${CATEGORY_ROW_HEIGHT} max-md:relative max-md:grid-cols-[1.5rem_minmax(0,1fr)_auto] max-md:px-2`
-  const usedPercent =
-    budgetedAmount.cents > 0
-      ? Math.min(100, (usedAmount.cents / budgetedAmount.cents) * 100)
+  // Below md the row stacks: name and available, then budget and used. At
+  // every size a thin bar along the bottom shows how much of the budget is used
+  const unifiedClassNames = `${isCheckedClassname} ${ROW_CLASS} ${STACKED.row} ${CATEGORY_ROW_HEIGHT} relative max-md:grid-cols-[1.5rem_minmax(0,1fr)_auto] max-md:px-2`
+  // The bar spans the larger of budget and spend: green up to the budget, and
+  // when over budget, red for the overspend
+  const barTotal = Math.max(budgetedAmount.cents, usedAmount.cents)
+  const withinPercent =
+    barTotal > 0
+      ? (Math.max(0, Math.min(budgetedAmount.cents, usedAmount.cents)) /
+          barTotal) *
+        100
       : 0
+  const overPercent = isOverBudget
+    ? ((usedAmount.cents - budgetedAmount.cents) / barTotal) * 100
+    : 0
 
   const handleChangeForm =
     (field: "name" | "amount") => async (newValue: string) => {
@@ -139,11 +147,10 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
         {leftoverBudget.format().replace(/^-/, "\u2212")}
       </td>
 
-      <td
-        aria-hidden
-        className={`md:hidden absolute bottom-0 left-0 h-1 ${isOverBudget ? "bg-red-400" : "bg-grass-500"}`}
-        style={{ width: `${usedPercent}%` }}
-      />
+      <td aria-hidden className="absolute inset-x-0 bottom-0 flex h-1 p-0">
+        <span className="bg-green-500" style={{ width: `${withinPercent}%` }} />
+        <span className="bg-red-500" style={{ width: `${overPercent}%` }} />
+      </td>
     </tr>
   )
 }

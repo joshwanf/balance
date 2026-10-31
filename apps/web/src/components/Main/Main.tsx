@@ -7,6 +7,7 @@ import { SettingsButton } from "./SettingsButton"
 import { MonthNavigator } from "./MonthNavigator"
 import { SIDEBAR_COOKIE, sectionLabel } from "./navLinks"
 import { useUrlTransition } from "../../hooks/urlTransition"
+import { useScrollLock } from "../../hooks/useScrollLock"
 
 interface Props {
   children?: React.ReactNode
@@ -30,6 +31,7 @@ export const Main = ({ children, defaultCollapsed = false }: Props) => {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [prevPathname, setPrevPathname] = useState(pathname)
   const { isPending } = useUrlTransition()
+  useScrollLock(drawerOpen)
 
   if (pathname !== prevPathname) {
     setPrevPathname(pathname)
@@ -59,7 +61,9 @@ export const Main = ({ children, defaultCollapsed = false }: Props) => {
   })
 
   return (
-    <div data-app-shell className="flex h-dvh bg-slate-200">
+    // From lg the shell fills the screen and only <main> scrolls. Below lg the
+    // page itself scrolls, so phone browsers can collapse their address bar
+    <div data-app-shell className="flex min-h-dvh lg:h-dvh bg-slate-200">
       {/* Desktop sidebar */}
       <aside
         className={`hidden lg:flex flex-col justify-between shrink-0 py-4 px-2
@@ -68,7 +72,8 @@ export const Main = ({ children, defaultCollapsed = false }: Props) => {
       >
         <Sidebar collapsed={collapsed} />
         <div
-          className={`flex gap-2 ${collapsed ? "flex-col items-center" : "items-center justify-between px-3"}`}
+          // one column in both states so the icons stay put when collapsing
+          className="flex flex-col items-start gap-2 px-2"
         >
           <SettingsButton />
           <button
@@ -124,7 +129,7 @@ export const Main = ({ children, defaultCollapsed = false }: Props) => {
 
       <div className="flex-1 min-w-0 flex flex-col">
         {/* Phone and tablet top bar */}
-        <header className="lg:hidden flex items-center gap-3 px-3 h-12 shrink-0">
+        <header className="lg:hidden sticky top-0 z-30 bg-slate-200 flex items-center gap-3 px-3 h-12 shrink-0">
           <button
             type="button"
             onClick={() => setDrawerOpen(true)}
@@ -139,7 +144,7 @@ export const Main = ({ children, defaultCollapsed = false }: Props) => {
           </span>
         </header>
 
-        <main className="flex-1 overflow-y-auto [scrollbar-gutter:stable] px-2 pb-6 lg:pt-4">
+        <main className="flex-1 lg:overflow-y-auto lg:[scrollbar-gutter:stable] px-2 pb-6 lg:pt-4">
           <div className="bg-white rounded-3xl px-4 pb-6">
             <MonthNavigator />
             {/* a month or search change keeps the old page, dimmed, until the new one is ready */}
