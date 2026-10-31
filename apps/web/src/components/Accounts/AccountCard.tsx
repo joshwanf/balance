@@ -61,9 +61,20 @@ export const AccountCard = ({ account }: Props) => {
         {/* name first; the id is reference detail, so it's small and may wrap anywhere */}
         <div className="pr-8 space-y-1">
           <h2 className="text-lg font-semibold truncate">{account.name}</h2>
-          <span className="inline-block rounded-full bg-grass-100 px-2 text-sm capitalize text-grass-800">
-            {account.accountType}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="rounded-full bg-grass-100 px-2 text-sm capitalize text-grass-800">
+              {account.accountType}
+            </span>
+            {/* last four digits, known only for bank-linked accounts */}
+            {account.bank?.mask && (
+              <span
+                className="font-mono text-sm tabular-nums text-slate-600"
+                aria-label={`Account ending ${account.bank.mask}`}
+              >
+                •••• {account.bank.mask}
+              </span>
+            )}
+          </div>
           <div className="font-mono text-xs text-slate-500 break-all">
             {account.id}
           </div>
