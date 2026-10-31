@@ -19,12 +19,13 @@ export const TransactionsToolbar = () => {
       className="flex flex-col justify-between bg-grass-50
       px-4 py-4 rounded-2xl space-y-4"
     >
-      <div className="flex flex-row justify-around items-center">
-        <div className="w-1/4">
+      {/* Phones: search on top, full-width Add below. From sm: side by side */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+        <div className="order-2 sm:order-1 shrink-0">
           <PrimaryButton
             onClick={() => setShowAddItem(!showAddItem)}
             className={`
-                px-4 rounded-md border-2 
+                w-full sm:w-auto whitespace-nowrap px-4 rounded-md border-2 
               ${!showAddItem ? "bg-grass-700" : "bg-grass-300"}
               ${!showAddItem ? "text-grass-200" : "text-grass-800"}
               ${!showAddItem ? "border-grass-700" : "border-grass-800"}
@@ -33,7 +34,7 @@ export const TransactionsToolbar = () => {
             Add Transaction
           </PrimaryButton>
         </div>
-        <div className="w-full space-y-2">
+        <div className="order-1 sm:order-2 w-full min-w-0 space-y-2">
           <SearchBar searchText={searchText} />
           <SearchOptions searchTermParams={searchParams} />
         </div>

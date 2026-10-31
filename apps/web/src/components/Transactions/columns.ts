@@ -10,4 +10,5 @@ export const TRANSACTION_COLUMNS: Column[] = [
   { label: "Category", width: "w-[18%]" },
 ]
 
-export const TRANSACTIONS_MIN_WIDTH = "min-w-[40rem]"
+// rows stack below md, so the min width only applies from md up
+export const TRANSACTIONS_MIN_WIDTH = "md:min-w-[40rem]"

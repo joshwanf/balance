@@ -29,3 +29,14 @@ export const HEADER_CELL_CLASS = "h-10 py-2 font-semibold"
 
 export const alignClass = (col: Column) =>
   col.align === "right" ? "text-right pr-4" : "text-left"
+
+/**
+ * Below md a table can stack: each row becomes a small grid (two text lines)
+ * instead of a row of cells. Rows place their own cells with max-md: classes.
+ */
+export const STACKED = {
+  table: "max-md:block",
+  head: "max-md:hidden",
+  body: "max-md:block",
+  row: "max-md:grid max-md:h-16 max-md:content-center max-md:gap-x-3 max-md:gap-y-0.5",
+}

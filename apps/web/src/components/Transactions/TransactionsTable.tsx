@@ -3,7 +3,11 @@ import { useState } from "react"
 import type { ApiTypes } from "@balance/api-types"
 import { TransactionCard } from "./TransactionCard"
 import { TableHead } from "@/components/Table/TableHead"
-import { TABLE_CLASS, TABLE_WRAPPER_CLASS } from "@/components/Table/layout"
+import {
+  STACKED,
+  TABLE_CLASS,
+  TABLE_WRAPPER_CLASS,
+} from "@/components/Table/layout"
 import { TRANSACTION_COLUMNS, TRANSACTIONS_MIN_WIDTH } from "./columns"
 
 type Transaction = ApiTypes.Transaction.TRow
@@ -38,13 +42,16 @@ export const TransactionsTable = ({ transactions, allTags }: Props) => {
 
   return (
     <div className={TABLE_WRAPPER_CLASS}>
-      <table className={`${TABLE_CLASS} ${TRANSACTIONS_MIN_WIDTH}`}>
+      <table
+        className={`${TABLE_CLASS} ${TRANSACTIONS_MIN_WIDTH} ${STACKED.table}`}
+      >
         <TableHead
           columns={TRANSACTION_COLUMNS}
           allChecked={checkAllItems}
           onCheckAll={handleSelectAllItems}
+          stacked
         />
-        <tbody>
+        <tbody className={STACKED.body}>
           {transactions.map(t => (
             <TransactionCard
               key={t.id}

@@ -13,6 +13,8 @@ export const SearchOptions = ({ searchTermParams }: Props) => {
   const hasSearchParams = Object.keys(searchTermParams).length > 0
 
   const { generalSearch, tags, ...restOfSearch } = searchTermParams
+  const hasFieldFilters =
+    Object.keys(restOfSearch).length > 0 || (tags?.length ?? 0) > 0
   const displayText =
     generalSearch && generalSearch.length > 0 ? "Searching for " : "Searching "
 
@@ -41,13 +43,13 @@ export const SearchOptions = ({ searchTermParams }: Props) => {
   if (!hasSearchParams) return null
 
   return (
-    <div className="flex flex-row space-x-2">
+    <div className="flex flex-wrap items-center gap-2">
       {displayText}
       {generalSearch &&
         generalSearch.map(t => (
           <Pill key={t} text={t} onClick={() => handleRemoveGeneralSearch(t)} />
         ))}
-      by:
+      {hasFieldFilters && "by:"}
       {restOfSearch &&
         Object.entries(restOfSearch).map(([k, v]) => (
           <Pill

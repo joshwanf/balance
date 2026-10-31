@@ -19,10 +19,14 @@ export const FormField = ({
   const [value, setValue] = useState(defaultValue || "")
 
   return (
-    <label htmlFor={name} className="grid grid-cols-[30%_70%] items-center">
-      <div className="mr-2 justify-self-end">{displayText}</div>
+    // label above the input on phones, beside it from sm
+    <label
+      htmlFor={name}
+      className="grid grid-cols-1 gap-1 sm:grid-cols-[30%_70%] sm:gap-0 items-center"
+    >
+      <div className="sm:mr-2 sm:justify-self-end">{displayText}</div>
       <input
-        className="bg-transparent py-0.5 pl-2 
+        className="w-full sm:w-auto bg-transparent py-0.5 pl-2 
         justify-self-start
         border-2 border-grass-300 rounded-md 
         hover:border-grass-400

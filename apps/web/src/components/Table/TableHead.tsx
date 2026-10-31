@@ -1,21 +1,28 @@
-import { type Column, HEADER_CELL_CLASS, alignClass } from "./layout"
+import { type Column, HEADER_CELL_CLASS, STACKED, alignClass } from "./layout"
 
 interface Props {
   columns: Column[]
   /** select-all checkbox state; the checkbox is disabled when omitted */
   allChecked?: boolean
   onCheckAll?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  /** hide the header below md, for tables whose rows stack there */
+  stacked?: boolean
 }
 
 /** <colgroup> and header row for a data table or its skeleton. */
-export const TableHead = ({ columns, allChecked, onCheckAll }: Props) => (
+export const TableHead = ({
+  columns,
+  allChecked,
+  onCheckAll,
+  stacked,
+}: Props) => (
   <>
     <colgroup>
       {columns.map((col, i) => (
         <col key={i} className={col.width} />
       ))}
     </colgroup>
-    <thead>
+    <thead className={stacked ? STACKED.head : undefined}>
       <tr>
         {columns.map((col, i) => (
           <th
