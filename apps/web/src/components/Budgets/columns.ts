@@ -10,4 +10,8 @@ export const CATEGORY_COLUMNS: Column[] = [
   { label: "Available amount", width: "w-40", align: "right" },
 ]
 
-export const CATEGORIES_MIN_WIDTH = "min-w-[38rem]"
+// rows stack below md, so the min width only applies from md up
+export const CATEGORIES_MIN_WIDTH = "md:min-w-[38rem]"
+
+/** Stacked (phone) row height: name line plus the editable budget line */
+export const CATEGORY_ROW_HEIGHT = "max-md:h-20"

@@ -6,7 +6,8 @@ import { Money } from "@/utils/classes/Money"
 import { EditableText } from "@/lib/ComponentLibrary/EditableText"
 import { changeCategoryAction } from "@/server/actions/category"
 import { FloatingErrors } from "@/lib/ComponentLibrary/Errors"
-import { ROW_CLASS } from "@/components/Table/layout"
+import { ROW_CLASS, STACKED } from "@/components/Table/layout"
+import { CATEGORY_ROW_HEIGHT } from "./columns"
 import { LoadingSpinner } from "@/components/Skeletons/LoadingSpinner"
 
 interface FormErrors {
@@ -33,7 +34,13 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
   const budgetedClasses = isOverBudget ? "bg-red-300" : "bg-green-200 "
 
   const isCheckedClassname = checked ? "bg-blue-200" : ""
-  const unifiedClassNames = `${isCheckedClassname} ${ROW_CLASS}`
+  // Below md the row stacks: name and available, then budget and used, with a
+  // thin bar along the bottom for how much of the budget is used
+  const unifiedClassNames = `${isCheckedClassname} ${ROW_CLASS} ${STACKED.row} ${CATEGORY_ROW_HEIGHT} max-md:relative max-md:grid-cols-[1.5rem_minmax(0,1fr)_auto] max-md:px-2`
+  const usedPercent =
+    budgetedAmount.cents > 0
+      ? Math.min(100, (usedAmount.cents / budgetedAmount.cents) * 100)
+      : 0
 
   const handleChangeForm =
     (field: "name" | "amount") => async (newValue: string) => {
@@ -72,8 +79,8 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
 
   return (
     <tr className={unifiedClassNames}>
-      <td className="pl-2">
-        <div className="flex gap-2 items-center">
+      <td className="pl-2 max-md:row-span-2 max-md:self-center max-md:pl-0">
+        <div className="flex gap-2 items-center max-md:flex-col max-md:gap-1">
           <input type="checkbox" checked={checked} onChange={onChange} />
           {/* always takes its space, so saving doesn't widen the column */}
           <span
@@ -85,7 +92,7 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
         </div>
       </td>
 
-      <td className="pr-4">
+      <td className="pr-4 max-md:col-start-2 max-md:row-start-1 max-md:pr-0">
         <div className="relative">
           <EditableText
             text={c.name}
@@ -101,8 +108,8 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
         </div>
       </td>
 
-      <td className="pr-4">
-        <div className="relative">
+      <td className="pr-4 max-md:col-start-2 max-md:row-start-2 max-md:pr-0">
+        <div className="relative max-md:w-36">
           <span
             className={`${budgetedClasses} flex items-center px-2 py-0.5 rounded-md`}
           >
@@ -123,11 +130,20 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
         </div>
       </td>
 
-      <td className="text-right pr-4 tabular-nums">{usedAmount.format()}</td>
+      <td className="text-right pr-4 tabular-nums max-md:col-start-3 max-md:row-start-2 max-md:self-center max-md:pr-0 max-md:text-sm max-md:text-slate-500">
+        <span className="md:hidden">used </span>
+        {usedAmount.format()}
+      </td>
 
-      <td className="text-right pr-4 tabular-nums">
+      <td className="text-right pr-4 tabular-nums max-md:col-start-3 max-md:row-start-1 max-md:self-center max-md:pr-0 max-md:font-semibold">
         {leftoverBudget.format().replace(/^-/, "\u2212")}
       </td>
+
+      <td
+        aria-hidden
+        className={`md:hidden absolute bottom-0 left-0 h-1 ${isOverBudget ? "bg-red-400" : "bg-grass-500"}`}
+        style={{ width: `${usedPercent}%` }}
+      />
     </tr>
   )
 }
