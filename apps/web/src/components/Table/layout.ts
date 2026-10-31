@@ -38,5 +38,7 @@ export const STACKED = {
   table: "max-md:block",
   head: "max-md:hidden",
   body: "max-md:block",
-  row: "max-md:grid max-md:h-16 max-md:content-center max-md:gap-x-3 max-md:gap-y-0.5",
+  row: "max-md:grid max-md:content-center max-md:gap-x-3 max-md:gap-y-0.5",
+  /** default stacked row height; a table with taller rows passes its own */
+  rowHeight: "max-md:h-16",
 }

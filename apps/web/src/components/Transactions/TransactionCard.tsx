@@ -23,7 +23,7 @@ export const TransactionCard = ({ t, allTags, checked, onChange }: Props) => {
   const hasCategory = t.categoryId
   const isCheckedClassname = checked ? "bg-blue-200" : ""
   // Below md the row stacks: payee and amount, then date, account and category
-  const unifiedClassNames = `${isCheckedClassname} ${ROW_CLASS} ${STACKED.row} max-md:grid-cols-[1.5rem_minmax(0,1fr)_auto] max-md:px-2 hover:cursor-pointer hover:shadow-md hover:shadow-slate-200`
+  const unifiedClassNames = `${isCheckedClassname} ${ROW_CLASS} ${STACKED.row} ${STACKED.rowHeight} max-md:grid-cols-[1.5rem_minmax(0,1fr)_auto] max-md:px-2 hover:cursor-pointer hover:shadow-md hover:shadow-slate-200`
   const amount = tAmount.format().replace(/^-/, "\u2212")
   const closeModal = (
     e?: React.MouseEvent<HTMLDivElement | HTMLButtonElement>,

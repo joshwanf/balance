@@ -15,6 +15,8 @@ interface Props {
   rows?: number
   /** the real table stacks its rows below md; match its two-line rows */
   stacked?: boolean
+  /** height class of the real table's stacked rows */
+  stackedRowHeight?: string
 }
 
 /** Grey placeholder rows in the real table's layout, shown while it loads. */
@@ -23,6 +25,7 @@ export const TableSkeleton = ({
   minWidth = "",
   rows = 10,
   stacked,
+  stackedRowHeight = STACKED.rowHeight,
 }: Props) => {
   const st = (cls: string) => (stacked ? cls : "")
   return (
@@ -33,7 +36,7 @@ export const TableSkeleton = ({
           {Array.from({ length: rows }, (_, r) => (
             <tr
               key={r}
-              className={`${ROW_CLASS} ${st(`${STACKED.row} max-md:px-2`)}`}
+              className={`${ROW_CLASS} ${st(`${STACKED.row} ${stackedRowHeight} max-md:px-2`)}`}
             >
               {stacked && (
                 <td className="space-y-2 md:hidden">
