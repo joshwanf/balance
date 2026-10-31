@@ -1,5 +1,5 @@
 .tag-selector-input {
-  @apply outline-none border-0 w-full;
+  @apply outline-none border-0 w-full bg-transparent;
 }
 .input-with-selector {
   font-size: 48px;

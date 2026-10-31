@@ -3,6 +3,7 @@ import { LogOut } from "lucide-react"
 import { SecondaryButton } from "../../lib/Base/Button"
 import { useTransition } from "react"
 import { logoutAction } from "@/server/actions/auth"
+import { ThemeSwitcher } from "./ThemeSwitcher"
 
 export const SettingsMenu = () => {
   const [isPending, startTransition] = useTransition()
@@ -13,7 +14,7 @@ export const SettingsMenu = () => {
     })
   }
   return (
-    <div className="p-2 border-2 rounded-lg bg-brand-300 border-brand-700 text-brand-800">
+    <div className="grid w-64 gap-3 rounded-lg border bg-surface p-3 text-ink shadow-lg">
       <SecondaryButton
         disabled={isPending}
         onClick={handleLogout}
@@ -28,7 +29,7 @@ export const SettingsMenu = () => {
         <LogOut size={16} className="mr-2" />
         Logout
       </SecondaryButton>
-      <div>User settings</div>
+      <ThemeSwitcher />
     </div>
   )
 }
