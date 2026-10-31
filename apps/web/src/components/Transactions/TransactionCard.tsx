@@ -6,7 +6,7 @@ import { TransactionDetails } from "./TransactionDetails"
 import { Money } from "../../utils/classes/Money"
 import { AnimatePresence } from "motion/react"
 import { Landmark } from "lucide-react"
-import { ROW_CLASS } from "@/components/Table/layout"
+import { ROW_CLASS, STACKED } from "@/components/Table/layout"
 
 type Transaction = ApiTypes.Transaction.TRow
 
@@ -22,11 +22,13 @@ export const TransactionCard = ({ t, allTags, checked, onChange }: Props) => {
 
   const hasCategory = t.categoryId
   const isCheckedClassname = checked ? "bg-blue-200" : ""
-  const unifiedClassNames = `${isCheckedClassname} ${ROW_CLASS} hover:cursor-pointer hover:shadow-md hover:shadow-slate-200`
+  // Below md the row stacks: payee and amount, then date, account and category
+  const unifiedClassNames = `${isCheckedClassname} ${ROW_CLASS} ${STACKED.row} ${STACKED.rowHeight} max-md:grid-cols-[1.5rem_minmax(0,1fr)_auto] max-md:px-2 hover:cursor-pointer hover:shadow-md hover:shadow-slate-200`
+  const amount = tAmount.format().replace(/^-/, "\u2212")
   const closeModal = (
-    e: React.MouseEvent<HTMLDivElement | HTMLButtonElement>,
+    e?: React.MouseEvent<HTMLDivElement | HTMLButtonElement>,
   ) => {
-    e.stopPropagation()
+    e?.stopPropagation()
     setShowModal(false)
   }
   const openModal = (e: React.MouseEvent<HTMLTableRowElement>) => {
@@ -36,7 +38,10 @@ export const TransactionCard = ({ t, allTags, checked, onChange }: Props) => {
 
   return (
     <tr className={unifiedClassNames} onClick={openModal}>
-      <td onClick={e => e.stopPropagation()} className="pl-2">
+      <td
+        onClick={e => e.stopPropagation()}
+        className="pl-2 max-md:row-span-2 max-md:self-center max-md:pl-0"
+      >
         <input
           type="checkbox"
           name={t.id}
@@ -45,8 +50,8 @@ export const TransactionCard = ({ t, allTags, checked, onChange }: Props) => {
           onClick={e => e.stopPropagation()}
         />
       </td>
-      <td className="tabular-nums">{t.date}</td>
-      <td>
+      <td className="tabular-nums max-md:hidden">{t.date}</td>
+      <td className="max-md:col-start-2 max-md:row-start-1">
         <div className="flex items-center gap-2 min-w-0 pr-2">
           {t.plaidTransactionId && (
             <span title="Imported from your bank" className="shrink-0">
@@ -63,17 +68,23 @@ export const TransactionCard = ({ t, allTags, checked, onChange }: Props) => {
           )}
         </div>
       </td>
-      <td className="truncate pr-2" title={t.accountName}>
+      <td className="truncate pr-2 max-md:hidden" title={t.accountName}>
         {t.accountName}
       </td>
-      <td className="text-right pr-4 tabular-nums">
-        {tAmount.format().replace(/^-/, "\u2212")}
+      <td className="text-right pr-4 tabular-nums max-md:col-start-3 max-md:row-start-1 max-md:pr-0">
+        {amount}
       </td>
-      <td className="truncate">{t.categoryName ?? "(unassigned)"}</td>
+      <td className="truncate max-md:hidden">
+        {t.categoryName ?? "(unassigned)"}
+      </td>
+      <td className="md:hidden col-start-2 col-span-2 row-start-2 truncate text-sm text-slate-500">
+        {t.date} · {t.accountName} · {t.categoryName ?? "(unassigned)"}
+      </td>
       <AnimatePresence>
         {showModal && (
           <SideModal
             selector="#transactionDetailNode"
+            title={t.payee}
             closeModal={closeModal}
             element={
               <TransactionDetails

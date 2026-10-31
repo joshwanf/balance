@@ -36,7 +36,7 @@ interface TransactionFields {
 interface Props {
   t: ApiTypes.Transaction.TSerialized
   allTags: string[]
-  closeModal: (e: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) => void
+  closeModal: (e?: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) => void
 }
 export const TransactionDetails = ({ t, allTags, closeModal }: Props) => {
   const { accounts, categories } = useLookups()
@@ -130,16 +130,20 @@ export const TransactionDetails = ({ t, allTags, closeModal }: Props) => {
         }}
       >
         <div className="pt-4 space-y-4">
-          <h1>
-            Click on a field to change its value. Hit "Enter" or click off to
-            save it.
-          </h1>
+          <p className="text-sm text-slate-500">
+            Click a field to change it. Press Enter or click away to save, or
+            Escape to cancel.
+          </p>
           {formErrors.invalid && <Errors errors={formErrors.invalid} />}
           <div>
-            ID: <code className="bg-slate-200 rounded-md p-1">{t.id}</code>
+            ID:{" "}
+            <code className="bg-slate-200 rounded-md p-1 text-xs break-all">
+              {t.id}
+            </code>
           </div>
-          <div className="grid grid-cols-[20%_80%] gap-y-2 items-center">
-            <div className="mr-2 font-semibold text-right">Type:</div>
+          {/* labels above fields on phones, beside them from sm */}
+          <div className="grid grid-cols-1 gap-y-1 sm:grid-cols-[6rem_minmax(0,1fr)] sm:gap-x-3 sm:gap-y-2 sm:items-center">
+            <div className="font-semibold max-sm:mt-2 sm:text-right">Type:</div>
             <div className="flex gap-2">
               {[
                 { label: "Outgoing", value: "outgoing" },
@@ -160,7 +164,9 @@ export const TransactionDetails = ({ t, allTags, closeModal }: Props) => {
               ))}
             </div>
 
-            <div className="mr-2 font-semibold text-right">Account:</div>
+            <div className="font-semibold max-sm:mt-2 sm:text-right">
+              Account:
+            </div>
             <div className="w-full">
               <DropdownSelector
                 field="accountId"
@@ -172,7 +178,7 @@ export const TransactionDetails = ({ t, allTags, closeModal }: Props) => {
               />
             </div>
 
-            <div className="mr-2 font-semibold text-right">Date:</div>
+            <div className="font-semibold max-sm:mt-2 sm:text-right">Date:</div>
             <div className="w-full">
               <EditableText
                 text={form.date}
@@ -183,7 +189,9 @@ export const TransactionDetails = ({ t, allTags, closeModal }: Props) => {
               {formErrors.date && <Errors errors={formErrors.date} />}
             </div>
 
-            <div className="mr-2 font-semibold text-right">Payee:</div>
+            <div className="font-semibold max-sm:mt-2 sm:text-right">
+              Payee:
+            </div>
             <div className="">
               <EditableText
                 text={form.payee}
@@ -194,7 +202,9 @@ export const TransactionDetails = ({ t, allTags, closeModal }: Props) => {
               {formErrors.payee && <div>{formErrors.payee}</div>}
             </div>
 
-            <div className="mr-2 font-semibold text-right">Category:</div>
+            <div className="font-semibold max-sm:mt-2 sm:text-right">
+              Category:
+            </div>
             <div className="w-full">
               <DropdownSelector
                 field="categoryId"
@@ -204,7 +214,9 @@ export const TransactionDetails = ({ t, allTags, closeModal }: Props) => {
               />
             </div>
 
-            <div className="mr-2 font-semibold text-right">Amount:</div>
+            <div className="font-semibold max-sm:mt-2 sm:text-right">
+              Amount:
+            </div>
             <div className="w-full flex items-center">
               {tAmount.currencySymbol}
               <EditableText
@@ -216,7 +228,7 @@ export const TransactionDetails = ({ t, allTags, closeModal }: Props) => {
               {formErrors.amount && <div>{formErrors.amount}</div>}
             </div>
 
-            <div className="mr-2 font-semibold text-right">Tags:</div>
+            <div className="font-semibold max-sm:mt-2 sm:text-right">Tags:</div>
             {/* <div className="w-fit"> */}
             {/* <InputWithSelector
               list={fakeTags}
