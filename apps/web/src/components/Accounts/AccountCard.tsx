@@ -1,8 +1,9 @@
 "use client"
 import { EllipsisVertical, FileX } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import type { ApiTypes } from "@balance/api-types"
 import { Modal } from "../../lib/ComponentLibrary/Modal"
+import { Popover } from "../../lib/ComponentLibrary/Popover/Popover"
 import { ConfirmDelete } from "./ConfirmDelete"
 import { LinkedBank } from "./LinkedBank"
 import { AnimatePresence } from "motion/react"
@@ -14,29 +15,14 @@ export const AccountCard = ({ account }: Props) => {
   const [showMenu, setShowMenu] = useState(false)
   const [showConfirmDelete, setShowConfirmDelete] = useState(false)
 
-  const menuRef = useRef<HTMLDivElement>(null)
-
-  const handleClickMenu = (e: MouseEvent) => {
-    e.stopPropagation()
-    if (
-      !showConfirmDelete &&
-      menuRef.current &&
-      !menuRef.current.contains(e.target as Node)
-    ) {
-      setShowMenu(false)
-    }
-  }
-
-  useEffect(() => {
-    document.addEventListener("click", handleClickMenu)
-    return () => document.removeEventListener("click", handleClickMenu)
-  }, [setShowMenu, menuRef, handleClickMenu])
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
 
   return (
     <div>
       <div className="border-4 border-grass-300 rounded-lg p-4 h-full min-h-32 relative">
-        <div ref={menuRef} className="absolute right-1 top-1">
+        <div className="absolute right-1 top-1">
           <button
+            ref={menuButtonRef}
             type="button"
             aria-label="Account options"
             aria-expanded={showMenu}
@@ -47,18 +33,28 @@ export const AccountCard = ({ account }: Props) => {
             <EllipsisVertical />
           </button>
         </div>
+        {/* the popover's overlay closes the menu on a click elsewhere or Escape */}
         {showMenu && (
-          <button
-            type="button"
-            onClick={() => setShowConfirmDelete(true)}
-            className="absolute top-10 right-1 z-10 flex items-center gap-2 whitespace-nowrap rounded-lg
-              border-2 border-grass-300 bg-white px-2 py-2 hover:bg-grass-300"
+          <Popover
+            callerRef={menuButtonRef}
+            selector="#authNode"
+            closePopover={() => setShowMenu(false)}
+            positionStyle="belowRightAligned"
           >
-            <FileX />
-            Delete Account
-          </button>
+            <button
+              type="button"
+              onClick={() => {
+                setShowMenu(false)
+                setShowConfirmDelete(true)
+              }}
+              className="flex items-center gap-2 whitespace-nowrap rounded-lg border-2 border-grass-300
+                bg-white px-2 py-2 shadow-sm hover:bg-grass-300"
+            >
+              <FileX />
+              Delete Account
+            </button>
+          </Popover>
         )}
-        {/* name first; the id is reference detail, so it's small and may wrap anywhere */}
         <div className="pr-8 space-y-1">
           <h2 className="text-lg font-semibold truncate">{account.name}</h2>
           <div className="flex items-center gap-2">
