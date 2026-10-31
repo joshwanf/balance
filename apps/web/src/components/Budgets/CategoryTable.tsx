@@ -118,6 +118,13 @@ const SelectionBar = ({
     <span className="tabular-nums">{count} selected</span>
     <button
       type="button"
+      onClick={onClear}
+      className="text-sm text-slate-600 underline-offset-2 hover:underline"
+    >
+      Clear selected
+    </button>
+    <button
+      type="button"
       onClick={onDelete}
       disabled={isPending}
       className="rounded-md border-2 border-red-300 bg-red-100 px-3 py-0.5 text-sm font-semibold text-red-800
@@ -132,13 +139,6 @@ const SelectionBar = ({
           </span>
         )}
       </span>
-    </button>
-    <button
-      type="button"
-      onClick={onClear}
-      className="text-sm text-slate-600 underline-offset-2 hover:underline"
-    >
-      Clear
     </button>
   </div>
 )
