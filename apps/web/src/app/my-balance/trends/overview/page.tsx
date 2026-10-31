@@ -5,11 +5,13 @@ import {
   PageSearchParams,
   OVERVIEW_RANGE_PARAM,
   rangeFromSearchParams,
-  withMonth,
 } from "@/utils/month"
-import Link from "next/link"
 import { MonthRangeSelector } from "@/components/Trends/Overview/MonthRangeSelector"
-import { Overview } from "@/components/Trends/Overview/Overview"
+import {
+  Overview,
+  OVERVIEW_CHART_CLASS,
+} from "@/components/Trends/Overview/Overview"
+import { TrendsBreadcrumb } from "@/components/Trends/TrendsBreadcrumb"
 import { BarChartSkeleton } from "@/components/Skeletons/BarChartSkeleton"
 import { Suspense } from "react"
 
@@ -25,21 +27,19 @@ export default async function Page({
   )
 
   return (
-    <div>
-      <div>
-        <Link href={withMonth("/my-balance/trends", month)}>Trends</Link> &gt;{" "}
-        <Link href={withMonth("/my-balance/trends/overview", month)}>
-          Overview
-        </Link>
-      </div>
-
+    <div className="max-w-3xl space-y-4">
+      <TrendsBreadcrumb month={month} current="Overview" />
       <MonthRangeSelector currentQuery={currentQuery} curRange={curRange} />
-
-      <div className="w-1/2">
-        <Suspense key={`${month}|${curRange}`} fallback={<BarChartSkeleton />}>
-          <Overview month={month} range={curRange} />
-        </Suspense>
-      </div>
+      <Suspense
+        key={`${month}|${curRange}`}
+        fallback={
+          <div className={OVERVIEW_CHART_CLASS}>
+            <BarChartSkeleton />
+          </div>
+        }
+      >
+        <Overview month={month} range={curRange} />
+      </Suspense>
     </div>
   )
 }

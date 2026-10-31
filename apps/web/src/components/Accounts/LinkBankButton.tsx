@@ -8,7 +8,8 @@ import {
 } from "@/server/actions/plaid"
 import { LoadingSpinner } from "@/components/Skeletons/LoadingSpinner"
 
-export const LinkBankCard = () => {
+/** Opens Plaid Link; the outcome shows as a line of text under the toolbar. */
+export const LinkBankButton = () => {
   const [token, setToken] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
@@ -48,15 +49,25 @@ export const LinkBankCard = () => {
   }, [token, ready, open])
 
   return (
-    <div
-      onClick={handleClick}
-      className="border-4 border-dashed border-grass-300 rounded-lg
-        w-full h-full min-h-32 p-4 flex flex-col items-center justify-center gap-1
-        text-center text-grass-400 hover:cursor-pointer hover:text-grass-700"
-    >
-      {isPending ? <LoadingSpinner /> : <Landmark />}
-      <div>Link a bank</div>
-      {message && <div className="text-sm text-slate-600">{message}</div>}
-    </div>
+    <>
+      <button
+        type="button"
+        onClick={handleClick}
+        disabled={isPending}
+        className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-grass-700
+          bg-white px-4 py-0.5 text-grass-800 hover:bg-grass-200 disabled:opacity-60 sm:w-auto"
+      >
+        {/* same-size slot, so the spinner doesn't resize the button */}
+        <span className="flex size-5 items-center justify-center">
+          {isPending ? <LoadingSpinner /> : <Landmark className="size-5" />}
+        </span>
+        Link a bank
+      </button>
+      {message && (
+        <p role="status" className="text-sm text-slate-600 sm:basis-full">
+          {message}
+        </p>
+      )}
+    </>
   )
 }

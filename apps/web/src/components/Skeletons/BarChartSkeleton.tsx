@@ -1,15 +1,14 @@
 const HEIGHTS = [45, 75, 20, 15, 85]
 
-/** Grey placeholder bar chart shown while it loads. */
+/** Grey placeholder bar chart; fills its parent, which sets the height. */
 export const BarChartSkeleton = () => {
   return (
     <div
-      className="w-full h-full aspect-[2/1] animate-pulse"
+      className="flex h-full w-full flex-col animate-pulse"
       aria-busy="true"
       aria-label="Loading chart"
     >
-      <div className="h-4 mb-4 bg-grass-100"></div>
-      <div className="h-[85%] flex items-end gap-4 px-4 border-grass-100 border-b-2 border-l-2">
+      <div className="flex-1 flex items-end gap-4 px-4 border-grass-100 border-b-2 border-l-2">
         {HEIGHTS.map((height, i) => {
           return (
             <div
@@ -20,6 +19,7 @@ export const BarChartSkeleton = () => {
           )
         })}
       </div>
+      <div className="mt-4 h-4 bg-grass-100"></div>
     </div>
   )
 }

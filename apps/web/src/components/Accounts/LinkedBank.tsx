@@ -54,7 +54,6 @@ export const LinkedBank = ({ bank }: Props) => {
       </div>
       <div className="flex items-center gap-2 text-slate-500">
         <span className="truncate">
-          {bank.mask && `•••• ${bank.mask} · `}
           {bank.lastSyncedAt
             ? `synced ${moment(bank.lastSyncedAt).fromNow()}`
             : "not synced yet"}

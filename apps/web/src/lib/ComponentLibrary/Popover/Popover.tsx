@@ -16,8 +16,11 @@ interface Props {
   callerRef: React.RefObject<HTMLElement | null>
   children: React.ReactNode
   overlayStyle?: "none" | "darken" | "blur"
-  /** preferred side of the anchor; flips when that side has no room */
-  positionStyle?: "belowLeftAligned" | "aboveLeftAligned"
+  /**
+   * preferred side of the anchor (flips when that side has no room) and which
+   * anchor edge the popover lines up with
+   */
+  positionStyle?: "belowLeftAligned" | "aboveLeftAligned" | "belowRightAligned"
 }
 
 /**
@@ -69,20 +72,22 @@ export const Popover = ({
       const above = a.top - OFFSET - height
       const fitsBelow = below + height <= vh - MARGIN
       const fitsAbove = above >= MARGIN
-      const top =
-        positionStyle === "belowLeftAligned"
-          ? fitsBelow || !fitsAbove
-            ? below
-            : above
-          : fitsAbove || !fitsBelow
-            ? above
-            : below
+      const top = positionStyle.startsWith("below")
+        ? fitsBelow || !fitsAbove
+          ? below
+          : above
+        : fitsAbove || !fitsBelow
+          ? above
+          : below
 
       const clamp = (v: number, max: number) =>
         Math.max(MARGIN, Math.min(v, max - MARGIN))
       setPosition({
         top: clamp(top, vh - height),
-        left: clamp(a.left, vw - width),
+        left: clamp(
+          positionStyle.endsWith("RightAligned") ? a.right - width : a.left,
+          vw - width,
+        ),
       })
     }
 
