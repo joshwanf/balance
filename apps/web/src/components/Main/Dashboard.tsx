@@ -13,44 +13,37 @@ interface Props {
 
 export const Dashboard = ({ month }: Props) => {
   const tiles = [
-    {
-      title: "Budget",
-      to: "/my-balance/budgets",
-      element: <Scale size={64} />,
-    },
+    { title: "Budget", to: "/my-balance/budgets", Icon: Scale },
     {
       title: "Transactions",
       to: "/my-balance/transactions",
-      element: <ArrowRightLeft size={64} />,
+      Icon: ArrowRightLeft,
     },
-    {
-      title: "Accounts",
-      to: "/my-balance/accounts",
-      element: <WalletCards size={64} />,
-    },
-    {
-      title: "Trends",
-      to: "/my-balance/trends",
-      element: <ChartNoAxesCombined size={64} />,
-    },
+    { title: "Accounts", to: "/my-balance/accounts", Icon: WalletCards },
+    { title: "Trends", to: "/my-balance/trends", Icon: ChartNoAxesCombined },
   ]
   return (
-    <div className="flex justify-around">
-      <div className="grid grid-cols-2 h-[75vh] w-[50vw] p-10 gap-8 justify-center items-center justify-items-center">
-        {tiles.map(t => (
-          <Link
-            key={t.title}
-            href={withMonth(t.to, month)}
-            className="border-[0.2em] border-grass-200 rounded-[0.7em] p-8 w-full h-full
-          text-4xl text-grass-700 hover:text-grass-900
-      hover:border-grass-400 hover:cursor-pointer hover:shadow-lg hover:shadow-grass-500
-      flex flex-col justify-center items-center"
-          >
-            <div className="">{t.element}</div>
-            <div>{t.title}</div>
-          </Link>
-        ))}
-      </div>
-    </div>
+    // Phones: one column of compact rows, all four above the fold.
+    // From sm: a 2x2 grid of tiles, capped so they don't grow huge on wide screens.
+    <nav
+      aria-label="Sections"
+      className="mx-auto grid max-w-3xl grid-cols-1 gap-3 py-2 sm:grid-cols-2 sm:gap-6 sm:py-6"
+    >
+      {tiles.map(({ title, to, Icon }) => (
+        <Link
+          key={title}
+          href={withMonth(to, month)}
+          className="flex items-center gap-4 rounded-xl border-2 border-grass-200 px-5 py-4
+            text-xl text-grass-700
+            sm:aspect-[4/3] sm:flex-col sm:justify-center sm:gap-3 sm:p-6 sm:text-3xl
+            hover:border-grass-400 hover:text-grass-900 hover:shadow-lg hover:shadow-grass-500
+            focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-grass-400
+            motion-safe:transition-shadow"
+        >
+          <Icon className="size-8 shrink-0 sm:size-16" />
+          <span>{title}</span>
+        </Link>
+      ))}
+    </nav>
   )
 }
