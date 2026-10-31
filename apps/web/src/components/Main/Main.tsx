@@ -7,6 +7,7 @@ import { SettingsButton } from "./SettingsButton"
 import { MonthNavigator } from "./MonthNavigator"
 import { SIDEBAR_COOKIE, sectionLabel } from "./navLinks"
 import { useUrlTransition } from "../../hooks/urlTransition"
+import { useScrollLock } from "../../hooks/useScrollLock"
 
 interface Props {
   children?: React.ReactNode
@@ -30,6 +31,7 @@ export const Main = ({ children, defaultCollapsed = false }: Props) => {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [prevPathname, setPrevPathname] = useState(pathname)
   const { isPending } = useUrlTransition()
+  useScrollLock(drawerOpen)
 
   if (pathname !== prevPathname) {
     setPrevPathname(pathname)

@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react"
 import { motion } from "motion/react"
 import { createPortal } from "react-dom"
+import { useScrollLock } from "@/hooks/useScrollLock"
 
 interface Props {
   selector: string
@@ -10,6 +11,7 @@ interface Props {
 }
 export const Modal = ({ selector, element, closeModal, ...rest }: Props) => {
   const [authNode, setPortalNode] = useState<Element | null>(null)
+  useScrollLock()
   useEffect(() => {
     setPortalNode(document.querySelector(selector))
   }, [selector])
