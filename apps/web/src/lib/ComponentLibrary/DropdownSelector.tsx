@@ -25,13 +25,18 @@ export const DropdownSelector = ({
   const [showOpts, setShowOpts] = useState(false)
   const divRef = useRef(null)
 
-  const gridCols = displayText ? "grid-cols-[30%_70%]" : "grid-cols-1"
+  // with a label: above the select on phones, beside it from sm
+  const gridCols = displayText
+    ? "grid-cols-1 gap-1 sm:grid-cols-[30%_70%] sm:gap-0"
+    : "grid-cols-1"
   const gridColSpan = displayText ? "col-span-1" : "col-span-1"
   return (
     // <div className="inline-block hover:cursor-pointer">
     <label htmlFor={field} className={`grid ${gridCols}`}>
       {displayText && (
-        <div className="mr-2 justify-self-end text-bold">{displayText}</div>
+        <div className="sm:mr-2 sm:justify-self-end text-bold">
+          {displayText}
+        </div>
       )}
       <div
         className={`w-full flex flex-row justify-around justify-self-start bg-gray-100 border-2 rounded-lg hover:border-gray-300`}

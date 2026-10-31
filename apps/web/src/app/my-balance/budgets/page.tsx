@@ -1,6 +1,7 @@
 import { Suspense } from "react"
 import { CategoryList } from "@/components/Budgets/CategoryList"
-import { TableSkeleton } from "@/components/Skeletons/TableSkeleton"
+import { CategoriesToolbar } from "@/components/Budgets/CategoriesToolbar"
+import { CategoryTableSkeleton } from "@/components/Budgets/CategoryTableSkeleton"
 import {
   MONTH_PARAM,
   monthFromSearchParams,
@@ -17,9 +18,13 @@ export default async function Page({
     pageParam(await searchParams, MONTH_PARAM),
   )
   return (
-    // A new key shows the shimmer again when the month changes
-    <Suspense key={month} fallback={<TableSkeleton rows={8} cols={4} />}>
-      <CategoryList month={month} />
-    </Suspense>
+    <div>
+      <CategoriesToolbar />
+      {/* No key: a month change keeps the old table (dimmed by the shell)
+          until the new one arrives, instead of showing the skeleton */}
+      <Suspense fallback={<CategoryTableSkeleton />}>
+        <CategoryList month={month} />
+      </Suspense>
+    </div>
   )
 }

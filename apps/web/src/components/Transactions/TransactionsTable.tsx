@@ -2,6 +2,13 @@
 import { useState } from "react"
 import type { ApiTypes } from "@balance/api-types"
 import { TransactionCard } from "./TransactionCard"
+import { TableHead } from "@/components/Table/TableHead"
+import {
+  STACKED,
+  TABLE_CLASS,
+  TABLE_WRAPPER_CLASS,
+} from "@/components/Table/layout"
+import { TRANSACTION_COLUMNS, TRANSACTIONS_MIN_WIDTH } from "./columns"
 
 type Transaction = ApiTypes.Transaction.TRow
 
@@ -34,36 +41,28 @@ export const TransactionsTable = ({ transactions, allTags }: Props) => {
   }
 
   return (
-    <table className=" w-full border-collapse">
-      <thead>
-        <tr>
-          <th className="py-2 pl-2 text-left">
-            <input
-              type="checkbox"
-              name="allTransactions"
-              checked={checkAllItems}
-              onChange={handleSelectAllItems}
-              onClick={e => e.stopPropagation()}
+    <div className={TABLE_WRAPPER_CLASS}>
+      <table
+        className={`${TABLE_CLASS} ${TRANSACTIONS_MIN_WIDTH} ${STACKED.table}`}
+      >
+        <TableHead
+          columns={TRANSACTION_COLUMNS}
+          allChecked={checkAllItems}
+          onCheckAll={handleSelectAllItems}
+          stacked
+        />
+        <tbody className={STACKED.body}>
+          {transactions.map(t => (
+            <TransactionCard
+              key={t.id}
+              t={t}
+              allTags={allTags}
+              checked={selectedItem.includes(t.id)}
+              onChange={handleSelectItem(t.id)}
             />
-          </th>
-          <th className="py-2 text-left">Date</th>
-          <th className="py-2 text-left">Payee</th>
-          <th className="py-2 text-left">Account</th>
-          <th className="py-2 text-left">Amount</th>
-          <th className="py-2 text-left">Category</th>
-        </tr>
-      </thead>
-      <tbody className="space-y-40">
-        {transactions.map(t => (
-          <TransactionCard
-            key={t.id}
-            t={t}
-            allTags={allTags}
-            checked={selectedItem.includes(t.id)}
-            onChange={handleSelectItem(t.id)}
-          />
-        ))}
-      </tbody>
-    </table>
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }

@@ -61,38 +61,47 @@ export const CreateTransaction = ({ onAfterSubmitForm }: Props) => {
         className="align-top shadow-xl
       bg-grass-50 py-6 px-2 rounded-lg border-2 border-grass-600"
       >
-        <div className="grid grid-cols-2 text-sm">
-          <FormField
-            name="date"
-            displayText="Date"
-            placeholder="YYYY-MM-DD"
-            defaultValue={form?.date}
-          />
-          {error.date ? <Errors errors={error.date} /> : <div></div>}
-          <FormField
-            name="payee"
-            displayText="Payee"
-            placeholder="Payee"
-            defaultValue={form?.payee}
-          />
-          {error.payee ? <Errors errors={error.payee} /> : <div></div>}
-          <DropdownSelector
-            field="account"
-            name="accountId"
-            options={accounts}
-            displayText="Account"
-            disableBlankSelection={true}
-            selected={selectedAcct}
-            onChange={setSelectedAcct}
-          />
-          {error.account ? <Errors errors={error.account} /> : <div></div>}
-          <FormField
-            name="amount"
-            displayText="Amount"
-            placeholder="Amount"
-            defaultValue={form?.amount}
-          />
-          {error.amount ? <Errors errors={error.amount} /> : <div></div>}
+        {/* each error sits under its own field; one column on phones */}
+        <div className="grid grid-cols-1 gap-3 text-sm md:grid-cols-2 md:gap-x-6">
+          <div className="space-y-1">
+            <FormField
+              name="date"
+              displayText="Date"
+              placeholder="YYYY-MM-DD"
+              defaultValue={form?.date}
+            />
+            {error.date && <Errors errors={error.date} />}
+          </div>
+          <div className="space-y-1">
+            <FormField
+              name="payee"
+              displayText="Payee"
+              placeholder="Payee"
+              defaultValue={form?.payee}
+            />
+            {error.payee && <Errors errors={error.payee} />}
+          </div>
+          <div className="space-y-1">
+            <DropdownSelector
+              field="account"
+              name="accountId"
+              options={accounts}
+              displayText="Account"
+              disableBlankSelection={true}
+              selected={selectedAcct}
+              onChange={setSelectedAcct}
+            />
+            {error.account && <Errors errors={error.account} />}
+          </div>
+          <div className="space-y-1">
+            <FormField
+              name="amount"
+              displayText="Amount"
+              placeholder="Amount"
+              defaultValue={form?.amount}
+            />
+            {error.amount && <Errors errors={error.amount} />}
+          </div>
           <DropdownSelector
             field="category"
             name="categoryId"
@@ -103,10 +112,13 @@ export const CreateTransaction = ({ onAfterSubmitForm }: Props) => {
           />
         </div>
         {error.invalid && <Errors errors={error.invalid} />}
-        <div>
+        <div className="mt-4">
           <PrimaryButton type="submit" disabled={isPending}>
             <div className="flex gap-2 items-center justify-center">
-              {isPending && <LoadingSpinner />}Add transaction
+              <span className={isPending ? "" : "invisible"}>
+                <LoadingSpinner />
+              </span>
+              Add transaction
             </div>
           </PrimaryButton>
         </div>

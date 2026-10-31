@@ -3,6 +3,10 @@ import { TransactionsList } from "@/components/Transactions/TransactionsList"
 import { TransactionsToolbar } from "@/components/Transactions/TransactionsToolbar"
 import { TableSkeleton } from "@/components/Skeletons/TableSkeleton"
 import {
+  TRANSACTION_COLUMNS,
+  TRANSACTIONS_MIN_WIDTH,
+} from "@/components/Transactions/columns"
+import {
   MONTH_PARAM,
   SEARCH_PARAM,
   monthFromSearchParams,
@@ -22,8 +26,17 @@ export default async function Page({
   return (
     <div>
       <TransactionsToolbar />
-      {/* A new key shows the shimmer again when the month or search changes */}
-      <Suspense key={`${month}|${searchText}`} fallback={<TableSkeleton />}>
+      {/* No key: a month or search change keeps the old rows (dimmed by the
+          shell) until the new ones arrive, instead of showing the skeleton */}
+      <Suspense
+        fallback={
+          <TableSkeleton
+            columns={TRANSACTION_COLUMNS}
+            minWidth={TRANSACTIONS_MIN_WIDTH}
+            stacked
+          />
+        }
+      >
         <TransactionsList month={month} searchText={searchText} />
       </Suspense>
     </div>

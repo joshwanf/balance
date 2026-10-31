@@ -5,7 +5,9 @@ import type { ApiTypes } from "@balance/api-types"
 import { Money } from "@/utils/classes/Money"
 import { EditableText } from "@/lib/ComponentLibrary/EditableText"
 import { changeCategoryAction } from "@/server/actions/category"
-import { Errors } from "@/lib/ComponentLibrary/Errors"
+import { FloatingErrors } from "@/lib/ComponentLibrary/Errors"
+import { ROW_CLASS, STACKED } from "@/components/Table/layout"
+import { CATEGORY_ROW_HEIGHT } from "./columns"
 import { LoadingSpinner } from "@/components/Skeletons/LoadingSpinner"
 
 interface FormErrors {
@@ -32,7 +34,21 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
   const budgetedClasses = isOverBudget ? "bg-red-300" : "bg-green-200 "
 
   const isCheckedClassname = checked ? "bg-blue-200" : ""
-  const unifiedClassNames = `${isCheckedClassname} border-b-2`
+  // Below md the row stacks: name and available, then budget and used. At
+  // every size a thin bar along the bottom shows how much of the budget is used
+  const unifiedClassNames = `${isCheckedClassname} ${ROW_CLASS} ${STACKED.row} ${CATEGORY_ROW_HEIGHT} relative max-md:grid-cols-[1.5rem_minmax(0,1fr)_auto] max-md:px-2`
+  // The bar spans the larger of budget and spend: green up to the budget, and
+  // when over budget, red for the overspend
+  const barTotal = Math.max(budgetedAmount.cents, usedAmount.cents)
+  const withinPercent =
+    barTotal > 0
+      ? (Math.max(0, Math.min(budgetedAmount.cents, usedAmount.cents)) /
+          barTotal) *
+        100
+      : 0
+  const overPercent = isOverBudget
+    ? ((usedAmount.cents - budgetedAmount.cents) / barTotal) * 100
+    : 0
 
   const handleChangeForm =
     (field: "name" | "amount") => async (newValue: string) => {
@@ -47,62 +63,93 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
             ? undefined
             : "Please enter a valid money value.",
         })
-        return
+        return false
       }
 
-      startTransition(async () => {
-        const result = await changeCategoryAction({
-          id: c.id,
-          month: curMonth,
-          [field]: newValue,
-        })
+      return new Promise<boolean>(resolve => {
+        startTransition(async () => {
+          const result = await changeCategoryAction({
+            id: c.id,
+            month: curMonth,
+            [field]: newValue,
+          })
 
-        if (result) {
-          setFormErrors({})
-        }
+          if (result.status === "success") {
+            setFormErrors({})
+          }
+          resolve(result.status === "success")
+        })
       })
     }
 
+  const clearError = (field: keyof FormErrors) => () =>
+    setFormErrors(prev => ({ ...prev, [field]: undefined }))
+
   return (
     <tr className={unifiedClassNames}>
-      <td className="pl-2">
-        <div className="flex gap-2">
+      <td className="pl-2 max-md:row-span-2 max-md:self-center max-md:pl-0">
+        <div className="flex gap-2 items-center max-md:flex-col max-md:gap-1">
           <input type="checkbox" checked={checked} onChange={onChange} />
-          {isPending && <LoadingSpinner />}
-        </div>
-      </td>
-
-      <td className="py-2">
-        <div className="flex gap-2">
-          <EditableText text={c.name} editText={handleChangeForm("name")} />
-
-          {formErrors.name && <Errors errors={formErrors.name} />}
-        </div>
-      </td>
-
-      <td className="py-2">
-        <div className="flex gap-2 items-center">
-          <span className={`${budgetedClasses} px-2 py-1 rounded-md`}>
-            <span className="select-none">{budgetedAmount.currencySymbol}</span>
-            <EditableText
-              text={`${budgetedAmount.format({ noCurrencySymbol: true })}`}
-              editText={handleChangeForm("amount")}
-            />
+          {/* always takes its space, so saving doesn't widen the column */}
+          <span
+            className={isPending ? "" : "invisible"}
+            aria-hidden={!isPending}
+          >
+            <LoadingSpinner />
           </span>
+        </div>
+      </td>
 
-          {formErrors.budgetedAmount && (
-            <Errors errors={formErrors.budgetedAmount} />
+      <td className="pr-4 max-md:col-start-2 max-md:row-start-1 max-md:pr-0">
+        <div className="relative">
+          <EditableText
+            text={c.name}
+            onFinishEditing={handleChangeForm("name")}
+            onCancel={clearError("name")}
+          />
+          {formErrors.name && (
+            <FloatingErrors
+              errors={formErrors.name}
+              onDismiss={clearError("name")}
+            />
           )}
         </div>
       </td>
 
-      <td className="py-2 text-left">{usedAmount.format()}</td>
-
-      <td>
-        <div className="grid grid-cols-[5%_auto]">
-          <div className="text-right">{leftoverBudget.negSign}</div>
-          <div>{leftoverBudget.format({ noNegSign: true })}</div>
+      <td className="pr-4 max-md:col-start-2 max-md:row-start-2 max-md:pr-0">
+        <div className="relative max-md:w-36">
+          <span
+            className={`${budgetedClasses} flex items-center px-2 py-0.5 rounded-md`}
+          >
+            <span className="select-none">{budgetedAmount.currencySymbol}</span>
+            <EditableText
+              text={`${budgetedAmount.format({ noCurrencySymbol: true })}`}
+              type="number"
+              onFinishEditing={handleChangeForm("amount")}
+              onCancel={clearError("budgetedAmount")}
+            />
+          </span>
+          {formErrors.budgetedAmount && (
+            <FloatingErrors
+              errors={formErrors.budgetedAmount}
+              onDismiss={clearError("budgetedAmount")}
+            />
+          )}
         </div>
+      </td>
+
+      <td className="text-right pr-4 tabular-nums max-md:col-start-3 max-md:row-start-2 max-md:self-center max-md:pr-0 max-md:text-sm max-md:text-slate-500">
+        <span className="md:hidden">used </span>
+        {usedAmount.format()}
+      </td>
+
+      <td className="text-right pr-4 tabular-nums max-md:col-start-3 max-md:row-start-1 max-md:self-center max-md:pr-0 max-md:font-semibold">
+        {leftoverBudget.format().replace(/^-/, "\u2212")}
+      </td>
+
+      <td aria-hidden className="absolute inset-x-0 bottom-0 flex h-1 p-0">
+        <span className="bg-green-500" style={{ width: `${withinPercent}%` }} />
+        <span className="bg-red-500" style={{ width: `${overPercent}%` }} />
       </td>
     </tr>
   )

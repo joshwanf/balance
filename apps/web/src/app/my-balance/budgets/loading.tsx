@@ -1,5 +1,12 @@
-import { TableSkeleton } from "@/components/Skeletons/TableSkeleton"
+import { CategoriesToolbar } from "@/components/Budgets/CategoriesToolbar"
+import { CategoryTableSkeleton } from "@/components/Budgets/CategoryTableSkeleton"
 
+// Same toolbar and table geometry as the page, so nothing moves when it arrives
 export default function Loading() {
-  return <TableSkeleton rows={8} cols={4} />
+  return (
+    <div>
+      <CategoriesToolbar />
+      <CategoryTableSkeleton />
+    </div>
+  )
 }

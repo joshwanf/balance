@@ -2,28 +2,29 @@
 import { useState, useTransition } from "react"
 import type { ApiTypes } from "@balance/api-types"
 import { CategoryCard } from "./CategoryCard"
-import { AnimatePresence } from "motion/react"
-import { CreateCategory } from "./CreateCategory"
-import { PrimaryButton } from "../../lib/Base/Button"
 import { deleteCategoryAction } from "@/server/actions/category"
 import { LoadingSpinner } from "@/components/Skeletons/LoadingSpinner"
+import { TableHead } from "@/components/Table/TableHead"
+import {
+  STACKED,
+  TABLE_CLASS,
+  TABLE_WRAPPER_CLASS,
+} from "@/components/Table/layout"
+import { CATEGORY_COLUMNS, CATEGORIES_MIN_WIDTH } from "./columns"
 
 interface Props {
   /** this month's categories with budget and spend, fetched on the server */
   categories: ApiTypes.Category.TSerialized[]
 }
 
-/** Toolbar and table for the budgets page; owns selection and the add form. */
+/** The budgets table; owns row selection and deleting the selected rows. */
 export const CategoryTable = ({ categories }: Props) => {
   const [isDeletePending, startDeleteTransition] = useTransition()
-
   const [selectedCat, setSelectedCat] = useState<string[]>([])
-  const [checkAllItems, setCheckAllItems] = useState(false)
-  const [showEditCat, setShowEditCat] = useState(false)
 
   const allCatIds = categories.map(c => c.id)
-
-  const isDisabledDelete = selectedCat.length < 1
+  const checkAllItems =
+    allCatIds.length > 0 && selectedCat.length === allCatIds.length
 
   const handleSelectCat =
     (id: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,113 +32,64 @@ export const CategoryTable = ({ categories }: Props) => {
       if (e.target.checked) {
         setSelectedCat([...selectedCat, id])
       } else {
-        const nextSelectedItems = selectedCat.filter(i => i !== id)
-        setSelectedCat(nextSelectedItems)
+        setSelectedCat(selectedCat.filter(i => i !== id))
       }
     }
 
   const handleSelectAllItems = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation()
-    if (e.target.checked) {
-      setSelectedCat(allCatIds)
-      setCheckAllItems(true)
-    } else {
-      setSelectedCat([])
-      setCheckAllItems(false)
-    }
+    setSelectedCat(e.target.checked ? allCatIds : [])
   }
 
   const handleDeleteCats = () => {
     startDeleteTransition(async () => {
       const result = await deleteCategoryAction(selectedCat)
-      if (result.status === "success") {
-        setSelectedCat([])
-        setCheckAllItems(false)
-      }
+      if (result.status === "success") setSelectedCat([])
     })
   }
 
+  const selectionBar = selectedCat.length > 0 && (
+    <SelectionBar
+      count={selectedCat.length}
+      isPending={isDeletePending}
+      onDelete={handleDeleteCats}
+      onClear={() => setSelectedCat([])}
+    />
+  )
+
   return (
     <div>
-      <div>
-        <div
-          className="flex flex-col justify-between bg-grass-100 space-y-2
-      px-4 py-4 rounded-2xl"
+      {/* Phones have no header row, so select-all and the selection actions
+          live in a bar of the same height above the rows */}
+      <div className="md:hidden flex h-10 items-center gap-3 border-b-2 px-2">
+        <input
+          type="checkbox"
+          aria-label="Select all"
+          checked={checkAllItems}
+          onChange={handleSelectAllItems}
+        />
+        {selectionBar || (
+          <span className="text-sm text-slate-500">Select all</span>
+        )}
+      </div>
+      <div className={TABLE_WRAPPER_CLASS}>
+        <table
+          className={`${TABLE_CLASS} ${CATEGORIES_MIN_WIDTH} ${STACKED.table}`}
         >
-          <div className="flex flex-row justify-around">
-            <div>
-              <PrimaryButton
-                onClick={() => setShowEditCat(!showEditCat)}
-                className={`px-4 rounded-md border-2 
-                  ${!showEditCat ? "bg-grass-700" : "bg-grass-300"}
-                  ${!showEditCat ? "text-grass-200" : "text-grass-800"}
-                  ${!showEditCat ? "border-grass-700" : "border-grass-800"}
-                  `}
-              >
-                Add Category
-              </PrimaryButton>
-            </div>
-            {/* <div>
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                className={`
-                px-4 rounded-md border-2 
-              ${!showEditCat ? "bg-grass-700" : "bg-grass-300"}
-              ${!showEditCat ? "text-grass-200" : "text-grass-800"}
-              ${!showEditCat ? "border-grass-700" : "border-grass-800"}
-              `}
-              >
-                Fill from previous month
-              </motion.button>
-            </div> */}
-            <div>
-              <PrimaryButton
-                disabled={isDisabledDelete}
-                onClick={handleDeleteCats}
-                className={`px-4 rounded-md border-2 
-                  ${isDisabledDelete ? "bg-grass-200" : "bg-grass-700"}
-                  ${isDisabledDelete ? "text-grass-600" : "text-grass-200"}
-                  ${isDisabledDelete ? "border-grass-200" : "border-grass-700"}
-                  `}
-              >
-                <div className="flex gap-2 items-center">
-                  {isDeletePending && <LoadingSpinner />}
-                  Delete {selectedCat.length <= 1 ? "category" : "categories"}
-                </div>
-              </PrimaryButton>
-            </div>
-            <div>Search</div>
-          </div>
-          <AnimatePresence>
-            {showEditCat && (
-              <CreateCategory onAfterSubmitForm={() => setShowEditCat(false)} />
-            )}
-          </AnimatePresence>
-        </div>
-        <table className=" w-full border-collapse">
-          <thead>
-            <tr>
-              <th className="py-2 pl-2 text-left">
-                <input
-                  type="checkbox"
-                  checked={checkAllItems}
-                  onChange={handleSelectAllItems}
-                  onClick={e => e.stopPropagation()}
-                />
-              </th>
-              <th className="py-2 text-left">Category name</th>
-              <th className="py-2 text-left">Budgeted amount</th>
-              <th className="py-2 text-left">Used amount</th>
-              <th className="py-2 text-left">Available amount</th>
-            </tr>
-          </thead>
-          <tbody className="space-y-40">
+          <TableHead
+            columns={CATEGORY_COLUMNS}
+            allChecked={checkAllItems}
+            onCheckAll={handleSelectAllItems}
+            selectionBar={selectionBar}
+            stacked
+          />
+          <tbody className={STACKED.body}>
             {categories.map(c => (
               <CategoryCard
                 key={`${c.id}-${c.month}`}
                 id={c.id}
                 c={c}
-                checked={selectedCat?.includes(c.id)}
+                checked={selectedCat.includes(c.id)}
                 onChange={handleSelectCat(c.id)}
               />
             ))}
@@ -147,3 +99,46 @@ export const CategoryTable = ({ categories }: Props) => {
     </div>
   )
 }
+
+interface SelectionBarProps {
+  count: number
+  isPending: boolean
+  onDelete: () => void
+  onClear: () => void
+}
+
+/** "n selected" with its actions; takes the header row's place, same height. */
+const SelectionBar = ({
+  count,
+  isPending,
+  onDelete,
+  onClear,
+}: SelectionBarProps) => (
+  <div className="flex items-center gap-3 font-normal">
+    <span className="tabular-nums">{count} selected</span>
+    <button
+      type="button"
+      onClick={onClear}
+      className="text-sm text-slate-600 underline-offset-2 hover:underline"
+    >
+      Clear selected
+    </button>
+    <button
+      type="button"
+      onClick={onDelete}
+      disabled={isPending}
+      className="rounded-md border-2 border-red-300 bg-red-100 px-3 py-0.5 text-sm font-semibold text-red-800
+        hover:bg-red-200 disabled:opacity-60"
+    >
+      {/* the spinner covers the label so the button keeps its size */}
+      <span className="relative">
+        <span className={isPending ? "invisible" : ""}>Delete</span>
+        {isPending && (
+          <span className="absolute inset-0 flex items-center justify-center">
+            <LoadingSpinner />
+          </span>
+        )}
+      </span>
+    </button>
+  </div>
+)

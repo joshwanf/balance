@@ -57,7 +57,7 @@ export const CreateCategory = ({ onAfterSubmitForm, ...rest }: Props) => {
       >
         <form
           action={action}
-          className="flex flex-col lg:flex-row gap-2 lg:space-x-2 w-fit items-end text-sm"
+          className="flex flex-col lg:flex-row gap-2 lg:space-x-2 w-full lg:w-fit lg:items-end text-sm"
         >
           <input type="hidden" value={month} name="month" />
 
@@ -83,9 +83,9 @@ export const CreateCategory = ({ onAfterSubmitForm, ...rest }: Props) => {
             {createErrors.amount && <Errors errors={createErrors.amount} />}
           </div>
 
-          <div>
+          <div className="w-full lg:w-auto">
             <PrimaryButton
-              className={`flex items-center px-4 py-0.5
+              className={`flex items-center justify-center w-full lg:w-auto px-4 py-0.5
                 border-2 rounded-md 
                 border-grass-700 hover:border-grass-600 disabled:border-grass-300 
                 text-grass-700 hover:text-grass-600 disabled:text-grass-300`}

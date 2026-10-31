@@ -2,27 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* html {
-  overflow-y: scroll;
-} */
-
-/* width */
-/* ::-webkit-scrollbar {
-  width: 10px;
-}  */
-
-/* Track */
-/* ::-webkit-scrollbar-track {
-  background: transparent;
-} */
-
-/* Handle */
-/* ::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 5px;
-} */
-
-/* Handle on hover */
-/* ::-webkit-scrollbar-thumb:hover {
-  background: #555;
-} */
+/* The page background shows in phone safe areas and when overscrolling, so
+   it matches the edges of whichever shell is on screen */
+@layer base {
+  html {
+    background-color: theme(colors.beige);
+  }
+  html:has([data-app-shell]) {
+    background-color: theme(colors.slate.200);
+  }
+}
