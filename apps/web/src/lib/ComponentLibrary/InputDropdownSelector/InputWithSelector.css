@@ -9,7 +9,7 @@
   content: "text here";
 }
 .backspace-pending-true .pill:nth-last-child(2) {
-  @apply bg-red-100 border-2 border-red-300;
+  @apply bg-danger-100 border-2 border-danger-300;
   /* outline: 0.1em solid red; */
   /* background-color: red; */
 }

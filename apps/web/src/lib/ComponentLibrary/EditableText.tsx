@@ -76,7 +76,7 @@ export const EditableText = ({
     // same box in both states, so starting to edit doesn't change the row height
     "w-full h-8 px-2 py-0.5 leading-6",
     "border rounded-md",
-    "hover:border-grass-300",
+    "hover:border-brand-300",
     "focus:outline-none",
   ]
   const unifiedClassNames = [
@@ -94,7 +94,7 @@ export const EditableText = ({
           value={draft}
           onChange={e => setDraft(e.target.value)}
           onBlur={handleStopEditing}
-          className={`${unifiedClassNames} border-grass-600`}
+          className={`${unifiedClassNames} border-brand-600`}
           onKeyDown={handleKeyDown}
           {...rest}
         />
@@ -107,7 +107,7 @@ export const EditableText = ({
           className={`${unifiedClassNames} inline-block truncate border-transparent cursor-pointer`}
         >
           {committed || (
-            <span className="text-slate-400">
+            <span className="text-neutral-400">
               {rest.placeholder ?? "\u00A0"}
             </span>
           )}

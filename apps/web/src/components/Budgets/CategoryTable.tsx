@@ -69,7 +69,7 @@ export const CategoryTable = ({ categories }: Props) => {
           onChange={handleSelectAllItems}
         />
         {selectionBar || (
-          <span className="text-sm text-slate-500">Select all</span>
+          <span className="text-sm text-neutral-500">Select all</span>
         )}
       </div>
       <div className={TABLE_WRAPPER_CLASS}>
@@ -119,7 +119,7 @@ const SelectionBar = ({
     <button
       type="button"
       onClick={onClear}
-      className="text-sm text-slate-600 underline-offset-2 hover:underline"
+      className="text-sm text-neutral-600 underline-offset-2 hover:underline"
     >
       Clear selected
     </button>
@@ -127,8 +127,8 @@ const SelectionBar = ({
       type="button"
       onClick={onDelete}
       disabled={isPending}
-      className="rounded-md border-2 border-red-300 bg-red-100 px-3 py-0.5 text-sm font-semibold text-red-800
-        hover:bg-red-200 disabled:opacity-60"
+      className="rounded-md border-2 border-danger-300 bg-danger-100 px-3 py-0.5 text-sm font-semibold text-danger-800
+        hover:bg-danger-200 disabled:opacity-60"
     >
       {/* the spinner covers the label so the button keeps its size */}
       <span className="relative">

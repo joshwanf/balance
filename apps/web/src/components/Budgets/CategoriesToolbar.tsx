@@ -13,14 +13,14 @@ export const CategoriesToolbar = () => {
   const [showAddCat, setShowAddCat] = useState(false)
 
   return (
-    <div className="flex flex-col bg-grass-100 space-y-2 px-4 py-4 rounded-2xl">
+    <div className="flex flex-col bg-brand-100 space-y-2 px-4 py-4 rounded-2xl">
       <div>
         <PrimaryButton
           onClick={() => setShowAddCat(!showAddCat)}
           className={`w-full sm:w-auto px-4 rounded-md border-2
-            ${!showAddCat ? "bg-grass-700" : "bg-grass-300"}
-            ${!showAddCat ? "text-grass-200" : "text-grass-800"}
-            ${!showAddCat ? "border-grass-700" : "border-grass-800"}
+            ${!showAddCat ? "bg-brand-700" : "bg-brand-300"}
+            ${!showAddCat ? "text-brand-200" : "text-brand-800"}
+            ${!showAddCat ? "border-brand-700" : "border-brand-800"}
             `}
         >
           Add Category

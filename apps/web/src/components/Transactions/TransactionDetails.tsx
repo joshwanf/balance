@@ -130,14 +130,14 @@ export const TransactionDetails = ({ t, allTags, closeModal }: Props) => {
         }}
       >
         <div className="pt-4 space-y-4">
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-neutral-500">
             Click a field to change it. Press Enter or click away to save, or
             Escape to cancel.
           </p>
           {formErrors.invalid && <Errors errors={formErrors.invalid} />}
           <div>
             ID:{" "}
-            <code className="bg-slate-200 rounded-md p-1 text-xs break-all">
+            <code className="bg-neutral-200 rounded-md p-1 text-xs break-all">
               {t.id}
             </code>
           </div>
@@ -152,8 +152,8 @@ export const TransactionDetails = ({ t, allTags, closeModal }: Props) => {
                 <label
                   key={value}
                   className={`cursor-pointer rounded-full border-2 px-3 py-0.5 text-sm
-                    has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-grass-500
-                    ${form.type === value ? "border-grass-600 bg-grass-100 font-semibold text-grass-900" : "border-slate-200 text-slate-500 hover:border-slate-300"}`}
+                    has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-500
+                    ${form.type === value ? "border-brand-600 bg-brand-100 font-semibold text-brand-900" : "border-neutral-200 text-neutral-500 hover:border-neutral-300"}`}
                 >
                   <input
                     type="radio"
@@ -250,14 +250,14 @@ export const TransactionDetails = ({ t, allTags, closeModal }: Props) => {
             <PrimaryButton
               onClick={handleShowConfirmModal}
               additionalClasses={[
-                "px-6 py-0 my-6 mx-0 flex items-center text-md font-semibold rounded-md border-0 ring-0 outline-none active:bg-red-200 active:border-red-200",
+                "px-6 py-0 my-6 mx-0 flex items-center text-md font-semibold rounded-md border-0 ring-0 outline-none active:bg-danger-200 active:border-danger-200",
               ]}
               classSchema={{
-                bgColor: "bg-red-300",
-                hoverBgColor: "hover:bg-red-200",
-                borderColor: "border-red-300",
-                hoverBorderColor: "hover:border-red-200",
-                textColor: "text-red-800",
+                bgColor: "bg-danger-300",
+                hoverBgColor: "hover:bg-danger-200",
+                borderColor: "border-danger-300",
+                hoverBorderColor: "hover:border-danger-200",
+                textColor: "text-danger-800",
               }}
             >
               <X size={20} />

@@ -39,10 +39,10 @@ export const DropdownSelector = ({
         </div>
       )}
       <div
-        className={`w-full flex flex-row justify-around justify-self-start bg-gray-100 border-2 rounded-lg hover:border-gray-300`}
+        className={`w-full flex flex-row justify-around justify-self-start bg-neutral-100 border-2 rounded-lg hover:border-neutral-300`}
       >
         <select
-          className="w-full bg-transparent text-gray-900 px-2 py-0.5 appearance-none hover:cursor-pointer focus:ring-0 focus-visible:outline-none"
+          className="w-full bg-transparent text-neutral-900 px-2 py-0.5 appearance-none hover:cursor-pointer focus:ring-0 focus-visible:outline-none"
           value={selected}
           onChange={e => onChange(e.target.value)}
           id={field}
@@ -55,7 +55,7 @@ export const DropdownSelector = ({
             <option
               key={option.id}
               value={option.id}
-              className="p-2 hover:bg-grass-200"
+              className="p-2 hover:bg-brand-200"
             >
               {option.name}
             </option>
@@ -64,7 +64,7 @@ export const DropdownSelector = ({
         {!disableBlankSelection && (
           <button
             type="button"
-            className="px-2 w-8 border-l-2 rounded-r-sm border-l-slate-300 hover:bg-gray-200 hover:rounded-r-md"
+            className="px-2 w-8 border-l-2 rounded-r-sm border-l-slate-300 hover:bg-neutral-200 hover:rounded-r-md"
             onClick={() => onChange("")}
           >
             &times;

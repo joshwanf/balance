@@ -63,7 +63,7 @@ export const Main = ({ children, defaultCollapsed = false }: Props) => {
   return (
     // From lg the shell fills the screen and only <main> scrolls. Below lg the
     // page itself scrolls, so phone browsers can collapse their address bar
-    <div data-app-shell className="flex min-h-dvh lg:h-dvh bg-slate-200">
+    <div data-app-shell className="flex min-h-dvh lg:h-dvh bg-neutral-200">
       {/* Desktop sidebar */}
       <aside
         className={`hidden lg:flex flex-col justify-between shrink-0 py-4 px-2
@@ -81,8 +81,8 @@ export const Main = ({ children, defaultCollapsed = false }: Props) => {
             onClick={toggleCollapsed}
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
             title={`${collapsed ? "Expand" : "Collapse"} sidebar ( [ )`}
-            className="p-1 rounded-md text-grass-700 hover:text-grass-900
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-grass-600"
+            className="p-1 rounded-md text-brand-700 hover:text-brand-900
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
           >
             {collapsed ? <PanelLeftOpen /> : <PanelLeftClose />}
           </button>
@@ -103,7 +103,7 @@ export const Main = ({ children, defaultCollapsed = false }: Props) => {
           role="dialog"
           aria-modal="true"
           aria-label="Menu"
-          className={`absolute inset-y-0 left-0 w-64 max-w-[85vw] bg-slate-200 shadow-xl
+          className={`absolute inset-y-0 left-0 w-64 max-w-[85vw] bg-neutral-200 shadow-xl
             flex flex-col justify-between py-4 px-2
             transition-transform duration-200 ease-out motion-reduce:transition-none
             ${drawerOpen ? "translate-x-0" : "-translate-x-full"}`}
@@ -114,7 +114,7 @@ export const Main = ({ children, defaultCollapsed = false }: Props) => {
                 type="button"
                 onClick={() => setDrawerOpen(false)}
                 aria-label="Close menu"
-                className="p-1 rounded-md text-grass-700 hover:text-grass-900"
+                className="p-1 rounded-md text-brand-700 hover:text-brand-900"
               >
                 <X />
               </button>
@@ -129,23 +129,23 @@ export const Main = ({ children, defaultCollapsed = false }: Props) => {
 
       <div className="flex-1 min-w-0 flex flex-col">
         {/* Phone and tablet top bar */}
-        <header className="lg:hidden sticky top-0 z-30 bg-slate-200 flex items-center gap-3 px-3 h-12 shrink-0">
+        <header className="lg:hidden sticky top-0 z-30 bg-neutral-200 flex items-center gap-3 px-3 h-12 shrink-0">
           <button
             type="button"
             onClick={() => setDrawerOpen(true)}
             aria-label="Open menu"
             aria-expanded={drawerOpen}
-            className="p-1 rounded-md text-grass-800 hover:bg-grass-300"
+            className="p-1 rounded-md text-brand-800 hover:bg-brand-300"
           >
             <Menu />
           </button>
-          <span className="font-semibold text-grass-900 truncate">
+          <span className="font-semibold text-brand-900 truncate">
             {sectionLabel(pathname)}
           </span>
         </header>
 
         <main className="flex-1 lg:overflow-y-auto lg:[scrollbar-gutter:stable] px-2 pb-6 lg:pt-4">
-          <div className="bg-white rounded-3xl px-4 pb-6">
+          <div className="bg-surface rounded-3xl px-4 pb-6">
             <MonthNavigator />
             {/* a month or search change keeps the old page, dimmed, until the new one is ready */}
             <div

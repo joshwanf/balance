@@ -13,7 +13,7 @@ export const SettingsMenu = () => {
     })
   }
   return (
-    <div className="p-2 border-2 rounded-lg bg-grass-300 border-grass-700 text-grass-800">
+    <div className="p-2 border-2 rounded-lg bg-brand-300 border-brand-700 text-brand-800">
       <SecondaryButton
         disabled={isPending}
         onClick={handleLogout}

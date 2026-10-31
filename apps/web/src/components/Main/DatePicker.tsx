@@ -31,7 +31,7 @@ export const DatePicker = ({ onChange, closeMenu }: Props) => {
   }
   return (
     <div
-      className="bg-grass-100 border-2 border-grass-300 w-48 space-y-2 p-2 rounded-lg"
+      className="bg-brand-100 border-2 border-brand-300 w-48 space-y-2 p-2 rounded-lg"
       onClick={e => e.stopPropagation()}
     >
       <DateOptions monthOpts={[month, setMonth]} yearOpts={[year, setYear]} />

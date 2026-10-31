@@ -73,7 +73,7 @@ export const InputWithSelector = ({
   return (
     <div
       ref={tagRef}
-      className="w-full border-2 border-grass-300 py-2 px-2 rounded-lg"
+      className="w-full border-2 border-brand-300 py-2 px-2 rounded-lg"
     >
       <div
         className={`flex flex-wrap gap-2 backspace-pending-${isPendingBackspace}`}

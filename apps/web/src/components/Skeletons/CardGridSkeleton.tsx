@@ -13,11 +13,11 @@ export const CardGridSkeleton = ({ count = 3 }: Props) => {
       {Array.from({ length: count }, (_, i) => (
         <div
           key={i}
-          className="border-4 border-grass-100 rounded-lg p-4 h-28 space-y-3"
+          className="border-4 border-brand-100 rounded-lg p-4 h-28 space-y-3"
         >
-          <div className="h-4 w-3/4 rounded bg-grass-100" />
-          <div className="h-4 w-1/2 rounded bg-grass-100" />
-          <div className="h-4 w-1/3 rounded bg-grass-100" />
+          <div className="h-4 w-3/4 rounded bg-brand-100" />
+          <div className="h-4 w-1/2 rounded bg-brand-100" />
+          <div className="h-4 w-1/3 rounded bg-brand-100" />
         </div>
       ))}
     </div>

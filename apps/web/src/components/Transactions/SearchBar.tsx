@@ -38,9 +38,9 @@ export const SearchBar = ({ searchText }: Props) => {
   return (
     <div
       className="flex items-start gap-1 w-full
-    border-2 border-grass-300 rounded-lg py-2 px-2
-    focus-within:border-grass-600
-    text-grass-700"
+    border-2 border-brand-300 rounded-lg py-2 px-2
+    focus-within:border-brand-600
+    text-brand-700"
     >
       <Search className="mt-0.5 shrink-0" />
       <textarea

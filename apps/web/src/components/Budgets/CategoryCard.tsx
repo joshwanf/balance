@@ -31,9 +31,9 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
   const usedAmount = Money.fromCents(c.usedAmount?.toString())
   const isOverBudget = budgetedAmount.lt(usedAmount)
   const leftoverBudget = budgetedAmount.subtract(usedAmount)
-  const budgetedClasses = isOverBudget ? "bg-red-300" : "bg-green-200 "
+  const budgetedClasses = isOverBudget ? "bg-danger-300" : "bg-success-200 "
 
-  const isCheckedClassname = checked ? "bg-blue-200" : ""
+  const isCheckedClassname = checked ? "bg-info-200" : ""
   // Below md the row stacks: name and available, then budget and used. At
   // every size a thin bar along the bottom shows how much of the budget is used
   const unifiedClassNames = `${isCheckedClassname} ${ROW_CLASS} ${STACKED.row} ${CATEGORY_ROW_HEIGHT} relative max-md:grid-cols-[1.5rem_minmax(0,1fr)_auto] max-md:px-2`
@@ -138,7 +138,7 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
         </div>
       </td>
 
-      <td className="text-right pr-4 tabular-nums max-md:col-start-3 max-md:row-start-2 max-md:self-center max-md:pr-0 max-md:text-sm max-md:text-slate-500">
+      <td className="text-right pr-4 tabular-nums max-md:col-start-3 max-md:row-start-2 max-md:self-center max-md:pr-0 max-md:text-sm max-md:text-neutral-500">
         <span className="md:hidden">used </span>
         {usedAmount.format()}
       </td>
@@ -148,8 +148,8 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
       </td>
 
       <td aria-hidden className="absolute inset-x-0 bottom-0 flex h-1 p-0">
-        <span className="bg-green-500" style={{ width: `${withinPercent}%` }} />
-        <span className="bg-red-500" style={{ width: `${overPercent}%` }} />
+        <span className="bg-success-500" style={{ width: `${withinPercent}%` }} />
+        <span className="bg-danger-500" style={{ width: `${overPercent}%` }} />
       </td>
     </tr>
   )

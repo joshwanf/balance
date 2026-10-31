@@ -36,8 +36,8 @@ export const CreateAccountForm = ({ closeForm, ...rest }: Props) => {
     <div className="relative p-4 w-full">
       <div
         className="absolute right-1 top-1 rounded-md p-1
-        text-grass-400
-        hover:cursor-pointer hover:bg-grass-200 hover:text-grass-700"
+        text-brand-400
+        hover:cursor-pointer hover:bg-brand-200 hover:text-brand-700"
         onClick={closeForm}
       >
         <X />
@@ -51,7 +51,7 @@ export const CreateAccountForm = ({ closeForm, ...rest }: Props) => {
             <Errors errors={state.error.name} />
           )}
           <input
-            className="px-3 py-1 border border-slate-400 rounded-lg w-full hover:border-slate-600"
+            className="px-3 py-1 border border-neutral-400 rounded-lg w-full hover:border-neutral-600"
             defaultValue={name}
             type="text"
             id="name"
@@ -86,7 +86,7 @@ export const CreateAccountForm = ({ closeForm, ...rest }: Props) => {
             <Errors errors={state.error.initialBalance} />
           )}
           <input
-            className="px-3 py-1 border border-slate-400 rounded-lg w-full hover:border-slate-600"
+            className="px-3 py-1 border border-neutral-400 rounded-lg w-full hover:border-neutral-600"
             defaultValue={initialBalance}
             type="number"
             id="initialBalance"
@@ -95,7 +95,7 @@ export const CreateAccountForm = ({ closeForm, ...rest }: Props) => {
           />
         </label>
 
-        <Btn.PrimaryButton additionalClasses={["py-1", "px-2", "bg-grass-50"]}>
+        <Btn.PrimaryButton additionalClasses={["py-1", "px-2", "bg-brand-50"]}>
           <div className="flex gap-2 items-center justify-center">
             {isPending && <LoadingSpinner />}Add new account
           </div>
