@@ -13,6 +13,7 @@ export default function Loading() {
       <TableSkeleton
         columns={TRANSACTION_COLUMNS}
         minWidth={TRANSACTIONS_MIN_WIDTH}
+        stacked
       />
     </div>
   )

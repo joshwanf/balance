@@ -33,6 +33,7 @@ export default async function Page({
           <TableSkeleton
             columns={TRANSACTION_COLUMNS}
             minWidth={TRANSACTIONS_MIN_WIDTH}
+            stacked
           />
         }
       >

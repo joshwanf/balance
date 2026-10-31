@@ -1,41 +1,65 @@
 "use client"
 import { useEffect, useState } from "react"
 import { createPortal } from "react-dom"
-import { AnimatePresence, motion } from "motion/react"
+import { motion, useReducedMotion } from "motion/react"
+import { X } from "lucide-react"
 interface Props {
   selector: string
   element: React.JSX.Element
-  closeModal: (e: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) => void
+  /** called with the click event, or with nothing for Escape */
+  closeModal: (e?: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) => void
+  title?: string
 }
-export const SideModal = ({
-  selector,
-  element,
-  closeModal,
-  ...rest
-}: Props) => {
+/**
+ * Panel that slides in from the right: full width on phones, max-w-md from sm.
+ * It scrolls on its own and closes from its X button, the backdrop or Escape.
+ */
+export const SideModal = ({ selector, element, closeModal, title }: Props) => {
   const [portalNode, setPortalNode] = useState<Element | null>(null)
+  const reduceMotion = useReducedMotion()
   useEffect(() => {
     setPortalNode(document.querySelector(selector))
   }, [selector])
+  useEffect(() => {
+    const keyDown = (e: KeyboardEvent) => e.key === "Escape" && closeModal()
+    window.addEventListener("keydown", keyDown)
+    return () => window.removeEventListener("keydown", keyDown)
+  }, [closeModal])
   if (!portalNode) return null
+
+  const slide = reduceMotion ? {} : { x: "100%" }
 
   return (
     <>
       {createPortal(
         <div
           onClick={closeModal}
-          className="fixed inset-0 flex justify-end items-start z-50 backdrop-blur-sm transition-opacity duration-1000"
+          className="fixed inset-0 flex justify-end items-start z-50 bg-black/20 backdrop-blur-sm"
         >
           <motion.div
-            animate={{
-              x: [200, 0, 50, 0],
-              transition: { ease: ["easeIn", "easeOut"], duration: 0.5 },
-            }}
-            exit={{ opacity: 0, scale: 1.3 }}
+            role="dialog"
+            aria-modal="true"
+            aria-label={title}
+            initial={slide}
+            animate={{ x: 0 }}
+            exit={slide}
+            transition={{ type: "tween", ease: "easeOut", duration: 0.2 }}
             onClick={e => e.stopPropagation()}
-            className="bg-white h-screen shadow-lg w-1/2 px-4"
+            className="bg-white h-dvh w-full sm:max-w-md shadow-lg flex flex-col"
           >
-            {element}
+            <div className="flex items-center justify-between gap-2 border-b-2 px-4 py-3">
+              <h2 className="truncate text-lg font-semibold">{title}</h2>
+              <button
+                type="button"
+                onClick={closeModal}
+                aria-label="Close"
+                className="shrink-0 rounded-md p-1 text-slate-600 hover:bg-slate-100
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-grass-600"
+              >
+                <X />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-4 pb-6">{element}</div>
           </motion.div>
         </div>,
         portalNode,

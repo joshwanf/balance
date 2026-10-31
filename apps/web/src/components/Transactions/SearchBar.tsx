@@ -36,7 +36,7 @@ export const SearchBar = ({ searchText }: Props) => {
         name="search"
         value={text}
         onChange={e => setText(e.target.value)}
-        className="w-full bg-transparent focus:outline-none
+        className="w-full min-w-0 bg-transparent focus:outline-none
         placeholder:italic"
         placeholder="Search..."
         onKeyDown={handleKeyDown}
