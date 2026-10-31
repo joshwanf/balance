@@ -59,7 +59,7 @@ export const Main = ({ children, defaultCollapsed = false }: Props) => {
   })
 
   return (
-    <div className="flex h-dvh bg-slate-200">
+    <div data-app-shell className="flex h-dvh bg-slate-200">
       {/* Desktop sidebar */}
       <aside
         className={`hidden lg:flex flex-col justify-between shrink-0 py-4 px-2
