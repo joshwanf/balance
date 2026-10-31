@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* The page background shows in phone safe areas and when overscrolling, so
+   it matches the edges of whichever shell is on screen */
+@layer base {
+  html {
+    background-color: theme(colors.beige);
+  }
+  html:has([data-app-shell]) {
+    background-color: theme(colors.slate.200);
+  }
+}

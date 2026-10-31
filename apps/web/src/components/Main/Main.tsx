@@ -61,7 +61,7 @@ export const Main = ({ children, defaultCollapsed = false }: Props) => {
   return (
     // From lg the shell fills the screen and only <main> scrolls. Below lg the
     // page itself scrolls, so phone browsers can collapse their address bar
-    <div className="flex min-h-dvh lg:h-dvh bg-slate-200">
+    <div data-app-shell className="flex min-h-dvh lg:h-dvh bg-slate-200">
       {/* Desktop sidebar */}
       <aside
         className={`hidden lg:flex flex-col justify-between shrink-0 py-4 px-2
