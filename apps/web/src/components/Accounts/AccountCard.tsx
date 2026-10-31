@@ -75,9 +75,6 @@ export const AccountCard = ({ account }: Props) => {
               </span>
             )}
           </div>
-          <div className="font-mono text-xs text-slate-500 break-all">
-            {account.id}
-          </div>
         </div>
         {account.bank && <LinkedBank bank={account.bank} />}
       </div>
