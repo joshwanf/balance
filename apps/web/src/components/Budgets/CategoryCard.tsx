@@ -160,7 +160,13 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
         {leftoverBudget.format().replace(/^-/, "\u2212")}
       </td>
 
-      <td aria-hidden className="absolute inset-x-0 bottom-0 flex h-1 p-0">
+      {/* Sits over the row's 2px bottom border so no sliver of it shows
+          below. As a table row (md up, border-collapse) that border reaches
+          1px further down than in the stacked grid. */}
+      <td
+        aria-hidden
+        className="absolute inset-x-0 -bottom-0.5 flex h-1 p-0 md:-bottom-[3px]"
+      >
         <span
           className="bg-success-500"
           style={{ width: `${withinPercent}%` }}
