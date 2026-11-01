@@ -14,7 +14,7 @@ export const CategoriesToolbar = ({ totals }: { totals: ReactNode }) => {
   const [showAddCat, setShowAddCat] = useState(false)
 
   return (
-    <div className="flex flex-col bg-brand-100 space-y-3 px-4 py-4 rounded-2xl">
+    <div className="flex flex-col space-y-3 pb-4">
       {totals}
       <div>
         <PrimaryButton

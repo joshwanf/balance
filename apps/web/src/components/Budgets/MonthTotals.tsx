@@ -4,7 +4,7 @@ import { Money } from "@/utils/classes/Money"
 
 export const TOTALS_GRID_CLASS = "grid grid-cols-2 gap-2 sm:flex sm:gap-3"
 export const TOTAL_TILE_CLASS =
-  "grid rounded-xl bg-surface px-3 py-2 sm:min-w-44"
+  "grid rounded-xl bg-neutral-100 px-3 py-2 sm:min-w-44"
 
 const Tile = ({ label, cents }: { label: string; cents: number }) => (
   <div className={TOTAL_TILE_CLASS}>
