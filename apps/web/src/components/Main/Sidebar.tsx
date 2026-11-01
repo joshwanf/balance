@@ -15,13 +15,13 @@ export const Sidebar = ({ collapsed, onNavigate }: Props) => {
         <img src="/assets/balance.svg" alt="" className="size-7" />
         <span
           className={
-            collapsed ? "sr-only" : "text-xl font-semibold text-grass-800"
+            collapsed ? "sr-only" : "text-xl font-semibold text-brand-800"
           }
         >
           Balance
         </span>
       </div>
-      <div className="space-y-2 text-slate-600">
+      <div className="space-y-2 text-neutral-600">
         {NAV_LINKS.map(l => (
           <SidebarLink
             key={l.to}

@@ -33,11 +33,11 @@ export const Dashboard = ({ month }: Props) => {
         <Link
           key={title}
           href={withMonth(to, month)}
-          className="flex items-center gap-4 rounded-xl border-2 border-grass-200 px-5 py-4
-            text-xl text-grass-700
+          className="flex items-center gap-4 rounded-xl border-2 border-brand-200 px-5 py-4
+            text-xl text-brand-700
             sm:aspect-[4/3] sm:flex-col sm:justify-center sm:gap-3 sm:p-6 sm:text-3xl
-            hover:border-grass-400 hover:text-grass-900 hover:shadow-lg hover:shadow-grass-500
-            focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-grass-400
+            hover:border-brand-400 hover:text-brand-900 hover:shadow-lg hover:shadow-brand-500
+            focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-400
             motion-safe:transition-shadow"
         >
           <Icon className="size-8 shrink-0 sm:size-16" />

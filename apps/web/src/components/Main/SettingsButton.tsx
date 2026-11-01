@@ -20,8 +20,8 @@ export const SettingsButton = ({}: Props) => {
         type="button"
         aria-label="Settings"
         aria-expanded={showMenu}
-        className="p-1 rounded-md text-grass-700 hover:text-grass-900
-          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-grass-600"
+        className="p-1 rounded-md text-brand-700 hover:text-brand-900
+          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
         onClick={handleShowMenu}
       >
         <Cog className="hover:animate-spin-slow motion-reduce:animate-none" />

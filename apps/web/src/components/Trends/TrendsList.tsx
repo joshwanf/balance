@@ -23,7 +23,7 @@ export const TrendsList = ({ month }: Props) => {
   ]
   return (
     <div className="max-w-3xl space-y-4">
-      <h1 className="text-xl font-semibold text-grass-900">Trends</h1>
+      <h1 className="text-xl font-semibold text-brand-900">Trends</h1>
       {/* one column on phones, two from sm */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-6">
         {trends.map(({ to, ...t }) => (

@@ -36,23 +36,23 @@ export const LinkedBank = ({ bank }: Props) => {
   }
 
   return (
-    <div className="mt-3 pt-3 border-t-2 border-grass-200 space-y-1 text-sm">
+    <div className="mt-3 pt-3 border-t-2 border-brand-200 space-y-1 text-sm">
       <div className="flex items-center gap-2">
-        <Landmark className="size-4 shrink-0 text-grass-700" />
+        <Landmark className="size-4 shrink-0 text-brand-700" />
         <span className="truncate font-semibold">
           {bank.institutionName ?? "Linked bank"}
         </span>
         <span
           className={`ml-auto shrink-0 rounded-full px-2 text-xs ${
             isActive
-              ? "bg-grass-100 text-grass-800"
-              : "bg-amber-100 text-amber-800"
+              ? "bg-brand-100 text-brand-800"
+              : "bg-warning-100 text-warning-800"
           }`}
         >
           {STATUS_LABELS[bank.status]}
         </span>
       </div>
-      <div className="flex items-center gap-2 text-slate-500">
+      <div className="flex items-center gap-2 text-neutral-500">
         <span className="truncate">
           {bank.lastSyncedAt
             ? `synced ${moment(bank.lastSyncedAt).fromNow()}`
@@ -64,7 +64,7 @@ export const LinkedBank = ({ bank }: Props) => {
             onClick={handleSync}
             disabled={isPending}
             className="ml-auto flex shrink-0 items-center gap-1 rounded-md px-2 py-0.5
-            text-grass-800 hover:bg-grass-200 disabled:opacity-50"
+            text-brand-800 hover:bg-brand-200 disabled:opacity-50"
           >
             <RefreshCw
               className={`size-4 ${isPending ? "animate-spin" : ""}`}
@@ -73,7 +73,7 @@ export const LinkedBank = ({ bank }: Props) => {
           </button>
         )}
       </div>
-      {message && <div className="text-slate-600">{message}</div>}
+      {message && <div className="text-neutral-600">{message}</div>}
     </div>
   )
 }

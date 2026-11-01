@@ -18,7 +18,7 @@ export const ConfirmDelete = ({ accountId, closeModal }: Props) => {
   }
 
   return (
-    <div className="bg-white p-6 space-y-2 rounded-md">
+    <div className="bg-surface p-6 space-y-2 rounded-md">
       <div>
         Are you sure you want to delete the account? All its transactions will
         be deleted as well.
@@ -30,15 +30,15 @@ export const ConfirmDelete = ({ accountId, closeModal }: Props) => {
             "py-0.5",
             "rounded-md",
             "font-semibold",
-            "hover:text-white",
+            "hover:text-surface",
           ]}
           onClick={handleDelete}
           classSchema={{
-            bgColor: "bg-slate-200",
-            hoverBgColor: "hover:bg-red-700",
-            borderColor: "bg-slate-200",
-            hoverBorderColor: "hover:bg-red-700",
-            textColor: "text-red-600",
+            bgColor: "bg-neutral-200",
+            hoverBgColor: "hover:bg-danger-700",
+            borderColor: "bg-neutral-200",
+            hoverBorderColor: "hover:bg-danger-700",
+            textColor: "text-danger-600",
           }}
         >
           <div className="flex gap-2 items-center justify-center">
@@ -50,10 +50,10 @@ export const ConfirmDelete = ({ accountId, closeModal }: Props) => {
             "px-6",
             "py-0.5",
             "rounded-md",
-            "bg-slate-500",
-            "text-white",
+            "bg-neutral-500",
+            "text-surface",
             "font-semibold",
-            "hover:bg-slate-400",
+            "hover:bg-neutral-400",
           ]}
           onClick={closeModal}
         >

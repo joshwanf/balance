@@ -17,12 +17,12 @@ export const AllButtons = () => {
         </h1>
         <Btn.PrimaryButton
           additionalClasses={[
-            "bg-green-500",
-            "border-green-500",
-            "hover:bg-green-400",
-            "hover:border-green-400",
-            "active:bg-green-600",
-            "active:border-green-600",
+            "bg-success-500",
+            "border-success-500",
+            "hover:bg-success-400",
+            "hover:border-success-400",
+            "active:bg-success-600",
+            "active:border-success-600",
           ]}
         >
           Primary Button

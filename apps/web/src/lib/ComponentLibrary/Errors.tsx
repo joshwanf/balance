@@ -7,7 +7,7 @@ export const Errors = ({ errors }: Props) => {
   const baseTwClasses = []
   if (typeof errors === "string") {
     return (
-      <div className="error bg-red-100 border-2 border-red-300 rounded-md text-center text-wrap">
+      <div className="error bg-danger-100 border-2 border-danger-300 rounded-md text-center text-wrap">
         {errors}
       </div>
     )
@@ -15,7 +15,7 @@ export const Errors = ({ errors }: Props) => {
     const allErrors = Object.entries(errors)
     return allErrors.map(([errorType, msg]) => (
       <div
-        className="error bg-red-100 border-2 border-red-300 rounded-md text-center"
+        className="error bg-danger-100 border-2 border-danger-300 rounded-md text-center"
         key={errorType}
       >
         {msg}
@@ -44,7 +44,7 @@ export const FloatingErrors = ({
     <div
       role="alert"
       className="error absolute left-0 top-full z-10 mt-1 flex w-max max-w-xs items-start gap-2
-        rounded-md border-2 border-red-300 bg-red-100 py-0.5 pl-2 pr-1 text-sm shadow-md"
+        rounded-md border-2 border-danger-300 bg-danger-100 py-0.5 pl-2 pr-1 text-sm shadow-md"
     >
       <div>
         {messages.map(msg => (
@@ -57,7 +57,7 @@ export const FloatingErrors = ({
           onClick={onDismiss}
           aria-label="Dismiss"
           title="Dismiss (Esc)"
-          className="rounded px-1 leading-5 text-red-800 hover:bg-red-200"
+          className="rounded px-1 leading-5 text-danger-800 hover:bg-danger-200"
         >
           &times;
         </button>

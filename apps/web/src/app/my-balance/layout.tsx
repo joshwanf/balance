@@ -10,7 +10,7 @@ import { getSessionUser } from "@/server/auth"
 import { listAccountNames } from "@/server/data"
 import { listCategoryNames } from "@/server/data"
 
-// browser chrome colour; matches the app shell (bg-slate-200)
+// browser chrome colour; matches the app shell (bg-neutral-200)
 export const viewport: Viewport = { themeColor: "#e2e8f0" }
 
 export default async function MyBalanceLayout({

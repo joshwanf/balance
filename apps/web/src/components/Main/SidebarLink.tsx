@@ -36,9 +36,9 @@ export const SidebarLink = ({
       // Same padding and height collapsed or not, so the icons never move
       // when the rail opens or closes
       className={`flex items-center gap-3 h-11 px-2.5 w-full text-lg border-2 border-transparent rounded-lg
-        hover:bg-grass-300 hover:border-grass-600 hover:text-grass-800
-        focus-visible:outline-none focus-visible:border-grass-700
-        aria-[current=page]:bg-white/50 aria-[current=page]:text-grass-900
+        hover:bg-brand-300 hover:border-brand-600 hover:text-brand-800
+        focus-visible:outline-none focus-visible:border-brand-700
+        aria-[current=page]:bg-surface/50 aria-[current=page]:text-brand-900
         aria-[current=page]:font-semibold aria-[current=page]:shadow-sm`}
     >
       <Icon className="size-6 shrink-0" />

@@ -6,7 +6,7 @@ interface Props {
 }
 export const ConfirmDelete = ({ closeModal, deleteT, ...rest }: Props) => {
   return (
-    <div className="bg-white p-6 space-y-2 rounded-md">
+    <div className="bg-surface p-6 space-y-2 rounded-md">
       <div>Are you sure you want to delete the transaction?</div>
       <div className="space-x-4">
         <PrimaryButton
@@ -15,15 +15,15 @@ export const ConfirmDelete = ({ closeModal, deleteT, ...rest }: Props) => {
             "py-0.5",
             "rounded-md",
             "font-semibold",
-            "hover:text-white",
+            "hover:text-surface",
           ]}
           onClick={deleteT}
           classSchema={{
-            bgColor: "bg-slate-200",
-            hoverBgColor: "hover:bg-red-700",
-            borderColor: "bg-slate-200",
-            hoverBorderColor: "hover:bg-red-700",
-            textColor: "text-red-600",
+            bgColor: "bg-neutral-200",
+            hoverBgColor: "hover:bg-danger-700",
+            borderColor: "bg-neutral-200",
+            hoverBorderColor: "hover:bg-danger-700",
+            textColor: "text-danger-600",
           }}
         >
           Delete
@@ -33,10 +33,10 @@ export const ConfirmDelete = ({ closeModal, deleteT, ...rest }: Props) => {
             "px-6",
             "py-0.5",
             "rounded-md",
-            "bg-slate-500",
-            "text-white",
+            "bg-neutral-500",
+            "text-surface",
             "font-semibold",
-            "hover:bg-slate-400",
+            "hover:bg-neutral-400",
           ]}
           onClick={closeModal}
         >
