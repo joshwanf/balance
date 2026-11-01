@@ -47,6 +47,7 @@ export const POST = withAuth(async (request, { user }) => {
   const res: ApiTypes.Category.CreateResponse = {
     id: created.id,
     name: created.name,
+    color: created.color,
     month,
     amount,
     usedAmount: 0,

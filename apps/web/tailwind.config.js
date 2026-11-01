@@ -23,8 +23,19 @@ const toVars = tokens =>
     ),
   )
 
-const lightVars = { ...toVars(light), colorScheme: "light" }
-const darkVars = { ...toVars(dark), colorScheme: "dark" }
+// Category chips: how strongly the hue tints the chip, and its outline
+const lightVars = {
+  ...toVars(light),
+  "--chip-tint": "20%",
+  "--chip-ring": "0%",
+  colorScheme: "light",
+}
+const darkVars = {
+  ...toVars(dark),
+  "--chip-tint": "30%",
+  "--chip-ring": "45%",
+  colorScheme: "dark",
+}
 
 // No data-theme: follow the OS. data-theme="light" | "dark": the user's
 // choice from the settings menu, set before first paint (see ThemeScript).
@@ -66,6 +77,10 @@ export default {
       success: scale("success"),
       warning: scale("warning"),
       info: scale("info"),
+      // Category hues, for swatches (chips use the .category-chip class)
+      cat: Object.fromEntries(
+        Object.keys(light.cat).map(k => [k, v(`cat-${k}`)]),
+      ),
     },
     extend: {
       // Bare `border` and `ring` classes use these

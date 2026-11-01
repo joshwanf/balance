@@ -14,6 +14,7 @@ import {
   deleteCategories,
   getCategoryForMonth,
 } from "@/server/data"
+import { isCategoryColor } from "@/theme/categoryColors"
 
 export const runtime = "nodejs"
 
@@ -40,16 +41,19 @@ export const PATCH = withAuth<Params>(async (request, { params, user }) => {
   const title = "Change category"
   const { id } = params
   const month = monthParam(searchParam(request, "startMonth"), title)
-  const { name, amount } =
-    await readJson<ApiTypes.Category.ChangeRequest>(request)
+  const { name, amount, color } =
+    await readJson<Partial<ApiTypes.Category.ChangeRequest>>(request)
   if (amount !== undefined && !Number.isInteger(amount)) {
     throw apiError(400, title, "Must provide a valid amount (in cents)")
+  }
+  if (color !== undefined && !isCategoryColor(color)) {
+    throw apiError(400, title, "Unknown colour")
   }
   await confirmC(id, user.id)
 
   const result = await changeCategory(
     { userId: user.id, id, month },
-    { name, amount },
+    { name, amount, color },
   )
 
   if (!result) throw notFound(title)

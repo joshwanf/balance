@@ -209,6 +209,8 @@ export declare namespace ApiTypes {
     }
     /** serialization of prisma Decimal and Date types */
     interface TSerialized extends Category {
+      /** palette key (see apps/web theme/categoryColors), null if unset */
+      color: string | null
       month: string
       usedAmount: number
     }
@@ -226,6 +228,7 @@ export declare namespace ApiTypes {
     interface ChangeRequest {
       name: string
       amount: number
+      color: string
     }
     interface ChangeResponse extends TSerialized {}
     interface RemoveRequest {

@@ -4,6 +4,7 @@ import { makeAccounts } from "./seeders/accounts"
 import { makeCategories } from "./seeders/categories"
 import { makeCategoryMonths } from "./seeders/categoryMonths"
 import { makeTransactions } from "./seeders/transactions"
+import { CATEGORY_COLORS } from "../src/theme/categoryColors"
 
 const prisma = new PrismaClient()
 
@@ -40,9 +41,10 @@ async function main() {
   }
   console.log(`Seeded accounts`)
 
-  for (const x of demoCategories) {
+  // same colours the category_color migration gives existing categories
+  for (const [i, x] of demoCategories.entries()) {
     const result = await prisma.category.create({
-      data: x,
+      data: { ...x, color: CATEGORY_COLORS[i % CATEGORY_COLORS.length] },
     })
   }
   console.log(`Seeded categories`)
