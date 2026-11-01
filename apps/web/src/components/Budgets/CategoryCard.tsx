@@ -51,6 +51,11 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
   const overPercent = isOverBudget
     ? ((usedAmount.cents - budgetedAmount.cents) / barTotal) * 100
     : 0
+  // where green turns red, as a share of the filled part
+  const splitPercent =
+    withinPercent + overPercent > 0
+      ? (withinPercent / (withinPercent + overPercent)) * 100
+      : 100
 
   const handleChangeForm =
     (field: "name" | "amount") => async (newValue: string) => {
@@ -165,13 +170,18 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
           1px further down than in the stacked grid. */}
       <td
         aria-hidden
-        className="absolute inset-x-0 -bottom-0.5 flex h-1 p-0 md:-bottom-[3px]"
+        className="absolute inset-x-0 -bottom-0.5 h-1 p-0 md:-bottom-[3px]"
       >
+        {/* One element with a hard colour stop, not a green and a red
+            sibling: two boxes with fractional widths can round to different
+            pixels in some browsers, leaving the red a hair off the green */}
         <span
-          className="bg-success-500"
-          style={{ width: `${withinPercent}%` }}
+          className="block h-full"
+          style={{
+            width: `${withinPercent + overPercent}%`,
+            backgroundImage: `linear-gradient(to right, rgb(var(--success-500)) ${splitPercent}%, rgb(var(--danger-500)) ${splitPercent}%)`,
+          }}
         />
-        <span className="bg-danger-500" style={{ width: `${overPercent}%` }} />
       </td>
     </tr>
   )
