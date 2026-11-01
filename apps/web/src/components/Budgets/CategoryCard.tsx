@@ -165,16 +165,10 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
         {leftoverBudget.format().replace(/^-/, "\u2212")}
       </td>
 
-      {/* Sits over the row's 2px bottom border so no sliver of it shows
-          below. As a table row (md up, border-collapse) that border reaches
-          1px further down than in the stacked grid. */}
       <td
         aria-hidden
         className="absolute inset-x-0 -bottom-0.5 h-1 p-0 md:-bottom-[3px]"
       >
-        {/* One element with a hard colour stop, not a green and a red
-            sibling: two boxes with fractional widths can round to different
-            pixels in some browsers, leaving the red a hair off the green */}
         <span
           className="block h-full"
           style={{
