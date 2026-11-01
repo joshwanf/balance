@@ -3,10 +3,17 @@ import { after } from "next/server"
 import { CountryCode, Products } from "plaid"
 import config from "@/server/config"
 import { requireUser } from "@/server/auth"
-import { countItemsForUser, getItemForUser, isDemoUser } from "@/server/data"
+import {
+  countItemsForUser,
+  getItemForUser,
+  isDemoUser,
+  setItemStatus,
+} from "@/server/data"
 import { userMutation } from "@/server/mutation"
 import { isPlaidConfigured, plaidClient } from "@/server/plaid/client"
 import { linkEnvironmentFor, storeLinkedItem } from "@/server/plaid/link"
+import { decryptToken } from "@/server/plaid/crypto"
+import type { PlaidEnvironment } from "@/server/config"
 import { refreshSandboxItem, syncItem } from "@/server/plaid/sync"
 
 // The shared demo account keeps its own bank plus this many from visitors
@@ -120,4 +127,48 @@ export const syncNowAction = async (itemId: string): Promise<SyncNowState> =>
           ? { status: "error", error: "This bank needs to be reconnected." }
           : { status: "error", error: "Couldn't reach the bank. Try again." }
     }
+  })
+
+/**
+ * A link token that opens Plaid Link in update mode for one of the user's
+ * banks, so they can sign in again when Plaid says the login has expired.
+ */
+export const createReconnectTokenAction = async (
+  itemId: string,
+): Promise<LinkTokenState> => {
+  const user = await requireUser()
+  if (!isPlaidConfigured()) {
+    return { status: "error", error: "Bank linking isn't set up." }
+  }
+  const item = await getItemForUser(itemId, user.id)
+  if (!item) return { status: "error", error: "Couldn't find that bank." }
+
+  try {
+    const { data } = await plaidClient(
+      item.environment as PlaidEnvironment,
+    ).linkTokenCreate({
+      user: { client_user_id: user.id },
+      client_name: "Balance",
+      access_token: decryptToken(item.accessToken),
+      country_codes: [CountryCode.Us],
+      language: "en",
+      webhook: config.plaid?.webhookUrl ?? undefined,
+    })
+    return { status: "success", linkToken: data.link_token }
+  } catch (e) {
+    console.error(e)
+    return { status: "error", error: "Couldn't start reconnecting." }
+  }
+}
+
+/** After the user signs in again in Plaid Link: mark the bank healthy and sync */
+export const finishReconnectAction = async (
+  itemId: string,
+): Promise<{ status: "success" } | { status: "error"; error: string }> =>
+  userMutation(async user => {
+    const item = await getItemForUser(itemId, user.id)
+    if (!item) return { status: "error", error: "Couldn't find that bank." }
+    await setItemStatus(item.id, "active")
+    after(() => syncItem(item.id).catch(console.error))
+    return { status: "success" }
   })
