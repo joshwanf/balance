@@ -9,6 +9,8 @@ import { FloatingErrors } from "@/lib/ComponentLibrary/Errors"
 import { ROW_CLASS, STACKED } from "@/components/Table/layout"
 import { CATEGORY_ROW_HEIGHT } from "./columns"
 import { LoadingSpinner } from "@/components/Skeletons/LoadingSpinner"
+import { CategoryColorPicker } from "@/components/Categories/CategoryColorPicker"
+import { CategoryColor, categoryColor } from "@/theme/categoryColors"
 
 interface FormErrors {
   name?: string
@@ -49,6 +51,11 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
   const overPercent = isOverBudget
     ? ((usedAmount.cents - budgetedAmount.cents) / barTotal) * 100
     : 0
+  // where green turns red, as a share of the filled part
+  const splitPercent =
+    withinPercent + overPercent > 0
+      ? (withinPercent / (withinPercent + overPercent)) * 100
+      : 100
 
   const handleChangeForm =
     (field: "name" | "amount") => async (newValue: string) => {
@@ -82,6 +89,12 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
       })
     }
 
+  const handleChangeColor = (color: CategoryColor) => {
+    startTransition(async () => {
+      await changeCategoryAction({ id: c.id, month: curMonth, color })
+    })
+  }
+
   const clearError = (field: keyof FormErrors) => () =>
     setFormErrors(prev => ({ ...prev, [field]: undefined }))
 
@@ -101,7 +114,12 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
       </td>
 
       <td className="pr-4 max-md:col-start-2 max-md:row-start-1 max-md:pr-0">
-        <div className="relative">
+        <div className="relative flex min-w-0 items-center gap-1">
+          <CategoryColorPicker
+            name={c.name}
+            color={categoryColor(c)}
+            onPick={handleChangeColor}
+          />
           <EditableText
             text={c.name}
             onFinishEditing={handleChangeForm("name")}
@@ -147,9 +165,17 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
         {leftoverBudget.format().replace(/^-/, "\u2212")}
       </td>
 
-      <td aria-hidden className="absolute inset-x-0 bottom-0 flex h-1 p-0">
-        <span className="bg-success-500" style={{ width: `${withinPercent}%` }} />
-        <span className="bg-danger-500" style={{ width: `${overPercent}%` }} />
+      <td
+        aria-hidden
+        className="absolute inset-x-0 -bottom-0.5 h-1 p-0 md:-bottom-[3px]"
+      >
+        <span
+          className="block h-full"
+          style={{
+            width: `${withinPercent + overPercent}%`,
+            backgroundImage: `linear-gradient(to right, rgb(var(--success-500)) ${splitPercent}%, rgb(var(--danger-500)) ${splitPercent}%)`,
+          }}
+        />
       </td>
     </tr>
   )

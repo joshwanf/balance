@@ -81,9 +81,12 @@ model Transaction {
 }
 
 model Category {
-  id          String @unique @db.Uuid
+  id          String  @unique @db.Uuid
   name        String
   cleanedName String
+  // Palette key from src/theme/categoryColors.ts ("green", "teal", ...).
+  // Null shows a colour picked from the id.
+  color       String?
 
   userId        String          @db.Uuid
   user          User            @relation(fields: [userId], references: [id])

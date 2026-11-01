@@ -2,6 +2,8 @@
 import { useMemo } from "react"
 import { Chart as ChartJS } from "chart.js"
 import { useResolvedTheme } from "./useThemeChoice"
+import { categoryColorValue } from "./categoryColors"
+import { useCategoryColors } from "@/components/Lookups/LookupsProvider"
 
 const cssColor = (name: string, fallback: string) => {
   if (typeof window === "undefined") return fallback
@@ -17,7 +19,10 @@ const cssColor = (name: string, fallback: string) => {
  * theme changes; Chart.js reads defaults only when a chart is created) and
  * the line colour for axes. Axis colours go in each chart's options, not
  * ChartJS.defaults.borderColor: changing that default turns off the Colors
- * plugin that colours the bars.
+ * plugin.
+ *
+ * Also returns colorFor(categoryName): the category's colour in the current
+ * theme, or grey for names that aren't a category (unassigned).
  */
 export const useChartTheme = () => {
   const theme = useResolvedTheme()
@@ -32,5 +37,17 @@ export const useChartTheme = () => {
     () => cssColor("neutral-400", "rgba(0,0,0,0.1)"),
     [theme],
   )
-  return { theme, line }
+  const { byName } = useCategoryColors()
+  const colorFor = useMemo(() => {
+    const unassigned = cssColor("neutral-500", "#999")
+    const cache = new Map<string, string>()
+    return (name: string) => {
+      if (!cache.has(name)) {
+        const c = byName.get(name)
+        cache.set(name, c ? categoryColorValue(c) : unassigned)
+      }
+      return cache.get(name)!
+    }
+  }, [byName, theme])
+  return { theme, line, colorFor }
 }

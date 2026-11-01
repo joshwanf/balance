@@ -33,11 +33,12 @@ interface Props {
 }
 
 export const OverviewChart = ({ categories, labels, ...rest }: Props) => {
-  const { theme, line } = useChartTheme()
+  const { theme, line, colorFor } = useChartTheme()
   const datasets =
     categories?.map(c => ({
       label: c.name,
       data: c.outgoing,
+      backgroundColor: colorFor(c.name),
     })) || []
 
   const data = {

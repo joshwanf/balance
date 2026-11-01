@@ -5,6 +5,7 @@ import { getFormData } from "@/server/utils/formData"
 import { isApiErrorBody } from "@/server/errors"
 import { Money } from "@/utils/classes/Money"
 import { monthFromSearchParams } from "@/utils/month"
+import { isCategoryColor } from "@/theme/categoryColors"
 
 export type CreateCategoryState =
   | { status: "idle" }
@@ -78,13 +79,18 @@ export const changeCategoryAction = async ({
   month,
   name,
   amount,
+  color,
 }: {
   id: string
   month: string
   name?: string
   amount?: string
+  color?: string
 }) =>
   userMutation(async user => {
+    if (color !== undefined && !isCategoryColor(color)) {
+      return { status: "error", error: "Unknown colour." } as const
+    }
     try {
       const result = await changeCategory(
         { userId: user.id, id, month },
@@ -92,6 +98,7 @@ export const changeCategoryAction = async ({
           name,
           amount:
             amount !== undefined ? Money.parse(amount).toInt() : undefined,
+          color,
         },
       )
       return result === null
