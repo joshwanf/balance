@@ -34,8 +34,8 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
   const isOverBudget = budgetedAmount.lt(usedAmount)
   const leftoverBudget = budgetedAmount.subtract(usedAmount)
   const budgetedClasses = isOverBudget
-    ? "bg-danger-200 text-danger-900 hover:ring-danger-400"
-    : "bg-success-200 text-success-900 hover:ring-success-400"
+    ? "bg-danger-200 text-danger-900 hover:ring-danger-400 focus-within:!ring-danger-500"
+    : "bg-success-200 text-success-900 hover:ring-success-400 focus-within:!ring-success-600"
 
   const isCheckedClassname = checked ? "bg-info-200" : ""
   // Below md the row stacks: name and available, then budget and used. At
@@ -139,7 +139,7 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
       <td className="pr-4 max-md:col-start-2 max-md:row-start-2 max-md:pr-0">
         <div className="relative max-md:w-36">
           <span
-            className={`${budgetedClasses} flex items-center rounded-full py-0.5 pl-3 pr-1 hover:ring-1 focus-within:!ring-2 focus-within:!ring-brand-600`}
+            className={`${budgetedClasses} flex items-center rounded-full py-0.5 pl-3 pr-1 hover:ring-1 focus-within:!ring-2`}
           >
             <span className="select-none">{budgetedAmount.currencySymbol}</span>
             <EditableText
