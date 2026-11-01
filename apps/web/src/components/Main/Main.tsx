@@ -63,7 +63,7 @@ export const Main = ({ children, defaultCollapsed = false }: Props) => {
   return (
     // From lg the shell fills the screen and only <main> scrolls. Below lg the
     // page itself scrolls, so phone browsers can collapse their address bar
-    <div data-app-shell className="flex min-h-dvh lg:h-dvh bg-neutral-200">
+    <div data-app-shell className="flex min-h-dvh lg:h-dvh bg-shell">
       {/* Desktop sidebar */}
       <aside
         className={`hidden lg:flex flex-col justify-between shrink-0 py-4 px-2
@@ -103,7 +103,7 @@ export const Main = ({ children, defaultCollapsed = false }: Props) => {
           role="dialog"
           aria-modal="true"
           aria-label="Menu"
-          className={`absolute inset-y-0 left-0 w-64 max-w-[85vw] bg-neutral-200 shadow-xl
+          className={`absolute inset-y-0 left-0 w-64 max-w-[85vw] bg-shell shadow-xl
             flex flex-col justify-between py-4 px-2
             transition-transform duration-200 ease-out motion-reduce:transition-none
             ${drawerOpen ? "translate-x-0" : "-translate-x-full"}`}
@@ -129,7 +129,7 @@ export const Main = ({ children, defaultCollapsed = false }: Props) => {
 
       <div className="flex-1 min-w-0 flex flex-col">
         {/* Phone and tablet top bar */}
-        <header className="lg:hidden sticky top-0 z-30 bg-neutral-200 flex items-center gap-3 px-3 h-12 shrink-0">
+        <header className="lg:hidden sticky top-0 z-30 bg-shell flex items-center gap-3 px-3 h-12 shrink-0">
           <button
             type="button"
             onClick={() => setDrawerOpen(true)}

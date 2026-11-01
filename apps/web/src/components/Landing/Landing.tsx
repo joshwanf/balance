@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { TopBar } from "./TopBar"
+import { HeroImage } from "./HeroImage"
 import { Search } from "lucide-react"
 import { getSessionUser } from "@/server/auth"
 import { StartBalancingButton } from "@/components/Landing/StartBalancingButton"
@@ -13,16 +14,10 @@ export const Landing = async () => {
       {/* <div className="relative w-full h-screen bg-paper"> */}
       {/* Phones stack the headline above the hero image; from md it sits on top */}
       <div className="w-full bg-paper flex flex-col">
-        <img
-          src="/assets/images/hero.svg"
-          alt="Hero Image"
-          className="inset-0 w-full object-cover"
-        />
+        <HeroImage className="inset-0 w-full" />
         <div className="max-md:order-first flex flex-col justify-start px-6 pt-4 pb-8 md:absolute md:inset-0 md:px-8 md:pt-0 md:pb-0 md:mt-[5%]">
           <div className="flex flex-col space-y-4 md:mt-[8%] md:w-1/2">
-            <h1 className="text-4xl lg:text-6xl">
-              Find Your Balance
-            </h1>
+            <h1 className="text-4xl lg:text-6xl">Find Your Balance</h1>
             <p className="text-lg text-neutral-500">
               Level with your money today
             </p>
@@ -31,12 +26,12 @@ export const Landing = async () => {
             {user ? (
               <Link
                 href="/my-balance"
-                className="inline-block px-6 py-2 bg-neutral-500 text-surface rounded-lg hover:bg-neutral-900 transition-all duration-1000"
+                className="inline-block px-6 py-2 bg-brand-700 text-surface rounded-lg hover:bg-brand-800 transition-all duration-1000"
               >
                 My Balance
               </Link>
             ) : (
-              <StartBalancingButton className="inline-block px-6 py-2 bg-neutral-500 text-surface rounded-lg hover:bg-neutral-900 transition-all duration-1000" />
+              <StartBalancingButton className="inline-block px-6 py-2 bg-brand-700 text-surface rounded-lg hover:bg-brand-800 transition-all duration-1000" />
             )}
           </div>
         </div>
@@ -110,12 +105,12 @@ export const Landing = async () => {
             {user ? (
               <Link
                 href="/my-balance"
-                className="inline-block px-6 py-2 bg-neutral-500 text-surface rounded-lg hover:bg-neutral-900 transition-all duration-1000 shadow-xl"
+                className="inline-block px-6 py-2 bg-brand-700 text-surface rounded-lg hover:bg-brand-800 transition-all duration-1000 shadow-xl"
               >
                 My Balance
               </Link>
             ) : (
-              <StartBalancingButton className="inline-block px-6 py-2 bg-neutral-500 text-surface rounded-lg hover:bg-neutral-900 transition-all duration-1000 shadow-xl" />
+              <StartBalancingButton className="inline-block px-6 py-2 bg-brand-700 text-surface rounded-lg hover:bg-brand-800 transition-all duration-1000 shadow-xl" />
             )}
           </div>
         </div>

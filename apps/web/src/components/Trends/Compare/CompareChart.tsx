@@ -7,6 +7,7 @@ import {
   ArcElement,
   PieController,
 } from "chart.js"
+import { useChartTheme } from "@/theme/useChartTheme"
 import { Pie } from "react-chartjs-2"
 import type { ApiTypes } from "@balance/api-types"
 import { Money } from "../../../utils/classes/Money"
@@ -20,6 +21,7 @@ interface Props {
 }
 
 export const CompareChart = ({ data, colors, ...rest }: Props) => {
+  const { theme } = useChartTheme()
   const chartData = {
     labels: data.summary.map(s => s.name),
     datasets: [
@@ -40,6 +42,7 @@ export const CompareChart = ({ data, colors, ...rest }: Props) => {
 
   return (
     <Pie
+      key={theme}
       data={chartData}
       options={{ plugins: { legend: { position: "bottom" } } }}
     />

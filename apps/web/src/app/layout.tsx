@@ -1,13 +1,27 @@
 import type { Metadata, Viewport } from "next"
+import { Figtree } from "next/font/google"
+import { THEME_COLOR, THEME_SCRIPT } from "@/theme/theme"
 import "./globals.css"
+
+const figtree = Figtree({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+})
 
 export const metadata: Metadata = {
   title: "Balance",
   icons: { icon: "/assets/balance.svg" },
 }
 
-// browser chrome colour; matches the landing page (my-balance overrides it)
-export const viewport: Viewport = { themeColor: "#EDECEC" }
+// Browser chrome colour: the shell of each theme. A saved light/dark choice
+// overrides both (THEME_SCRIPT, setThemeChoice).
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: THEME_COLOR.light },
+    { media: "(prefers-color-scheme: dark)", color: THEME_COLOR.dark },
+  ],
+}
 
 export default function RootLayout({
   children,
@@ -15,7 +29,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    // data-theme is set by THEME_SCRIPT before React hydrates
+    <html lang="en" className={figtree.variable} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body>
         <div>{children}</div>
         <div id="authNode" className=""></div>
