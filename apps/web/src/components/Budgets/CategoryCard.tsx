@@ -33,7 +33,9 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
   const usedAmount = Money.fromCents(c.usedAmount?.toString())
   const isOverBudget = budgetedAmount.lt(usedAmount)
   const leftoverBudget = budgetedAmount.subtract(usedAmount)
-  const budgetedClasses = isOverBudget ? "bg-danger-300" : "bg-success-200 "
+  const budgetedClasses = isOverBudget
+    ? "bg-danger-200 text-danger-900"
+    : "bg-success-200 text-success-900"
 
   const isCheckedClassname = checked ? "bg-info-200" : ""
   // Below md the row stacks: name and available, then budget and used. At
@@ -137,11 +139,12 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
       <td className="pr-4 max-md:col-start-2 max-md:row-start-2 max-md:pr-0">
         <div className="relative max-md:w-36">
           <span
-            className={`${budgetedClasses} flex items-center px-2 py-0.5 rounded-md`}
+            className={`${budgetedClasses} flex items-center rounded-full px-3 py-0.5`}
           >
             <span className="select-none">{budgetedAmount.currencySymbol}</span>
             <EditableText
               text={`${budgetedAmount.format({ noCurrencySymbol: true })}`}
+              additionalClasses={["rounded-full"]}
               type="number"
               onFinishEditing={handleChangeForm("amount")}
               onCancel={clearError("budgetedAmount")}
@@ -161,7 +164,7 @@ export const CategoryCard = ({ id, c, checked, onChange, ...rest }: Props) => {
         {usedAmount.format()}
       </td>
 
-      <td className="text-right pr-4 tabular-nums max-md:col-start-3 max-md:row-start-1 max-md:self-center max-md:pr-0 max-md:font-semibold">
+      <td className={`text-right pr-4 tabular-nums max-md:col-start-3 max-md:row-start-1 max-md:self-center max-md:pr-0 max-md:font-semibold ${isOverBudget ? "text-danger-600" : ""}`}>
         {leftoverBudget.format().replace(/^-/, "\u2212")}
       </td>
 
