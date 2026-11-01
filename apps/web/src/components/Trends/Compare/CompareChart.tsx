@@ -14,6 +14,8 @@ import { Money } from "../../../utils/classes/Money"
 
 ChartJS.register(ArcElement, PieController, Colors, Legend, Tooltip)
 
+const HOVER_OFFSET = 16
+
 interface Props {
   data: ApiTypes.Trend.PieChart
 }
@@ -30,7 +32,7 @@ export const CompareChart = ({ data, ...rest }: Props) => {
           s => Money.fromCents(s.spent.toString()).dollars,
         ),
         backgroundColor: data.summary.map(s => colorFor(s.name)),
-        hoverOffset: 20,
+        hoverOffset: HOVER_OFFSET,
       },
     ],
   }
@@ -43,7 +45,10 @@ export const CompareChart = ({ data, ...rest }: Props) => {
     <Pie
       key={theme}
       data={chartData}
-      options={{ plugins: { legend: { position: "bottom" } } }}
+      options={{
+        layout: { padding: HOVER_OFFSET },
+        plugins: { legend: { position: "bottom" } },
+      }}
     />
   )
 }
