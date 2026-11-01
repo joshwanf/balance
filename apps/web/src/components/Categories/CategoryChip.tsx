@@ -20,7 +20,7 @@ export const CategoryChip = ({ name, color, className = "" }: Props) => (
 /** Shown where a transaction has no category */
 export const UnassignedChip = ({ className = "" }: { className?: string }) => (
   <span
-    className={`inline-block rounded-full border border-dashed border-neutral-300 px-2 text-xs leading-5 text-neutral-500 ${className}`}
+    className={`inline-block rounded-full border border-dashed border-neutral-500 px-2 text-xs leading-5 text-neutral-600 ${className}`}
   >
     Unassigned
   </span>
