@@ -15,6 +15,7 @@
     "start": "yarn workspace @balance/web start",
     "type-check": "yarn workspace @balance/web type-check",
     "migrate": "yarn workspace @balance/web migrate",
-    "seed": "yarn workspace @balance/web seed"
+    "seed": "yarn workspace @balance/web seed",
+    "plaid:sync": "yarn workspace @balance/web plaid:sync"
   }
 }
