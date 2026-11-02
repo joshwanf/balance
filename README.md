@@ -4,6 +4,10 @@ Balance is a personal budgeting app. You record transactions across your account
 
 **Live site:** [balance.joshwanf.com](https://balance.joshwanf.com)
 
+| Light | Dark |
+| ----- | ---- |
+| ![Home, light theme](docs/screenshots/home-light.png) | ![Home, dark theme](docs/screenshots/home-dark.png) |
+
 ## Features
 
 - **Home**: a Recent transactions card with the month's latest transactions, and spending shown up or down against the same point last month.
