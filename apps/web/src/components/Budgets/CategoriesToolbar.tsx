@@ -1,19 +1,21 @@
 "use client"
-import { useState } from "react"
+import { useState, type ReactNode } from "react"
 import { AnimatePresence } from "motion/react"
 import { CreateCategory } from "./CreateCategory"
 import { PrimaryButton } from "../../lib/Base/Button"
 
 /**
- * Add-category button and form above the budgets table. It needs no data, so
- * the page and its loading state render it outside the table's Suspense
- * boundary and it never disappears while the table loads.
+ * The month's totals, then the add-category button and form, above the
+ * budgets table. The button needs no data, so the page and its loading state
+ * render it outside the table's Suspense boundary and it never disappears
+ * while the table loads.
  */
-export const CategoriesToolbar = () => {
+export const CategoriesToolbar = ({ totals }: { totals: ReactNode }) => {
   const [showAddCat, setShowAddCat] = useState(false)
 
   return (
-    <div className="flex flex-col bg-brand-100 space-y-2 px-4 py-4 rounded-2xl">
+    <div className="flex flex-col space-y-3 pb-4">
+      {totals}
       <div>
         <PrimaryButton
           onClick={() => setShowAddCat(!showAddCat)}
