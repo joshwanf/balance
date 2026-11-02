@@ -16,7 +16,7 @@ export const TransactionsToolbar = () => {
 
   return (
     <div
-      className="flex flex-col justify-between bg-grass-50
+      className="flex flex-col justify-between bg-brand-50
       px-4 py-4 rounded-2xl space-y-4"
     >
       {/* Phones: search on top, full-width Add below. From sm: side by side */}
@@ -26,9 +26,9 @@ export const TransactionsToolbar = () => {
             onClick={() => setShowAddItem(!showAddItem)}
             className={`
                 w-full sm:w-auto whitespace-nowrap px-4 rounded-md border-2 
-              ${!showAddItem ? "bg-grass-700" : "bg-grass-300"}
-              ${!showAddItem ? "text-grass-200" : "text-grass-800"}
-              ${!showAddItem ? "border-grass-700" : "border-grass-800"}
+              ${!showAddItem ? "bg-brand-700" : "bg-brand-300"}
+              ${!showAddItem ? "text-brand-200" : "text-brand-800"}
+              ${!showAddItem ? "border-brand-700" : "border-brand-800"}
               `}
           >
             Add Transaction

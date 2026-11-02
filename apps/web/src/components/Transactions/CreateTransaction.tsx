@@ -59,7 +59,7 @@ export const CreateTransaction = ({ onAfterSubmitForm }: Props) => {
           transition: { height: { duration: 0.1 } },
         }}
         className="align-top shadow-xl
-      bg-grass-50 py-6 px-2 rounded-lg border-2 border-grass-600"
+      bg-brand-50 py-6 px-2 rounded-lg border-2 border-brand-600"
       >
         {/* each error sits under its own field; one column on phones */}
         <div className="grid grid-cols-1 gap-3 text-sm md:grid-cols-2 md:gap-x-6">

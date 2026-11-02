@@ -22,7 +22,7 @@ export const SignupForm = () => {
   }
 
   return (
-    <div className="border-2 bg-white rounded-md p-4 m-6">
+    <div className="border-2 bg-surface rounded-md p-4 m-6">
       {state.status === "error" && state.error.invalid && (
         <Errors errors={state.error.invalid} />
       )}
@@ -33,7 +33,7 @@ export const SignupForm = () => {
           )}
           <p>First name</p>
           <input
-            className="px-3 py-1 border border-slate-400 rounded-lg w-full hover:border-slate-600"
+            className="px-3 py-1 border border-neutral-400 rounded-lg w-full hover:border-neutral-600"
             defaultValue={initialForm.firstName}
             type="text"
             name="firstName"
@@ -47,7 +47,7 @@ export const SignupForm = () => {
           )}
           <p>Last name</p>
           <input
-            className="px-3 py-1 border border-slate-400 rounded-lg w-full hover:border-slate-600"
+            className="px-3 py-1 border border-neutral-400 rounded-lg w-full hover:border-neutral-600"
             defaultValue={initialForm.lastName}
             type="text"
             name="lastName"
@@ -61,7 +61,7 @@ export const SignupForm = () => {
           )}
           <p>Username</p>
           <input
-            className="px-3 py-1 border border-slate-400 rounded-lg w-full hover:border-slate-600"
+            className="px-3 py-1 border border-neutral-400 rounded-lg w-full hover:border-neutral-600"
             defaultValue={initialForm.username}
             type="text"
             name="username"
@@ -75,7 +75,7 @@ export const SignupForm = () => {
           )}
           <p>Email</p>
           <input
-            className="px-3 py-1 border border-slate-400 rounded-lg w-full hover:border-slate-600"
+            className="px-3 py-1 border border-neutral-400 rounded-lg w-full hover:border-neutral-600"
             defaultValue={initialForm.email}
             type="email"
             name="email"
@@ -89,7 +89,7 @@ export const SignupForm = () => {
           )}
           <p>Password</p>
           <input
-            className="px-3 py-1 border border-slate-400 rounded-lg w-full hover:border-slate-600"
+            className="px-3 py-1 border border-neutral-400 rounded-lg w-full hover:border-neutral-600"
             type="password"
             name="password"
             id="password"
@@ -102,7 +102,7 @@ export const SignupForm = () => {
           )}
           <p>Confirm password</p>
           <input
-            className="px-3 py-1 border border-slate-400 rounded-lg w-full hover:border-slate-600"
+            className="px-3 py-1 border border-neutral-400 rounded-lg w-full hover:border-neutral-600"
             type="password"
             name="confirmPassword"
             id="confirmPassword"

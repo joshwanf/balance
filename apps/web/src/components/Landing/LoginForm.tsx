@@ -14,7 +14,7 @@ export const LoginForm = () => {
 
   return (
     <div>
-      <div className="bg-white border-0 border-slate-300 rounded-md p-4 space-y-2">
+      <div className="bg-surface border-0 border-neutral-300 rounded-md p-4 space-y-2">
         {state.status === "error" && state.error.invalid && (
           <Errors errors={state.error.invalid} />
         )}
@@ -25,7 +25,7 @@ export const LoginForm = () => {
             )}
             <p>Email/username</p>
             <input
-              className="px-3 py-1 border border-slate-400 rounded-lg w-full hover:border-slate-600"
+              className="px-3 py-1 border border-neutral-400 rounded-lg w-full hover:border-neutral-600"
               defaultValue={credential}
               type="text"
               name="credential"
@@ -39,7 +39,7 @@ export const LoginForm = () => {
             )}
             <p>Password</p>
             <input
-              className="px-3 py-1 border border-slate-400 rounded-lg w-full hover:border-slate-600"
+              className="px-3 py-1 border border-neutral-400 rounded-lg w-full hover:border-neutral-600"
               type="password"
               name="password"
               id="password"

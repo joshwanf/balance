@@ -18,11 +18,11 @@ export const TextInput = ({
     "px-3",
     "py-1",
     "border",
-    "border-slate-400",
+    "border-neutral-400",
     "rounded-lg",
     "w-full",
     // hover
-    "hover:border-slate-600",
+    "hover:border-neutral-600",
   ]
   const unifiedClassNames = [
     ...defaultClasses,

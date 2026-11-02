@@ -21,10 +21,10 @@ export const TertiaryButton = ({
   const classSchema = cs || {}
   const { bgColor, hoverBgColor, borderColor, hoverBorderColor } = classSchema
 
-  const unifiedBgColor = bgColor ?? "bg-beige"
-  const unifiedBorderColor = borderColor ?? "border-grass-700"
-  const unifiedHoverBgColor = hoverBgColor ?? "hover:bg-grass-100"
-  const unifiedHoverBorderColor = hoverBorderColor ?? "hover:border-grass-700"
+  const unifiedBgColor = bgColor ?? "bg-paper"
+  const unifiedBorderColor = borderColor ?? "border-brand-700"
+  const unifiedHoverBgColor = hoverBgColor ?? "hover:bg-brand-100"
+  const unifiedHoverBorderColor = hoverBorderColor ?? "hover:border-brand-700"
 
   const defaultClasses = [
     // default style
@@ -37,7 +37,7 @@ export const TertiaryButton = ({
     unifiedBorderColor,
     unifiedHoverBgColor,
     unifiedHoverBorderColor,
-    "active:bg-grass-300",
+    "active:bg-brand-300",
     "active:ring-0",
   ]
 

@@ -10,7 +10,7 @@ export const CategoryTableSkeleton = () => (
   <div>
     <div className="md:hidden flex h-10 items-center gap-3 border-b-2 px-2">
       <input type="checkbox" aria-label="Select all" disabled />
-      <span className="text-sm text-slate-500">Select all</span>
+      <span className="text-sm text-neutral-500">Select all</span>
     </div>
     <TableSkeleton
       columns={CATEGORY_COLUMNS}

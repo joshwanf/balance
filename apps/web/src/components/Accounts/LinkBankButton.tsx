@@ -54,8 +54,8 @@ export const LinkBankButton = () => {
         type="button"
         onClick={handleClick}
         disabled={isPending}
-        className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-grass-700
-          bg-white px-4 py-0.5 text-grass-800 hover:bg-grass-200 disabled:opacity-60 sm:w-auto"
+        className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-brand-700
+          bg-surface px-4 py-0.5 text-brand-800 hover:bg-brand-200 disabled:opacity-60 sm:w-auto"
       >
         {/* same-size slot, so the spinner doesn't resize the button */}
         <span className="flex size-5 items-center justify-center">
@@ -64,7 +64,7 @@ export const LinkBankButton = () => {
         Link a bank
       </button>
       {message && (
-        <p role="status" className="text-sm text-slate-600 sm:basis-full">
+        <p role="status" className="text-sm text-neutral-600 sm:basis-full">
           {message}
         </p>
       )}

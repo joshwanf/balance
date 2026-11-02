@@ -2,13 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
-/* The page background shows in phone safe areas and when overscrolling, so
-   it matches the edges of whichever shell is on screen */
 @layer base {
+  body {
+    @apply text-ink;
+    /* money lines up in columns without a mono font */
+    font-variant-numeric: tabular-nums;
+    /* checkboxes and radios */
+    accent-color: theme(colors.brand.700);
+  }
+
+  /* Browsers paint fields white, or grey in dark mode; use the card colour.
+     A bg-* class still wins (utilities come after base) */
+  input:not([type="checkbox"], [type="radio"]),
+  textarea,
+  select {
+    background-color: theme(colors.surface);
+  }
+
+  /* The page background shows in phone safe areas and when overscrolling, so
+     it matches the edges of whichever shell is on screen */
   html {
-    background-color: theme(colors.beige);
+    background-color: theme(colors.paper);
   }
   html:has([data-app-shell]) {
-    background-color: theme(colors.slate.200);
+    background-color: theme(colors.shell);
+  }
+}
+
+@layer components {
+  /* A category name tinted with its colour. Set --chip to the colour's
+     variable, e.g. style={{ "--chip": "var(--cat-teal)" }} (CategoryChip) */
+  .category-chip {
+    background-color: color-mix(
+      in srgb,
+      rgb(var(--chip)) var(--chip-tint),
+      rgb(var(--surface))
+    );
+    color: color-mix(in srgb, rgb(var(--chip)) 45%, rgb(var(--ink)));
+    box-shadow: inset 0 0 0 1px
+      color-mix(in srgb, rgb(var(--chip)) var(--chip-ring), transparent);
   }
 }

@@ -17,12 +17,12 @@ export const TextArea = ({
     "py-2",
     // "mx-1",
     "border",
-    "border-slate-400",
+    "border-neutral-400",
     "rounded-lg",
     "w-full",
     "box-border",
     // hover
-    "hover:border-slate-600",
+    "hover:border-neutral-600",
   ]
   const unifiedClassNames = [
     ...defaultClasses,

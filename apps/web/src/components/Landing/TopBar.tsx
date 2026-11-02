@@ -17,7 +17,7 @@ export const TopBar = async () => {
         ) : (
           <Link
             href="/my-balance"
-            className="mx-1 px-6 py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-900 transition-all duration-1000"
+            className="mx-1 px-6 py-2 bg-neutral-500 text-surface rounded-lg hover:bg-neutral-900 transition-all duration-1000"
           >
             My Balance
           </Link>

@@ -47,7 +47,7 @@ export const SideModal = ({ selector, element, closeModal, title }: Props) => {
             exit={slide}
             transition={{ type: "tween", ease: "easeOut", duration: 0.2 }}
             onClick={e => e.stopPropagation()}
-            className="bg-white h-dvh w-full sm:max-w-md shadow-lg flex flex-col"
+            className="bg-surface h-dvh w-full sm:max-w-md shadow-lg flex flex-col"
           >
             <div className="flex items-center justify-between gap-2 border-b-2 px-4 py-3">
               <h2 className="truncate text-lg font-semibold">{title}</h2>
@@ -55,8 +55,8 @@ export const SideModal = ({ selector, element, closeModal, title }: Props) => {
                 type="button"
                 onClick={closeModal}
                 aria-label="Close"
-                className="shrink-0 rounded-md p-1 text-slate-600 hover:bg-slate-100
-                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-grass-600"
+                className="shrink-0 rounded-md p-1 text-neutral-600 hover:bg-neutral-100
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
               >
                 <X />
               </button>

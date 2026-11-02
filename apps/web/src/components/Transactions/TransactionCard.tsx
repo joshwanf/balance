@@ -7,6 +7,11 @@ import { Money } from "../../utils/classes/Money"
 import { AnimatePresence } from "motion/react"
 import { Landmark } from "lucide-react"
 import { ROW_CLASS, STACKED } from "@/components/Table/layout"
+import { useCategoryColors } from "@/components/Lookups/LookupsProvider"
+import {
+  CategoryChip,
+  UnassignedChip,
+} from "@/components/Categories/CategoryChip"
 
 type Transaction = ApiTypes.Transaction.TRow
 
@@ -20,10 +25,19 @@ export const TransactionCard = ({ t, allTags, checked, onChange }: Props) => {
   const [showModal, setShowModal] = useState(false)
   const tAmount = Money.fromCents(`${t.amount}`)
 
-  const hasCategory = t.categoryId
-  const isCheckedClassname = checked ? "bg-blue-200" : ""
+  const { byId: categoryColors } = useCategoryColors()
+  const categoryColor = t.categoryId
+    ? categoryColors.get(t.categoryId)
+    : undefined
+  const category =
+    t.categoryName && categoryColor ? (
+      <CategoryChip name={t.categoryName} color={categoryColor} />
+    ) : (
+      <UnassignedChip />
+    )
+  const isCheckedClassname = checked ? "bg-info-200" : ""
   // Below md the row stacks: payee and amount, then date, account and category
-  const unifiedClassNames = `${isCheckedClassname} ${ROW_CLASS} ${STACKED.row} ${STACKED.rowHeight} max-md:grid-cols-[1.5rem_minmax(0,1fr)_auto] max-md:px-2 hover:cursor-pointer hover:shadow-md hover:shadow-slate-200`
+  const unifiedClassNames = `${isCheckedClassname} ${ROW_CLASS} ${STACKED.row} ${STACKED.rowHeight} max-md:grid-cols-[1.5rem_minmax(0,1fr)_auto] max-md:px-2 hover:cursor-pointer hover:shadow-md hover:shadow-neutral-200`
   const amount = tAmount.format().replace(/^-/, "\u2212")
   const closeModal = (
     e?: React.MouseEvent<HTMLDivElement | HTMLButtonElement>,
@@ -55,14 +69,14 @@ export const TransactionCard = ({ t, allTags, checked, onChange }: Props) => {
         <div className="flex items-center gap-2 min-w-0 pr-2">
           {t.plaidTransactionId && (
             <span title="Imported from your bank" className="shrink-0">
-              <Landmark className="size-4 text-slate-400" />
+              <Landmark className="size-4 text-neutral-400" />
             </span>
           )}
           <span className="truncate" title={t.payee}>
             {t.payee}
           </span>
           {t.pending && (
-            <span className="shrink-0 rounded-full bg-amber-100 px-2 text-xs text-amber-800">
+            <span className="shrink-0 rounded-full bg-warning-100 px-2 text-xs text-warning-800">
               Pending
             </span>
           )}
@@ -74,11 +88,12 @@ export const TransactionCard = ({ t, allTags, checked, onChange }: Props) => {
       <td className="text-right pr-4 tabular-nums max-md:col-start-3 max-md:row-start-1 max-md:pr-0">
         {amount}
       </td>
-      <td className="truncate max-md:hidden">
-        {t.categoryName ?? "(unassigned)"}
-      </td>
-      <td className="md:hidden col-start-2 col-span-2 row-start-2 truncate text-sm text-slate-500">
-        {t.date} · {t.accountName} · {t.categoryName ?? "(unassigned)"}
+      <td className="min-w-0 pr-2 max-md:hidden">{category}</td>
+      <td className="md:hidden col-start-2 col-span-2 row-start-2 flex min-w-0 items-center gap-2 text-sm text-neutral-500">
+        <span className="shrink-0">{category}</span>
+        <span className="truncate">
+          {t.date} · {t.accountName}
+        </span>
       </td>
       <AnimatePresence>
         {showModal && (

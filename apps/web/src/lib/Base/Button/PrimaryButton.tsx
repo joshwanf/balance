@@ -31,11 +31,11 @@ export const PrimaryButton = ({
     hoverTextColor,
   } = classSchema
 
-  const unifiedBgColor = bgColor ?? "bg-grass-700"
-  const unifiedBorderColor = borderColor ?? "border-grass-700"
-  const unifiedHoverBgColor = hoverBgColor ?? "hover:bg-grass-600"
-  const unifiedHoverBorderColor = hoverBorderColor ?? "hover:border-grass-600"
-  const unifiedTextColor = textColor ?? "text-white"
+  const unifiedBgColor = bgColor ?? "bg-brand-700"
+  const unifiedBorderColor = borderColor ?? "border-brand-700"
+  const unifiedHoverBgColor = hoverBgColor ?? "hover:bg-brand-600"
+  const unifiedHoverBorderColor = hoverBorderColor ?? "hover:border-brand-600"
+  const unifiedTextColor = textColor ?? "text-surface"
 
   const defaultClasses = [
     "px-3",
@@ -45,14 +45,14 @@ export const PrimaryButton = ({
     unifiedBorderColor,
     "border-2",
     "rounded-md",
-    // "text-white",
+    // "text-surface",
     unifiedTextColor,
     unifiedHoverBgColor,
     unifiedHoverBorderColor,
-    "active:bg-grass-800",
-    "active:border-grass-800",
+    "active:bg-brand-800",
+    "active:border-brand-800",
     // "active:ring-4",
-    // "active:ring-blue-400",
+    // "active:ring-info-400",
   ]
 
   const unifiedClassNames = [

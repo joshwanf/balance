@@ -28,10 +28,10 @@ export const FormField = ({
       <input
         className="w-full sm:w-auto bg-transparent py-0.5 pl-2 
         justify-self-start
-        border-2 border-grass-300 rounded-md 
-        hover:border-grass-400
-        focus:ring-0 focus:outline-none focus:border-grass-700
-        placeholder:italic placeholder:text-grass-500"
+        border-2 border-brand-300 rounded-md 
+        hover:border-brand-400
+        focus:ring-0 focus:outline-none focus:border-brand-700
+        placeholder:italic placeholder:text-brand-500"
         name={name}
         placeholder={placeholder}
         value={value}

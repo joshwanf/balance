@@ -21,10 +21,10 @@ export const SecondaryButton = ({
   const classSchema = cs || {}
   const { bgColor, hoverBgColor, borderColor, hoverBorderColor } = classSchema
 
-  const unifiedBgColor = bgColor ?? "bg-slate-700"
-  const unifiedBorderColor = borderColor ?? "border-slate-700"
-  const unifiedHoverBgColor = hoverBgColor ?? "hover:bg-slate-500"
-  const unifiedHoverBorderColor = hoverBorderColor ?? "hover:border-slate-500"
+  const unifiedBgColor = bgColor ?? "bg-neutral-700"
+  const unifiedBorderColor = borderColor ?? "border-neutral-700"
+  const unifiedHoverBgColor = hoverBgColor ?? "hover:bg-neutral-500"
+  const unifiedHoverBorderColor = hoverBorderColor ?? "hover:border-neutral-500"
 
   const defaultClasses = [
     "px-3",
@@ -34,11 +34,11 @@ export const SecondaryButton = ({
     unifiedBorderColor,
     "border-2",
     "rounded-md",
-    "text-white",
+    "text-surface",
     unifiedHoverBgColor,
     unifiedHoverBorderColor,
-    "active:bg-slate-800",
-    "active:border-slate-800",
+    "active:bg-neutral-800",
+    "active:border-neutral-800",
   ]
 
   const unifiedClassNames = [

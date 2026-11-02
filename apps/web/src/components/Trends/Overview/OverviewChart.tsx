@@ -10,6 +10,7 @@ import {
   Legend,
 } from "chart.js"
 import { Bar } from "react-chartjs-2"
+import { useChartTheme } from "@/theme/useChartTheme"
 
 ChartJS.register(
   CategoryScale,
@@ -32,10 +33,12 @@ interface Props {
 }
 
 export const OverviewChart = ({ categories, labels, ...rest }: Props) => {
+  const { theme, line, colorFor } = useChartTheme()
   const datasets =
     categories?.map(c => ({
       label: c.name,
       data: c.outgoing,
+      backgroundColor: colorFor(c.name),
     })) || []
 
   const data = {
@@ -55,6 +58,7 @@ export const OverviewChart = ({ categories, labels, ...rest }: Props) => {
         grid: {
           display: false,
         },
+        border: { color: line },
       },
       x: {
         title: {
@@ -64,9 +68,10 @@ export const OverviewChart = ({ categories, labels, ...rest }: Props) => {
         grid: {
           display: false,
         },
+        border: { color: line },
       },
     },
   }
 
-  return <Bar data={data} options={options} />
+  return <Bar key={theme} data={data} options={options} />
 }

@@ -40,8 +40,8 @@ export const TableSkeleton = ({
             >
               {stacked && (
                 <td className="space-y-2 md:hidden">
-                  <div className="h-4 w-2/3 rounded bg-grass-100" />
-                  <div className="h-3 w-1/2 rounded bg-grass-100" />
+                  <div className="h-4 w-2/3 rounded bg-brand-100" />
+                  <div className="h-3 w-1/2 rounded bg-brand-100" />
                 </td>
               )}
               {columns.map((col, c) => (
@@ -50,7 +50,7 @@ export const TableSkeleton = ({
                   className={`${col.checkbox ? "pl-2" : "pr-4"} ${st("max-md:hidden")}`}
                 >
                   <div
-                    className={`h-4 rounded bg-grass-100 ${col.checkbox ? "w-4" : "w-3/4"} ${col.align === "right" ? "ml-auto" : ""}`}
+                    className={`h-4 rounded bg-brand-100 ${col.checkbox ? "w-4" : "w-3/4"} ${col.align === "right" ? "ml-auto" : ""}`}
                   />
                 </td>
               ))}

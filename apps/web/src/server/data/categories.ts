@@ -6,11 +6,12 @@ import type { ApiTypes } from "@balance/api-types"
 import { pc, TxClient } from "../prisma"
 import { apiError } from "../errors"
 import { cleanName } from "../utils/cleanName"
+import { leastUsedColor } from "@/theme/categoryColors"
 
 export const listCategoryNames = async (userId: string) => {
   const categories = await pc.category.findMany({
     where: { userId },
-    select: { id: true, name: true },
+    select: { id: true, name: true, color: true },
   })
   return categories
 }
@@ -58,7 +59,14 @@ export const getCategoriesWithTransAgg = async (
     const month = CategoryMonth.length ? CategoryMonth[0].month : curMonth
     const amount = CategoryMonth.length ? CategoryMonth[0].amount : 0
     const usedAmount = aggTransNorm.get(cat.id) || 0
-    return { id: cat.id, name: cat.name, amount, month, usedAmount }
+    return {
+      id: cat.id,
+      name: cat.name,
+      color: cat.color,
+      amount,
+      month,
+      usedAmount,
+    }
   })
 }
 
@@ -76,7 +84,7 @@ export const getCategoryForMonth = async (
   const nextMonth = moment(month, "YYYY-MM").add(1, "month").format("YYYY-MM")
   const category = await prisma.category.findFirst({
     where: { id, userId },
-    select: { id: true, name: true },
+    select: { id: true, name: true, color: true },
   })
   if (!category) return null
 
@@ -141,6 +149,11 @@ export const createCategory = async (
   { name, amount, month }: { name: string; amount: number; month: string },
 ) => {
   const cleanedName = await checkValidCategoryName(name, userId)
+  const existing = await pc.category.findMany({
+    where: { userId },
+    select: { color: true },
+  })
+  const color = leastUsedColor(existing.map(c => c.color))
 
   const created = await pc.category
     .create({
@@ -150,6 +163,7 @@ export const createCategory = async (
         userId,
         name,
         cleanedName,
+        color,
         CategoryMonth: {
           create: [{ id: uuidv7(), amount, month, userId }],
         },
@@ -172,6 +186,7 @@ export const createCategory = async (
   return {
     id: created.id,
     name: created.name,
+    color: created.color,
     month,
     amount: created.CategoryMonth[0].amount,
     usedAmount: 0,
@@ -184,15 +199,18 @@ type ChangeCategoryResult = ApiTypes.Category.ChangeResponse
 
 export const changeCategory = async (
   { userId, id, month }: { userId: string; id: string; month: string },
-  { name, amount }: ChangeCategoryRequest,
+  { name, amount, color }: ChangeCategoryRequest,
 ): Promise<ChangeCategoryResult | null> => {
   await confirmC(id, userId)
 
   const result = await pc.$transaction(async prisma => {
-    if (name) {
+    if (name || color) {
       await prisma.category.update({
         where: { id, userId },
-        data: { name, cleanedName: cleanName(name) },
+        data: {
+          ...(name ? { name, cleanedName: cleanName(name) } : {}),
+          ...(color ? { color } : {}),
+        },
       })
     }
     await prisma.categoryMonth.upsert({

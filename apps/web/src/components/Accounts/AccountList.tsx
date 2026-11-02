@@ -26,7 +26,7 @@ export const AccountList = async ({ month }: Props) => {
 
   if (accounts.length === 0) {
     return (
-      <p className="py-8 text-center text-slate-500">
+      <p className="py-8 text-center text-neutral-500">
         No accounts yet. Add one or link a bank above.
       </p>
     )

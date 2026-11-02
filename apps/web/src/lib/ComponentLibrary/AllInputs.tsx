@@ -17,8 +17,8 @@ export const AllInputs = () => {
   >(manyCheckboxesOptions.map(box => false))
   return (
     <div>
-      <div className="p-3 m-3 border border-slate-400 rounded-md relative">
-        <h1 className="px-2 absolute -top-3 bg-white">Default Inputs</h1>
+      <div className="p-3 m-3 border border-neutral-400 rounded-md relative">
+        <h1 className="px-2 absolute -top-3 bg-surface">Default Inputs</h1>
         <div>
           <fieldset>
             <legend>

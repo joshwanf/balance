@@ -53,7 +53,7 @@ export const CreateCategory = ({ onAfterSubmitForm, ...rest }: Props) => {
           transition: { height: { duration: 0.2 }, opacity: { duration: 0.2 } },
         }}
         className="align-top shadow-xl
-      bg-grass-50 py-6 px-2 rounded-lg border-2 border-grass-600"
+      bg-brand-50 py-6 px-2 rounded-lg border-2 border-brand-600"
       >
         <form
           action={action}
@@ -87,8 +87,8 @@ export const CreateCategory = ({ onAfterSubmitForm, ...rest }: Props) => {
             <PrimaryButton
               className={`flex items-center justify-center w-full lg:w-auto px-4 py-0.5
                 border-2 rounded-md 
-                border-grass-700 hover:border-grass-600 disabled:border-grass-300 
-                text-grass-700 hover:text-grass-600 disabled:text-grass-300`}
+                border-brand-700 hover:border-brand-600 disabled:border-brand-300 
+                text-brand-700 hover:text-brand-600 disabled:text-brand-300`}
               disabled={isPending}
             >
               <div className="flex gap-2 items-center justify-center">

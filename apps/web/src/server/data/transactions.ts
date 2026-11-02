@@ -6,6 +6,7 @@ import type { ApiTypes } from "@balance/api-types"
 import { pc, TxClient } from "../prisma"
 import { apiError } from "../errors"
 import { cleanName } from "../utils/cleanName"
+import { getNextMonth } from "../utils/date"
 import { changeSchema, createSchema } from "../schemas/transactions"
 import { assertAccountOwned } from "./accounts"
 import { assertCategoryOwned, getCategoriesWithTransAgg } from "./categories"
@@ -312,4 +313,16 @@ export const listTagsWithTransactions = async (userId: string) => {
     name: t.name,
     transactions: t.transactions.map(trans => trans.transactions),
   }))
+}
+
+/** Money out and money in for the month, across every category. */
+export const monthTotals = async (userId: string, month: string) => {
+  const sums = await pc.transaction.groupBy({
+    by: ["type"],
+    where: { userId, date: { gte: month, lt: getNextMonth(month) } },
+    _sum: { amount: true },
+  })
+  const sumOf = (type: string) =>
+    sums.find(s => s.type === type)?._sum.amount ?? 0
+  return { spent: sumOf("outgoing"), broughtIn: sumOf("incoming") }
 }

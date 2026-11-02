@@ -7,19 +7,22 @@ import {
   ArcElement,
   PieController,
 } from "chart.js"
+import { useChartTheme } from "@/theme/useChartTheme"
 import { Pie } from "react-chartjs-2"
 import type { ApiTypes } from "@balance/api-types"
 import { Money } from "../../../utils/classes/Money"
 
 ChartJS.register(ArcElement, PieController, Colors, Legend, Tooltip)
 
+const HOVER_OFFSET = 16
+
 interface Props {
   data: ApiTypes.Trend.PieChart
-  /** category name to colour, shared by both charts */
-  colors: Record<string, string>
 }
 
-export const CompareChart = ({ data, colors, ...rest }: Props) => {
+export const CompareChart = ({ data, ...rest }: Props) => {
+  // each category keeps its own colour, so the two months can be compared
+  const { theme, colorFor } = useChartTheme()
   const chartData = {
     labels: data.summary.map(s => s.name),
     datasets: [
@@ -28,8 +31,8 @@ export const CompareChart = ({ data, colors, ...rest }: Props) => {
         data: data.summary.map(
           s => Money.fromCents(s.spent.toString()).dollars,
         ),
-        backgroundColor: data.summary.map(s => colors[s.name]),
-        hoverOffset: 20,
+        backgroundColor: data.summary.map(s => colorFor(s.name)),
+        hoverOffset: HOVER_OFFSET,
       },
     ],
   }
@@ -40,8 +43,12 @@ export const CompareChart = ({ data, colors, ...rest }: Props) => {
 
   return (
     <Pie
+      key={theme}
       data={chartData}
-      options={{ plugins: { legend: { position: "bottom" } } }}
+      options={{
+        layout: { padding: HOVER_OFFSET },
+        plugins: { legend: { position: "bottom" } },
+      }}
     />
   )
 }
